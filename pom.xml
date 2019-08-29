@@ -1,0 +1,46 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<properties>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+
+		<bungeecord.version>1.14-SNAPSHOT</bungeecord.version>
+		<minecraft.version>1.14.2-R0.1-SNAPSHOT</minecraft.version>
+
+		<project.version>0.0.1</project.version>
+
+		<project.synced.version>0.0.1</project.synced.version>
+
+		<project.proxy.core.version>0.0.1</project.proxy.core.version>
+		<project.proxy.version>0.0.1</project.proxy.version>
+
+		<project.minecraft.core.version>0.0.1</project.minecraft.core.version>
+		<project.minecraft.lobby.version>0.0.1</project.minecraft.lobby.version>
+	</properties>
+
+	<groupId>eu.teamwuffy</groupId>
+	<artifactId>minecraft</artifactId>
+	<version>${project.version}</version>
+	<packaging>pom</packaging>
+
+	<modules>
+		<module>synced</module>
+		<module>lobby</module>
+		<module>proxy</module>
+		<module>core-proxy</module>
+		<module>core-minecraft</module>
+	</modules>
+
+	<developers>
+		<developer>
+			<name>NgLoader</name>
+			<roles>
+				<role>Owner</role>
+				<role>Developer</role>
+			</roles>
+		</developer>
+	</developers>
+</project>
