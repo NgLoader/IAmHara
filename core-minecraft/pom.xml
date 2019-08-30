@@ -24,11 +24,13 @@
 			<groupId>eu.teamwuffy</groupId>
 			<artifactId>synced</artifactId>
 			<version>${project.synced.version}</version>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.spigotmc</groupId>
 			<artifactId>spigot-api</artifactId>
 			<version>${minecraft.version}</version>
+			<type>jar</type>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>

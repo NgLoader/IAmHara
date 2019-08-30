@@ -1,0 +1,30 @@
+image: maven:3.3.9-jdk-8
+
+stages:
+  - build
+  - test
+  - package
+
+cache:
+  paths:
+    - .m2/repository
+
+build:
+  stage: build
+  script:
+    - mvn compile
+
+test:
+  stage: test
+  script:
+    - mvn test
+
+package:
+  stage: package
+  script:
+    - mvn package
+  artifacts:
+    paths:
+      - "*/target/*.jar*"
+  only:
+    - master
