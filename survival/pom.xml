@@ -2,15 +2,14 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-
 	<parent>
 		<groupId>eu.teamwuffy</groupId>
 		<artifactId>minecraft</artifactId>
 		<version>${project.version}</version>
 	</parent>
 
-	<artifactId>lobby</artifactId>
-	<version>${project.minecraft.lobby.version}</version>
+	<artifactId>survival</artifactId>
+	<version>${project.minecraft.survival.version}</version>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

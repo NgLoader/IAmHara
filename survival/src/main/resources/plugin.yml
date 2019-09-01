@@ -1,0 +1,46 @@
+name: Survival
+author: TeamWuffy
+version: 0.0.1
+api-version: 1.13
+depend: [LuckPerms, Matrix]
+loadbefore: [LuckPerms, Matrix]
+
+main: eu.wuffy.survival.Survival
+
+commands:
+  gamemode:
+    aliases: [gm, gmode, gamem]
+  invsee:
+    aliases: [inventorysee, seeinv, seeinventory, isee, seei]
+  admintool:
+    aliases: [admint, atool, at]
+  fly:
+  warp:
+    aliases: [w]
+  warpcreate:
+    aliases: [warpadd, warpcreate]
+    permission: wuffy.warp.create
+  warpdelete:
+    aliases: [warpdel, warpdelete, warprem, warpremove]
+    permission: wuffy.warp.delete
+  warplist:
+    aliases: [listwarp, listwarps, lwarps, lwarp, listw, warps, warpl, wl, lw]
+  warpcreatealias:
+    aliases: [addsubwarp]
+    permission: wuffy.warp.alias.create
+  warpdeletealias:
+    aliases: [delsubwarp]
+    permission: wuffy.warp.alias.delete
+  home:
+    aliases: [h]
+  homecreate:
+    aliases: [chome, createh, crehome, creh, addh, addhome, seth, sethome, homeadd, homecreate, homec]
+  homedelete:
+    aliases: [dhome, deleteh, delhome, delh, removeh, removehome, rhome, homeremove, homedelete, homedel]
+  homelist:
+    aliases: [listhomes, lhomes, lhome, lh, listh, homes, homelist, homel, hl]
+  say:
+  ping:
+  spawn:
+  vanish:
+    aliases: [v]

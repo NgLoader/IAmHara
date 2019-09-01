@@ -19,6 +19,7 @@
 
 		<project.minecraft.core.version>0.0.1</project.minecraft.core.version>
 		<project.minecraft.lobby.version>0.0.1</project.minecraft.lobby.version>
+		<project.minecraft.survival.version>0.0.1</project.minecraft.survival.version>
 	</properties>
 
 	<groupId>eu.teamwuffy</groupId>
@@ -32,6 +33,7 @@
 		<module>proxy</module>
 		<module>core-proxy</module>
 		<module>core-minecraft</module>
+		<module>survival</module>
 	</modules>
 
 	<developers>

@@ -1,5 +1,4 @@
 package eu.wuffy.synced;
 
-public class Synced {
-
+public interface ICore {
 }
