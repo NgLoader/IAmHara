@@ -15,7 +15,7 @@ public class CommandSay implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		if (!sender.hasPermission("nizada.say")) {
+		if (!sender.hasPermission("wuffy.say")) {
 			sender.sendMessage(Survival.PREFIX + "§7Du hast keine §cRechte §7um diesen §cCommand §7zu nutzen§8.");
 			return true;
 		}
@@ -25,7 +25,7 @@ public class CommandSay implements CommandExecutor {
 			message = message.substring(1);
 
 		for (Player online : Bukkit.getOnlinePlayers())
-			if (online.hasPermission("nizada.say.see"))
+			if (online.hasPermission("wuffy.say.see"))
 				online.sendMessage("§c" + senderColor + sender.getName() + " §8» §c" + message);
 			else
 				online.sendMessage("§4Server §8» §c" + message);

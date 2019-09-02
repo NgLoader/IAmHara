@@ -28,17 +28,25 @@ import eu.wuffy.survival.database.SurvivalDatabase;
 import eu.wuffy.survival.event.AsyncPlayerChatEventListener;
 import eu.wuffy.survival.event.PlayerJoinEventListener;
 import eu.wuffy.survival.event.PlayerQuitEventListener;
+import eu.wuffy.survival.event.luckperms.UserLoadEventListener;
+import eu.wuffy.survival.event.luckperms.UserPromoteEventListener;
 import eu.wuffy.survival.handler.ScoreboardHandler;
 import eu.wuffy.survival.home.HomeHandler;
 import eu.wuffy.survival.warp.WarpHandler;
+import me.lucko.luckperms.api.LuckPermsApi;
+import me.lucko.luckperms.api.event.EventBus;
+import me.lucko.luckperms.api.event.user.UserLoadEvent;
+import me.lucko.luckperms.api.event.user.track.UserPromoteEvent;
 
 public class Survival extends Core<SurvivalDatabase> {
 
 	public static final String PREFIX = "§8[§2Survival§8] ";
 
-	private ScoreboardHandler scoreboardHandler;
-	private WarpHandler warpHandler;
-	private HomeHandler homeHandler;
+	private final ScoreboardHandler scoreboardHandler;
+	private final WarpHandler warpHandler;
+	private final HomeHandler homeHandler;
+
+	private LuckPermsApi luckPermsApi;
 
 	public Survival() {
 		HikariConfig databaseConfig = new HikariConfig();
@@ -65,6 +73,8 @@ public class Survival extends Core<SurvivalDatabase> {
 	@Override
 	public void onEnable() {
 		Bukkit.setWhitelist(true);
+
+		this.luckPermsApi = Bukkit.getServicesManager().getRegistration(LuckPermsApi.class).getProvider();
 
 		try {
 			this.getDatabase().createTables();
@@ -96,6 +106,10 @@ public class Survival extends Core<SurvivalDatabase> {
 	}
 
 	private void registerListener() {
+		EventBus eventBus = this.luckPermsApi.getEventBus();
+		eventBus.subscribe(UserPromoteEvent.class, new UserPromoteEventListener(this));
+		eventBus.subscribe(UserLoadEvent.class, new UserLoadEventListener(this));
+
 		Bukkit.getPluginManager().registerEvents(new AsyncPlayerChatEventListener(this), this);
 		Bukkit.getPluginManager().registerEvents(new PlayerJoinEventListener(this), this);
 		Bukkit.getPluginManager().registerEvents(new PlayerQuitEventListener(this), this);
@@ -119,6 +133,10 @@ public class Survival extends Core<SurvivalDatabase> {
 		getCommand("say").setExecutor(new CommandSay());
 		getCommand("ping").setExecutor(new CommandPing());
 		getCommand("spawn").setExecutor(new CommandSpawn());
+	}
+
+	public LuckPermsApi getLuckPermsApi() {
+		return this.luckPermsApi;
 	}
 
 	public ScoreboardHandler getScoreboardHandler() {

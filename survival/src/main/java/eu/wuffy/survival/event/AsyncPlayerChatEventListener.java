@@ -9,11 +9,8 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.scoreboard.Team;
 
 import eu.wuffy.survival.Survival;
-import eu.wuffy.synced.Rank;
 
 public class AsyncPlayerChatEventListener implements Listener {
-
-	private static final String PLAYER_DEFAULT_TAG = Rank.PLAYER.getColorCode() + Rank.PLAYER.getDisplayName();
 
 	private Survival core;
 
@@ -31,11 +28,12 @@ public class AsyncPlayerChatEventListener implements Listener {
 		Team team = player.getScoreboard().getEntryTeam(player.getName());
 
 		if(team == null)
-			message = new StringBuilder(String.format("§8[%s§8] ", AsyncPlayerChatEventListener.PLAYER_DEFAULT_TAG));
+			message = new StringBuilder(String.format("§8[§aunknown§8] "));
 		else
-			message = new StringBuilder("§8[").append(team.getPrefix().substring(0, team.getPrefix().length() - 5)).append("§8] ");
+			message = new StringBuilder("§8[").append(team.getPrefix().trim()).append("§8] ");
 
 		message.append(String.format("§7%s §8» §7", player.getDisplayName()));
+
 		message.append(player.hasPermission("wuffy.chat.color") ? ChatColor.translateAlternateColorCodes('&', event.getMessage()) : event.getMessage());
 
 		Bukkit.broadcastMessage(message.toString());

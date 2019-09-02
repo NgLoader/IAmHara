@@ -9,11 +9,9 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import eu.wuffy.core.util.RankUtil;
 import eu.wuffy.survival.Survival;
 import eu.wuffy.survival.home.Home;
 import eu.wuffy.survival.home.HomeHandler;
-import eu.wuffy.synced.Rank;
 
 public class CommandHomeCreate implements CommandExecutor {
 
@@ -39,7 +37,7 @@ public class CommandHomeCreate implements CommandExecutor {
 		if (args.length >= 1) {
 			HomeHandler handler = this.core.getHomeHandler();
 			String homeName = args[0];
-			int homes = Rank.isRankHigher(RankUtil.getRankByPermission(player), Rank.PREMIUM, true) ? 20 : 10;
+			int homes = player.hasPermission("home.limit.20") ? 20 : 10;
 
 			if (!player.hasPermission("nizada.admin") && !player.hasPermission("wuffy.home.nohomelimit") && handler.getHomesOfPlayer(player.getUniqueId()).size() >= homes) {
 				player.sendMessage(Survival.PREFIX + "§7Du darfst nur maximal §c3 §7Homes §cbesitzen§8.");

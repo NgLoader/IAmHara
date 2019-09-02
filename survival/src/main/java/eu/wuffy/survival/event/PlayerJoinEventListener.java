@@ -7,7 +7,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
-import eu.wuffy.core.util.RankUtil;
 import eu.wuffy.survival.Survival;
 
 public class PlayerJoinEventListener implements Listener {
@@ -30,8 +29,6 @@ public class PlayerJoinEventListener implements Listener {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-
-		this.core.getScoreboardHandler().addPlayerToScoreboard(player, RankUtil.getRankByPermission(player));
 	}
 
 	public Survival getCore() {
