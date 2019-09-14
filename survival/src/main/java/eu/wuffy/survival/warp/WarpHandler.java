@@ -7,29 +7,35 @@ import java.util.Map;
 
 import org.bukkit.Location;
 
+import eu.wuffy.core.IHandler;
 import eu.wuffy.survival.Survival;
 
-public class WarpHandler {
-
-	private Survival core;
+public class WarpHandler extends IHandler<Survival> {
 
 	private Map<String, Warp> warpsByAlias = new HashMap<String, Warp>();
 	private List<Warp> warps = new LinkedList<Warp>();
 
 	public WarpHandler(Survival core) {
-		this.core = core;
+		super(core);
 	}
 
-	public void init() {
+	@Override
+	public void onInit() { }
+
+	@Override
+	public void onEnable() {
 		this.warps.clear();
 
-		for(Warp warp : this.core.getDatabase().loadWarps()) {
+		for(Warp warp : this.getCore().getDatabase().loadWarps()) {
 			this.warps.add(warp);
 			this.warpsByAlias.put(warp.name.toLowerCase(), warp);
 
 			warp.aliases.forEach(alias -> this.warpsByAlias.put(alias.alias.toLowerCase(), warp));
 		}
 	}
+
+	@Override
+	public void onDisable() { }
 
 	public Warp get(String name) {
 		if (this.warpsByAlias.containsKey(name))
@@ -55,7 +61,7 @@ public class WarpHandler {
 		if (this.exist(name.toLowerCase()))
 			return null;
 
-		Warp warp = this.core.getDatabase().addWarp(name, description, permission, location.getWorld().getName(), location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+		Warp warp = this.getCore().getDatabase().addWarp(name, description, permission, location.getWorld().getName(), location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
 
 		this.warps.add(warp);
 		this.warpsByAlias.put(warp.name.toLowerCase(), warp);
@@ -69,14 +75,14 @@ public class WarpHandler {
 		this.warpsByAlias.remove(warp.name.toLowerCase());
 		warp.aliases.forEach(alias -> this.warpsByAlias.remove(alias.alias.toLowerCase()));
 
-		this.core.getDatabase().deleteWarp(warp);
+		this.getCore().getDatabase().deleteWarp(warp);
 	}
 
 	public WarpAlias createAlias(Warp warp, String alias) {
 		if (this.exist(alias))
 			return null;
 
-		WarpAlias warpAlias = this.core.getDatabase().addWarpAlias(warp, alias);
+		WarpAlias warpAlias = this.getCore().getDatabase().addWarpAlias(warp, alias);
 
 		warp.aliases.add(warpAlias);
 		this.warpsByAlias.put(alias.toLowerCase(), warp);
@@ -87,14 +93,10 @@ public class WarpHandler {
 	public void deleteAlias(WarpAlias alias) {
 		this.warpsByAlias.remove(alias.alias);
 
-		this.core.getDatabase().deleteWarpAlias(alias);
+		this.getCore().getDatabase().deleteWarpAlias(alias);
 	}
 
 	public List<Warp> getWarps() {
 		return this.warps;
-	}
-
-	public Survival getCore() {
-		return this.core;
 	}
 }

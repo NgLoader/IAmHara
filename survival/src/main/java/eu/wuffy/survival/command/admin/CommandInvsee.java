@@ -1,14 +1,19 @@
 package eu.wuffy.survival.command.admin;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 
 import eu.wuffy.survival.Survival;
+import eu.wuffy.synced.util.ArrayUtil;
 
-public class CommandInvsee implements CommandExecutor {
+public class CommandInvsee implements CommandExecutor, TabExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -35,5 +40,24 @@ public class CommandInvsee implements CommandExecutor {
 		} else
 			sender.sendMessage(Survival.PREFIX + "§7Du hast keine §4Rechte §7um diesen §cCommand §7zu nutzen§8.");
 		return true;
+	}
+
+	@Override
+	public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
+		if (args.length == 1) {
+			List<String> found = new ArrayList<String>();
+			String search = args[0].toLowerCase();
+
+			for (Player player : Bukkit.getOnlinePlayers()) {
+				String name = player.getName();
+
+				if (name.toLowerCase().startsWith(search) || name.toLowerCase().contains(search)) {
+					found.add(name);
+				}
+			}
+			return found;
+		}
+
+		return ArrayUtil.EMPTY_ARRAY_LIST;
 	}
 }

@@ -7,6 +7,7 @@ import org.bukkit.Bukkit;
 import com.zaxxer.hikari.HikariConfig;
 
 import eu.wuffy.core.Core;
+import eu.wuffy.core.IHandler;
 import eu.wuffy.survival.command.CommandPing;
 import eu.wuffy.survival.command.CommandSpawn;
 import eu.wuffy.survival.command.admin.CommandAdminTool;
@@ -14,6 +15,12 @@ import eu.wuffy.survival.command.admin.CommandFly;
 import eu.wuffy.survival.command.admin.CommandGameMode;
 import eu.wuffy.survival.command.admin.CommandInvsee;
 import eu.wuffy.survival.command.admin.CommandSay;
+import eu.wuffy.survival.command.admin.CommandVanish;
+import eu.wuffy.survival.command.help.CommandHelp;
+import eu.wuffy.survival.command.help.CommandHelpCreate;
+import eu.wuffy.survival.command.help.CommandHelpDelete;
+import eu.wuffy.survival.command.help.CommandHelpList;
+import eu.wuffy.survival.command.help.CommandHelpUpdate;
 import eu.wuffy.survival.command.home.CommandHome;
 import eu.wuffy.survival.command.home.CommandHomeCreate;
 import eu.wuffy.survival.command.home.CommandHomeDelete;
@@ -26,15 +33,24 @@ import eu.wuffy.survival.command.warp.CommandWarpDeleteAlias;
 import eu.wuffy.survival.command.warp.CommandWarpList;
 import eu.wuffy.survival.database.SurvivalDatabase;
 import eu.wuffy.survival.event.AsyncPlayerChatEventListener;
+import eu.wuffy.survival.event.EntityDamageEventListener;
+import eu.wuffy.survival.event.EntityPickupItemEventListener;
+import eu.wuffy.survival.event.FoodLevelChangeEventListener;
 import eu.wuffy.survival.event.PlayerJoinEventListener;
 import eu.wuffy.survival.event.PlayerQuitEventListener;
+import eu.wuffy.survival.event.luckperms.GroupDataRecalculateEventListener;
 import eu.wuffy.survival.event.luckperms.UserLoadEventListener;
 import eu.wuffy.survival.event.luckperms.UserPromoteEventListener;
+import eu.wuffy.survival.handler.ChatHandler;
+import eu.wuffy.survival.handler.InventoryHandler;
 import eu.wuffy.survival.handler.ScoreboardHandler;
+import eu.wuffy.survival.handler.VanishHandler;
+import eu.wuffy.survival.help.HelpHandler;
 import eu.wuffy.survival.home.HomeHandler;
 import eu.wuffy.survival.warp.WarpHandler;
 import me.lucko.luckperms.api.LuckPermsApi;
 import me.lucko.luckperms.api.event.EventBus;
+import me.lucko.luckperms.api.event.group.GroupDataRecalculateEvent;
 import me.lucko.luckperms.api.event.user.UserLoadEvent;
 import me.lucko.luckperms.api.event.user.track.UserPromoteEvent;
 
@@ -45,6 +61,10 @@ public class Survival extends Core<SurvivalDatabase> {
 	private final ScoreboardHandler scoreboardHandler;
 	private final WarpHandler warpHandler;
 	private final HomeHandler homeHandler;
+	private final VanishHandler vanishHandler;
+	private final InventoryHandler inventoryHandler;
+	private final HelpHandler helpHandler;
+	private final ChatHandler chatHandler;
 
 	private LuckPermsApi luckPermsApi;
 
@@ -68,6 +88,12 @@ public class Survival extends Core<SurvivalDatabase> {
 		this.scoreboardHandler = new ScoreboardHandler(this);
 		this.warpHandler = new WarpHandler(this);
 		this.homeHandler = new HomeHandler(this);
+		this.vanishHandler = new VanishHandler(this);
+		this.inventoryHandler = new InventoryHandler(this);
+		this.helpHandler = new HelpHandler(this);
+		this.chatHandler = new ChatHandler(this);
+
+		IHandler.getHandlers().forEach(IHandler::init);
 	}
 
 	@Override
@@ -85,54 +111,68 @@ public class Survival extends Core<SurvivalDatabase> {
 			return;
 		}
 
-		this.getScoreboardHandler().init();
-		this.getWarpHandler().init();
-		this.getHomeHandler().init();
-
-		this.getDatabase().loadWarps();
+		IHandler.getHandlers().forEach(IHandler::enable);
 
 		this.registerListener();
 		this.registerCommands();
 
-		Bukkit.getConsoleSender().sendMessage("&8[$aSurival&8] &2Enabled");
+		Bukkit.getConsoleSender().sendMessage("§8[§aSurival§8] §2Enabled§8!");
 		Bukkit.setWhitelist(false);
 	}
 
 	@Override
 	public void onDisable() {
+		Bukkit.setWhitelist(true);
+
+		IHandler.destroy();
+
 		this.getDatabase().closeConnection();
 
-		Bukkit.getConsoleSender().sendMessage("&8[$aSurival&8] &4Disabled");
+		Bukkit.getConsoleSender().sendMessage("§8[§aSurival§8] §4Disabled§8!");
 	}
 
 	private void registerListener() {
 		EventBus eventBus = this.luckPermsApi.getEventBus();
 		eventBus.subscribe(UserPromoteEvent.class, new UserPromoteEventListener(this));
 		eventBus.subscribe(UserLoadEvent.class, new UserLoadEventListener(this));
+		eventBus.subscribe(GroupDataRecalculateEvent.class, new GroupDataRecalculateEventListener(this));
 
 		Bukkit.getPluginManager().registerEvents(new AsyncPlayerChatEventListener(this), this);
 		Bukkit.getPluginManager().registerEvents(new PlayerJoinEventListener(this), this);
 		Bukkit.getPluginManager().registerEvents(new PlayerQuitEventListener(this), this);
+		Bukkit.getPluginManager().registerEvents(new EntityDamageEventListener(this), this);
+		Bukkit.getPluginManager().registerEvents(new EntityPickupItemEventListener(this), this);
+		Bukkit.getPluginManager().registerEvents(new FoodLevelChangeEventListener(this), this);
 	}
 
 	private void registerCommands() {
+		getCommand("ping").setExecutor(new CommandPing());
+		getCommand("spawn").setExecutor(new CommandSpawn());
+
+		getCommand("gamemode").setExecutor(new CommandGameMode());
+		getCommand("admintool").setExecutor(new CommandAdminTool());
+		getCommand("invsee").setExecutor(new CommandInvsee());
+		getCommand("vanish").setExecutor(new CommandVanish(this));
+		getCommand("say").setExecutor(new CommandSay());
+		getCommand("fly").setExecutor(new CommandFly());
+
+		getCommand("home").setExecutor(new CommandHome(this));
+		getCommand("homelist").setExecutor(new CommandHomeList(this));
+		getCommand("homecreate").setExecutor(new CommandHomeCreate(this));
+		getCommand("homedelete").setExecutor(new CommandHomeDelete(this));
+
 		getCommand("warp").setExecutor(new CommandWarp(this));
 		getCommand("warpcreate").setExecutor(new CommandWarpCreate(this));
 		getCommand("warpdelete").setExecutor(new CommandWarpDelete(this));
 		getCommand("warplist").setExecutor(new CommandWarpList(this));
 		getCommand("warpcreatealias").setExecutor(new CommandWarpCreateAlias(this));
 		getCommand("warpdeletealias").setExecutor(new CommandWarpDeleteAlias(this));
-		getCommand("home").setExecutor(new CommandHome(this));
-		getCommand("homelist").setExecutor(new CommandHomeList(this));
-		getCommand("homecreate").setExecutor(new CommandHomeCreate(this));
-		getCommand("homedelete").setExecutor(new CommandHomeDelete(this));
-		getCommand("gamemode").setExecutor(new CommandGameMode());
-		getCommand("fly").setExecutor(new CommandFly());
-		getCommand("admintool").setExecutor(new CommandAdminTool());
-		getCommand("invsee").setExecutor(new CommandInvsee());
-		getCommand("say").setExecutor(new CommandSay());
-		getCommand("ping").setExecutor(new CommandPing());
-		getCommand("spawn").setExecutor(new CommandSpawn());
+
+		getCommand("help").setExecutor(new CommandHelp(this));
+		getCommand("helpcreate").setExecutor(new CommandHelpCreate(this));
+		getCommand("helpdelete").setExecutor(new CommandHelpDelete(this));
+		getCommand("helplist").setExecutor(new CommandHelpList(this));
+		getCommand("helpupdate").setExecutor(new CommandHelpUpdate(this));
 	}
 
 	public LuckPermsApi getLuckPermsApi() {
@@ -149,5 +189,21 @@ public class Survival extends Core<SurvivalDatabase> {
 
 	public HomeHandler getHomeHandler() {
 		return this.homeHandler;
+	}
+
+	public VanishHandler getVanishHandler() {
+		return this.vanishHandler;
+	}
+
+	public InventoryHandler getInventoryHandler() {
+		return this.inventoryHandler;
+	}
+
+	public HelpHandler getHelpHandler() {
+		return this.helpHandler;
+	}
+
+	public ChatHandler getChatHandler() {
+		return this.chatHandler;
 	}
 }

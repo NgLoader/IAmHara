@@ -9,9 +9,11 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import eu.wuffy.core.util.GroupUtil;
 import eu.wuffy.survival.Survival;
 import eu.wuffy.survival.home.Home;
 import eu.wuffy.survival.home.HomeHandler;
+import me.lucko.luckperms.api.LuckPermsApi;
 
 public class CommandHomeCreate implements CommandExecutor {
 
@@ -37,10 +39,11 @@ public class CommandHomeCreate implements CommandExecutor {
 		if (args.length >= 1) {
 			HomeHandler handler = this.core.getHomeHandler();
 			String homeName = args[0];
-			int homes = player.hasPermission("home.limit.20") ? 20 : 10;
+			LuckPermsApi luckPermsApi = this.core.getLuckPermsApi();
+			int homes = Integer.valueOf(GroupUtil.getGroupMetaSorted(luckPermsApi.getGroup(luckPermsApi.getUserSafe(player.getUniqueId()).get().getPrimaryGroup()), "max-homes", "10"));
 
-			if (!player.hasPermission("nizada.admin") && !player.hasPermission("wuffy.home.nohomelimit") && handler.getHomesOfPlayer(player.getUniqueId()).size() >= homes) {
-				player.sendMessage(Survival.PREFIX + "§7Du darfst nur maximal §c3 §7Homes §cbesitzen§8.");
+			if (!player.hasPermission("wuffy.home.nohomelimit") && handler.getHomesOfPlayer(player.getUniqueId()).size() >= homes) {
+				player.sendMessage(Survival.PREFIX + "§7Du darfst nur maximal §c" + homes + " §7Homes §cbesitzen§8.");
 				return true;
 			}
 

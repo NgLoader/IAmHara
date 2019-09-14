@@ -11,19 +11,22 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
+import eu.wuffy.core.IHandler;
 import eu.wuffy.survival.Survival;
 
-public class HomeHandler {
-
-	private final Survival core;
+public class HomeHandler extends IHandler<Survival> {
 
 	private Map<UUID, List<Home>> homes = new HashMap<UUID, List<Home>>();
 
 	public HomeHandler(Survival core) {
-		this.core = core;
+		super(core);
 	}
 
-	public void init() {
+	@Override
+	public void onInit() { }
+
+	@Override
+	public void onEnable() {
 		Bukkit.getOnlinePlayers().forEach(player -> {
 			try {
 				this.load(player.getUniqueId());
@@ -33,13 +36,16 @@ public class HomeHandler {
 		});
 	}
 
+	@Override
+	public void onDisable() { }
+
 	public void load(UUID uuid) throws SQLException {
 		if (this.homes.containsKey(uuid))
 			this.homes.get(uuid).clear();
 		else
 			this.homes.put(uuid, new ArrayList<Home>());
 
-		this.core.getDatabase().loadHomes(uuid).forEach(home -> this.homes.get(uuid).add(home));
+		this.getCore().getDatabase().loadHomes(uuid).forEach(home -> this.homes.get(uuid).add(home));
 	}
 
 	public void unload(UUID uuid) {
@@ -67,7 +73,7 @@ public class HomeHandler {
 	}
 
 	public Home create(UUID uuid, String name, String description, Location location) throws SQLException {
-		Home home = this.core.getDatabase().createHome(uuid, name, description, location.getWorld().getName(), location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+		Home home = this.getCore().getDatabase().createHome(uuid, name, description, location.getWorld().getName(), location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
 
 		if (!this.homes.containsKey(uuid))
 			this.load(uuid);
@@ -80,16 +86,12 @@ public class HomeHandler {
 		if (this.homes.containsKey(uuid))
 			this.homes.get(uuid).remove(home);
 
-		this.core.getDatabase().deleteHome(home);
+		this.getCore().getDatabase().deleteHome(home);
 	}
 
 	public List<Home> getHomesOfPlayer(UUID uuid) {
 		if (this.homes.containsKey(uuid))
 			return this.homes.get(uuid);
 		return new ArrayList<Home>();
-	}
-
-	public Survival getCore() {
-		return this.core;
 	}
 }

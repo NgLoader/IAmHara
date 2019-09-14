@@ -1,14 +1,19 @@
 package eu.wuffy.survival.command.warp;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 
 import eu.wuffy.survival.Survival;
 import eu.wuffy.survival.warp.Warp;
+import eu.wuffy.synced.util.ArrayUtil;
 
-public class CommandWarp implements CommandExecutor {
+public class CommandWarp implements CommandExecutor, TabExecutor {
 
 	private Survival core;
 
@@ -48,5 +53,22 @@ public class CommandWarp implements CommandExecutor {
 			player.sendMessage(Survival.PREFIX + "§7/Warp §8<§7name§8>");
 		}
 		return true;
+	}
+
+	@Override
+	public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
+		if (args.length == 0) {
+			return this.core.getWarpHandler().getWarps().stream()
+					.map(warp -> warp.name)
+					.collect(Collectors.toList());
+		} else if (args.length == 1) {
+			String search = args[0].toLowerCase();
+
+			return this.core.getWarpHandler().getWarps().stream()
+					.map(warp -> warp.name)
+					.filter(warp -> warp.toLowerCase().startsWith(search))
+					.collect(Collectors.toList());
+		}
+		return ArrayUtil.EMPTY_ARRAY_LIST;
 	}
 }

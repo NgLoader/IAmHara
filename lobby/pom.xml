@@ -27,7 +27,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.spigotmc</groupId>
-			<artifactId>spigot-api</artifactId>
+			<artifactId>spigot</artifactId>
 			<version>${minecraft.version}</version>
 			<type>jar</type>
 			<scope>provided</scope>

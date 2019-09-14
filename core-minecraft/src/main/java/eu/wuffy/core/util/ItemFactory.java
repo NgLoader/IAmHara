@@ -1,21 +1,29 @@
 package eu.wuffy.core.util;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Material;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.inventory.meta.BookMeta;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
@@ -23,13 +31,87 @@ import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.util.io.BukkitObjectInputStream;
+import org.bukkit.util.io.BukkitObjectOutputStream;
+import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 public class ItemFactory extends ItemStack {
-	
+
+	public static final List<Material> MATERIAL_ITEMS = Arrays.stream(Material.values()).filter(material -> material.isItem()).collect(Collectors.toList());
+	public static final List<Material> MATERIAL_BLOCKS = Arrays.stream(Material.values()).filter(material -> material.isBlock()).collect(Collectors.toList());
+
+	public static String[] playerInventoryToBase64(PlayerInventory playerInventory) {
+		return new String[] { toBase64(playerInventory), itemStackArrayToBase64(playerInventory.getArmorContents()) };
+	}
+
+	public static String itemStackArrayToBase64(ItemStack[] items) {
+		try {
+			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+			BukkitObjectOutputStream dataOutput = new BukkitObjectOutputStream(outputStream);
+
+			dataOutput.writeInt(items.length);
+			for (int i = 0; i < items.length; i++)
+				dataOutput.writeObject(items[i]);
+			dataOutput.close();
+			
+			return Base64Coder.encodeLines(outputStream.toByteArray());
+		} catch (Exception e) {
+			throw new IllegalStateException("Unable to save item stacks.", e);
+		}
+	}
+
+	public static String toBase64(Inventory inventory) {
+		try {
+			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+			BukkitObjectOutputStream dataOutput = new BukkitObjectOutputStream(outputStream);
+
+			dataOutput.writeInt(inventory.getSize());
+			for (int i = 0; i < inventory.getSize(); i++)
+				dataOutput.writeObject(inventory.getItem(i));
+			dataOutput.close();
+			
+			return Base64Coder.encodeLines(outputStream.toByteArray());
+		} catch (Exception e) {
+			throw new IllegalStateException("Unable to save item stacks.", e);
+		}
+	}
+
+	public static Inventory fromBase64(String data) throws IOException {
+		try {
+			ByteArrayInputStream inputStream = new ByteArrayInputStream(Base64Coder.decodeLines(data));
+			BukkitObjectInputStream dataInput = new BukkitObjectInputStream(inputStream);
+			Inventory inventory = Bukkit.getServer().createInventory(null, dataInput.readInt());
+			
+			for (int i = 0; i < inventory.getSize(); i++)
+				inventory.setItem(i, (ItemStack) dataInput.readObject());
+			dataInput.close();
+			
+			return inventory;
+		} catch (ClassNotFoundException e) {
+			throw new IOException("Unable to decode class type.", e);
+		}
+	}
+
+	public static ItemStack[] itemStackArrayFromBase64(String data) {
+		try {
+			ByteArrayInputStream inputStream = new ByteArrayInputStream(Base64Coder.decodeLines(data));
+			BukkitObjectInputStream dataInput = new BukkitObjectInputStream(inputStream);
+			ItemStack[] items = new ItemStack[dataInput.readInt()];
+			
+			for (int i = 0; i < items.length; i++)
+				items[i] = (ItemStack) dataInput.readObject();
+			dataInput.close();
+			
+			return items;
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
 	private ItemMeta meta;
-	
+
 	public ItemFactory() { }
-	
+
 	public ItemFactory(ItemStack item) {
 		this(item.getType(), item.getAmount(), item.getDurability());
 		this.meta = item.getItemMeta();
@@ -65,7 +147,7 @@ public class ItemFactory extends ItemStack {
 	public ItemFactory(Material material, int amount, int i) {
 		this.setType(material);
 		this.setAmount(amount);
-		this.setDamage((short) 1);
+		this.setDamage((short) i);
 		this.meta = this.getItemMeta();
 	}
 	
@@ -83,7 +165,7 @@ public class ItemFactory extends ItemStack {
 		this.setDurability(damage);
 		return this;
 	}
-	
+
 	public ItemFactory setDisplayName(String name) {
 		this.meta.setDisplayName(name);
 		return this;

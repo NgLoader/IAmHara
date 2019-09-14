@@ -1,5 +1,6 @@
 package eu.wuffy.survival.command.admin;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -9,11 +10,17 @@ import org.bukkit.GameMode;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 
-import eu.wuffy.survival.Survival;
+import com.google.common.collect.ImmutableList;
 
-public class CommandGameMode implements CommandExecutor {
+import eu.wuffy.survival.Survival;
+import eu.wuffy.synced.util.ArrayUtil;
+
+public class CommandGameMode implements CommandExecutor, TabExecutor {
+
+	private static final List<String> GAMEMODE_LIST = ImmutableList.of("Survival", "Adventure", "Creative", "Spectator");
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -101,6 +108,39 @@ public class CommandGameMode implements CommandExecutor {
 			sender.sendMessage(Survival.PREFIX + "§7Der GameMode von §a" + target.getName() + " §7wurde zu " + this.getGameModeName(gameMode) + " §7geändert§8.");
 		}
 		return true;
+	}
+
+	@Override
+	public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
+
+		switch (args.length) {
+		case 0:
+			return CommandGameMode.GAMEMODE_LIST;
+		case 1:
+			List<String> found = new ArrayList<String>();
+			String search = args[0].toLowerCase();
+
+			for (String gamemode : CommandGameMode.GAMEMODE_LIST) {
+				if (gamemode.toLowerCase().startsWith(search)) {
+					found.add(gamemode);
+				}
+			}
+			return found;
+		case 2:
+			found = new ArrayList<String>();
+			search = args[1].toLowerCase();
+
+			for (Player player : Bukkit.getOnlinePlayers()) {
+				String name = player.getName();
+
+				if (name.toLowerCase().startsWith(search) || name.toLowerCase().contains(search)) {
+					found.add(name);
+				}
+			}
+			return found;
+		}
+
+		return ArrayUtil.EMPTY_ARRAY_LIST;
 	}
 
 	private String getGameModeName(GameMode gameMode) {

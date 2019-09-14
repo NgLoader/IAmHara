@@ -39,6 +39,16 @@ commands:
     aliases: [dhome, deleteh, delhome, delh, removeh, removehome, rhome, homeremove, homedelete, homedel]
   homelist:
     aliases: [listhomes, lhomes, lhome, lh, listh, homes, homelist, homel, hl]
+  help:
+    aliases: [h]
+  helpcreate:
+    aliases: [helpadd, helpc]
+  helpdelete:
+    aliases: [helpdel, helpremove, helpd]
+  helpupdate:
+    aliases: [helpu]
+  helplist:
+    aliases: [hlist, helpl]
   say:
   ping:
   spawn:

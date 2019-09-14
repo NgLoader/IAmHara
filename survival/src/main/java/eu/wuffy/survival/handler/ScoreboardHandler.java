@@ -5,53 +5,55 @@ import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
+import eu.wuffy.core.IHandler;
 import eu.wuffy.core.util.GroupUtil;
 import eu.wuffy.survival.Survival;
 import me.lucko.luckperms.api.Group;
 import me.lucko.luckperms.api.LuckPermsApi;
 
-public class ScoreboardHandler {
+public class ScoreboardHandler extends IHandler<Survival> {
 
-	private final Survival core;
 	private final Map<String, Team> teams = new HashMap<String, Team>();
 
 	public ScoreboardHandler(Survival core) {
-		this.core = core;
+		super(core);
 	}
 
-	public void init() {
-		this.removeAllScoreboards();
-		LuckPermsApi luckPermsApi = this.core.getLuckPermsApi();
+	@Override
+	public void onInit() { }
 
-		for(Group group : luckPermsApi.getGroups())
-			this.createTeam(group);
+	@Override
+	public void onEnable() {
+		LuckPermsApi luckPermsApi = this.getCore().getLuckPermsApi();
 
-		Bukkit.getOnlinePlayers().forEach(player -> addPlayerToScoreboard(player, luckPermsApi.getGroup(luckPermsApi.getUserManager().getUser(player.getUniqueId()).getPrimaryGroup())));
+		this.removeScoreboardTeams();
+
+		while(luckPermsApi.getGroupManager().loadAllGroups().isDone());
+		Bukkit.getConsoleSender().sendMessage(Survival.PREFIX + "§7Loaded §a" + luckPermsApi.getGroups().size() + " §7groups§8.");
+
+		this.reloadAllGroups();
 	}
 
-	public void addPlayerToScoreboard(Player player, Group group) {
-		if(teams.containsKey(group.getName()))
-			teams.get(group.getName()).addEntry(player.getName());
-		else
-			createTeam(group).addEntry(player.getName());
+	@Override
+	public void onDisable() { }
+
+	public void onPlayerJoin(String username, Group group) {
+		if(this.teams.containsKey(group.getName())) {
+			this.teams.get(group.getName()).addEntry(username);
+		} else
+			createTeam(group).addEntry(username);
 	}
 
-	public void removePlayerFromScoreboard(Player player) {
+	public void onPlayerQuit(OfflinePlayer player) {
 		Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
 
 		Team team = scoreboard.getEntryTeam(player.getName());
 		if (team != null)
 			team.removeEntry(player.getName());
-	}
-
-	public void removeAllScoreboards() {
-		teams.clear();
-		for(Team team : Bukkit.getScoreboardManager().getMainScoreboard().getTeams())
-			team.unregister();
 	}
 
 	public Team createTeam(Group group) {
@@ -62,24 +64,39 @@ public class ScoreboardHandler {
 		if(team == null) {
 			team = scoreboard.registerNewTeam(teamName);
 			team.setPrefix(ChatColor.translateAlternateColorCodes('&', GroupUtil.getGroupPrefix(group).orElseGet(() -> GroupUtil.getGroupMeta(group, "color", "§a") + group.getFriendlyName())));
-			team.setColor(ChatColor.getByChar(GroupUtil.getGroupMeta(group, "color", "a")));
+			team.setColor(ChatColor.getByChar(GroupUtil.getGroupMetaSorted(group, "tablist-color", "a")));
 
 			if (!team.getPrefix().endsWith(" "))
 				team.setPrefix(team.getPrefix() + " ");
 		}
+
+		this.getCore().getChatHandler().onScoreboardTeamUpdate(team, group);
+
 		if(!teams.containsKey(group.getName()))
 			teams.put(group.getName(), team);
 		return team;
 	}
 
 	public String getTeamName(Group group) {
-		String teamName = "ABCEDFGHIJKLMNOPQRSTUFWXYZ".charAt(group.getWeight().orElseGet(() -> 23)) + "_" + group.getFriendlyName().toUpperCase();
+		String teamName = "ABCEDFGHIJKLMNOPQRSTUFWXYZ".charAt(25 - group.getWeight().orElseGet(() -> 25)) + "_" + group.getName().toUpperCase();
 		if(teamName.length() > 16)
 			teamName = teamName.substring(0, 16);
 		return teamName;
 	}
 
-	public Survival getCore() {
-		return this.core;
+	public void reloadAllGroups() {
+		this.removeScoreboardTeams();
+
+		LuckPermsApi luckPermsApi = this.getCore().getLuckPermsApi();
+		for(Group group : luckPermsApi.getGroups())
+			this.createTeam(group);
+
+		Bukkit.getOnlinePlayers().forEach(player -> this.onPlayerJoin(player.getName(), luckPermsApi.getGroup(luckPermsApi.getUserManager().getUser(player.getUniqueId()).getPrimaryGroup())));
+	}
+
+	public void removeScoreboardTeams() {
+		teams.clear();
+		for(Team team : Bukkit.getScoreboardManager().getMainScoreboard().getTeams())
+			team.unregister();
 	}
 }

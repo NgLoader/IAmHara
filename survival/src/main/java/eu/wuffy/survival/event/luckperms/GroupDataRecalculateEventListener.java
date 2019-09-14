@@ -4,21 +4,21 @@ import java.util.function.Consumer;
 
 import eu.wuffy.survival.Survival;
 import eu.wuffy.survival.handler.ScoreboardHandler;
-import me.lucko.luckperms.api.event.user.UserLoadEvent;
+import me.lucko.luckperms.api.event.group.GroupDataRecalculateEvent;
 
-public class UserLoadEventListener implements Consumer<UserLoadEvent> {
+public class GroupDataRecalculateEventListener implements Consumer<GroupDataRecalculateEvent> {
 
 	private final Survival core;
 	private final ScoreboardHandler scoreboardHandler;
 
-	public UserLoadEventListener(Survival core) {
+	public GroupDataRecalculateEventListener(Survival core) {
 		this.core = core;
 		this.scoreboardHandler = this.core.getScoreboardHandler();
 	}
 
 	@Override
-	public void accept(UserLoadEvent event) {
-		this.scoreboardHandler.onPlayerJoin(event.getUser().getName(), event.getApi().getGroupSafe(event.getUser().getPrimaryGroup()).get());
+	public void accept(GroupDataRecalculateEvent event) {
+		this.scoreboardHandler.reloadAllGroups();
 	}
 
 	public Survival getCore() {
