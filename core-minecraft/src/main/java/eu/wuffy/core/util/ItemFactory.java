@@ -113,7 +113,7 @@ public class ItemFactory extends ItemStack {
 	public ItemFactory() { }
 
 	public ItemFactory(ItemStack item) {
-		this(item.getType(), item.getAmount(), item.getDurability());
+		this(item.getType(), item.getAmount(), ((Damageable) item.getItemMeta()).getDamage());
 		this.meta = item.getItemMeta();
 	}
 	
@@ -127,27 +127,23 @@ public class ItemFactory extends ItemStack {
 	}
 	
 	public ItemFactory(Material material, int amount) {
-		this(material, amount, (byte) 0);
+		this(material, amount, 0);
 	}
-	
-	public ItemFactory(Material material, int amount, String name, byte b) {
-		this(material, amount, b);
+
+	public ItemFactory(Material material, int amount, String name, int damage) {
+		this(material, amount, damage);
 		this.setDisplayName(name);
 	}
-	
-	public ItemFactory(Material material, String name, byte b) {
-		this(material, b);
+
+	public ItemFactory(Material material, String name, int damage) {
+		this(material, damage);
 		this.setDisplayName(name);
 	}
-	
-	public ItemFactory(Material material, byte b) {
-		this(material, 1, b);
-	}
-	
-	public ItemFactory(Material material, int amount, int i) {
+
+	public ItemFactory(Material material, int amount, int damage) {
 		this.setType(material);
 		this.setAmount(amount);
-		this.setDamage((short) i);
+		this.setDamage(damage);
 		this.meta = this.getItemMeta();
 	}
 	
@@ -161,8 +157,16 @@ public class ItemFactory extends ItemStack {
 		return this;
 	}
 	
-	public ItemFactory setDamage(short damage) {
-		this.setDurability(damage);
+	public ItemFactory setDamage(int damage) {
+		if (this.meta != null)
+			((Damageable) this.meta).setDamage(damage);
+		else {
+			ItemMeta itemMeta = this.getItemMeta();
+
+			((Damageable) itemMeta).setDamage(damage);
+
+			this.setItemMeta(itemMeta);
+		}
 		return this;
 	}
 

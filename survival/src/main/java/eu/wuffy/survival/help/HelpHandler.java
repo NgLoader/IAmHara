@@ -10,9 +10,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.permissions.Permissible;
 
-import eu.wuffy.core.IHandler;
 import eu.wuffy.survival.Survival;
 import eu.wuffy.survival.database.SurvivalDatabase;
+import eu.wuffy.synced.IHandler;
 
 public class HelpHandler extends IHandler<Survival> {
 
@@ -25,9 +25,6 @@ public class HelpHandler extends IHandler<Survival> {
 	}
 
 	@Override
-	public void onInit() { }
-
-	@Override
 	public void onEnable() {
 		try {
 			this.lines.addAll(this.database.loadHelpLines());
@@ -36,9 +33,6 @@ public class HelpHandler extends IHandler<Survival> {
 			e.printStackTrace();
 		}
 	}
-
-	@Override
-	public void onDisable() { }
 
 	public String build(Permissible permissible) {
 		return ChatColor.translateAlternateColorCodes(

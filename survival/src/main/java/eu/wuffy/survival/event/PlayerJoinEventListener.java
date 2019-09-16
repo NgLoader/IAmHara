@@ -9,8 +9,11 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 import eu.wuffy.survival.Survival;
 import eu.wuffy.survival.database.SurvivalDatabase;
+import eu.wuffy.survival.handler.ScoreboardHandler;
 import eu.wuffy.survival.handler.VanishHandler;
 import eu.wuffy.survival.home.HomeHandler;
+import me.lucko.luckperms.api.LuckPermsApi;
+import me.lucko.luckperms.api.manager.UserManager;
 
 public class PlayerJoinEventListener implements Listener {
 
@@ -18,12 +21,18 @@ public class PlayerJoinEventListener implements Listener {
 	private final SurvivalDatabase database;
 	private final HomeHandler homeHandler;
 	private final VanishHandler vanishHandler;
+	private final ScoreboardHandler scoreboardHandler;
+	private final LuckPermsApi luckPermsApi;
+	private final UserManager userManager;
 
 	public PlayerJoinEventListener(Survival core) {
 		this.core = core;
 		this.database = this.core.getDatabase();
 		this.homeHandler = this.core.getHomeHandler();
 		this.vanishHandler = this.core.getVanishHandler();
+		this.scoreboardHandler = this.core.getScoreboardHandler();
+		this.luckPermsApi = this.core.getLuckPermsApi();
+		this.userManager = this.luckPermsApi.getUserManager();
 	}
 
 	@EventHandler
@@ -33,6 +42,8 @@ public class PlayerJoinEventListener implements Listener {
 		event.setJoinMessage("§8[§a+§8] " + player.getDisplayName());
 
 		try {
+			this.userManager.loadUser(player.getUniqueId()).thenAcceptAsync(user -> this.scoreboardHandler.onPlayerJoin(player, this.luckPermsApi.getGroup(user.getPrimaryGroup())));
+
 			this.database.getPlayerId(player.getUniqueId());
 			this.homeHandler.load(player.getUniqueId());
 			this.vanishHandler.onPlayerJoin(player);

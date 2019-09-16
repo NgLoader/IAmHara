@@ -54,3 +54,5 @@ commands:
   spawn:
   vanish:
     aliases: [v]
+  treefeller:
+    aliases: [treef, baumfäller, baumf, t]

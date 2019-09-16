@@ -28,7 +28,7 @@ public class UserPromoteEventListener implements Consumer<UserPromoteEvent> {
 
 		if (player != null && player.isOnline()) {
 			this.scoreboardHandler.onPlayerQuit(player);
-			this.scoreboardHandler.onPlayerJoin(player.getName(), event.getApi().getGroup(event.getApi().getUserSafe(event.getUser().getUuid()).get().getPrimaryGroup()));
+			this.scoreboardHandler.onPlayerJoin(player.getPlayer(), event.getApi().getGroup(event.getApi().getUserSafe(event.getUser().getUuid()).get().getPrimaryGroup()));
 
 			this.vanishHandler.checkTabVisibilityForPlayer(player.getPlayer(), true);
 		}

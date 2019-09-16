@@ -6,12 +6,13 @@ import java.util.Map;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
-import eu.wuffy.core.IHandler;
 import eu.wuffy.core.util.GroupUtil;
 import eu.wuffy.survival.Survival;
+import eu.wuffy.synced.IHandler;
 import me.lucko.luckperms.api.Group;
 import me.lucko.luckperms.api.LuckPermsApi;
 
@@ -22,9 +23,6 @@ public class ScoreboardHandler extends IHandler<Survival> {
 	public ScoreboardHandler(Survival core) {
 		super(core);
 	}
-
-	@Override
-	public void onInit() { }
 
 	@Override
 	public void onEnable() {
@@ -38,14 +36,11 @@ public class ScoreboardHandler extends IHandler<Survival> {
 		this.reloadAllGroups();
 	}
 
-	@Override
-	public void onDisable() { }
-
-	public void onPlayerJoin(String username, Group group) {
+	public void onPlayerJoin(Player player, Group group) {
 		if(this.teams.containsKey(group.getName())) {
-			this.teams.get(group.getName()).addEntry(username);
+			this.teams.get(group.getName()).addEntry(player.getName());
 		} else
-			createTeam(group).addEntry(username);
+			createTeam(group).addEntry(player.getName());
 	}
 
 	public void onPlayerQuit(OfflinePlayer player) {
@@ -91,7 +86,7 @@ public class ScoreboardHandler extends IHandler<Survival> {
 		for(Group group : luckPermsApi.getGroups())
 			this.createTeam(group);
 
-		Bukkit.getOnlinePlayers().forEach(player -> this.onPlayerJoin(player.getName(), luckPermsApi.getGroup(luckPermsApi.getUserManager().getUser(player.getUniqueId()).getPrimaryGroup())));
+		Bukkit.getOnlinePlayers().forEach(player -> this.onPlayerJoin(player, luckPermsApi.getGroup(luckPermsApi.getUserManager().getUser(player.getUniqueId()).getPrimaryGroup())));
 	}
 
 	public void removeScoreboardTeams() {

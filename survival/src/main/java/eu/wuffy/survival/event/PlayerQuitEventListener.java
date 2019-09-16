@@ -7,6 +7,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import eu.wuffy.survival.Survival;
 import eu.wuffy.survival.handler.ScoreboardHandler;
+import eu.wuffy.survival.handler.TreeFellerHandler;
 import eu.wuffy.survival.handler.VanishHandler;
 import eu.wuffy.survival.home.HomeHandler;
 
@@ -16,12 +17,14 @@ public class PlayerQuitEventListener implements Listener {
 	private final HomeHandler homeHandler;
 	private final ScoreboardHandler scoreboardHandler;
 	private final VanishHandler vanishHandler;
+	private final TreeFellerHandler treeFellerHandler;
 
 	public PlayerQuitEventListener(Survival core) {
 		this.core = core;
 		this.homeHandler = this.core.getHomeHandler();
 		this.scoreboardHandler = this.core.getScoreboardHandler();
 		this.vanishHandler = this.core.getVanishHandler();
+		this.treeFellerHandler = this.core.getTreeFellerHandler();
 	}
 
 	@EventHandler
@@ -32,6 +35,7 @@ public class PlayerQuitEventListener implements Listener {
 
 		this.vanishHandler.onPlayerQuit(player);
 		this.scoreboardHandler.onPlayerQuit(player);
+		this.treeFellerHandler.onPlayerQuit(player);
 		this.homeHandler.unload(player.getUniqueId());
 	}
 

@@ -6,8 +6,8 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import eu.wuffy.core.IHandler;
 import eu.wuffy.survival.Survival;
+import eu.wuffy.synced.IHandler;
 
 public class InventoryHandler extends IHandler<Survival> {
 
@@ -22,15 +22,6 @@ public class InventoryHandler extends IHandler<Survival> {
 	public InventoryHandler(Survival core) {
 		super(core);
 	}
-
-	@Override
-	public void onInit() { }
-
-	@Override
-	public void onEnable() { }
-
-	@Override
-	public void onDisable() { }
 
 	public void onPlayerJoin(Player player) {
 		synchronized (this.loaded) {

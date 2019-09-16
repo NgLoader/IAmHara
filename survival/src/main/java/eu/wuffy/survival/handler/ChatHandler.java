@@ -5,9 +5,9 @@ import java.util.Map;
 
 import org.bukkit.scoreboard.Team;
 
-import eu.wuffy.core.IHandler;
 import eu.wuffy.core.util.GroupUtil;
 import eu.wuffy.survival.Survival;
+import eu.wuffy.synced.IHandler;
 import me.lucko.luckperms.api.Group;
 
 public class ChatHandler extends IHandler<Survival> {
@@ -17,12 +17,6 @@ public class ChatHandler extends IHandler<Survival> {
 	public ChatHandler(Survival core) {
 		super(core);
 	}
-
-	@Override
-	public void onInit() { }
-
-	@Override
-	public void onEnable() { }
 
 	@Override
 	public void onDisable() {

@@ -7,8 +7,8 @@ import java.util.Map;
 
 import org.bukkit.Location;
 
-import eu.wuffy.core.IHandler;
 import eu.wuffy.survival.Survival;
+import eu.wuffy.synced.IHandler;
 
 public class WarpHandler extends IHandler<Survival> {
 
@@ -18,9 +18,6 @@ public class WarpHandler extends IHandler<Survival> {
 	public WarpHandler(Survival core) {
 		super(core);
 	}
-
-	@Override
-	public void onInit() { }
 
 	@Override
 	public void onEnable() {
@@ -33,9 +30,6 @@ public class WarpHandler extends IHandler<Survival> {
 			warp.aliases.forEach(alias -> this.warpsByAlias.put(alias.alias.toLowerCase(), warp));
 		}
 	}
-
-	@Override
-	public void onDisable() { }
 
 	public Warp get(String name) {
 		if (this.warpsByAlias.containsKey(name))

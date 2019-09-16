@@ -7,9 +7,9 @@ import org.bukkit.Bukkit;
 import com.zaxxer.hikari.HikariConfig;
 
 import eu.wuffy.core.Core;
-import eu.wuffy.core.IHandler;
 import eu.wuffy.survival.command.CommandPing;
 import eu.wuffy.survival.command.CommandSpawn;
+import eu.wuffy.survival.command.CommandTreeFeller;
 import eu.wuffy.survival.command.admin.CommandAdminTool;
 import eu.wuffy.survival.command.admin.CommandFly;
 import eu.wuffy.survival.command.admin.CommandGameMode;
@@ -33,6 +33,7 @@ import eu.wuffy.survival.command.warp.CommandWarpDeleteAlias;
 import eu.wuffy.survival.command.warp.CommandWarpList;
 import eu.wuffy.survival.database.SurvivalDatabase;
 import eu.wuffy.survival.event.AsyncPlayerChatEventListener;
+import eu.wuffy.survival.event.BlockBreakEventListener;
 import eu.wuffy.survival.event.EntityDamageEventListener;
 import eu.wuffy.survival.event.EntityPickupItemEventListener;
 import eu.wuffy.survival.event.FoodLevelChangeEventListener;
@@ -44,10 +45,12 @@ import eu.wuffy.survival.event.luckperms.UserPromoteEventListener;
 import eu.wuffy.survival.handler.ChatHandler;
 import eu.wuffy.survival.handler.InventoryHandler;
 import eu.wuffy.survival.handler.ScoreboardHandler;
+import eu.wuffy.survival.handler.TreeFellerHandler;
 import eu.wuffy.survival.handler.VanishHandler;
 import eu.wuffy.survival.help.HelpHandler;
 import eu.wuffy.survival.home.HomeHandler;
 import eu.wuffy.survival.warp.WarpHandler;
+import eu.wuffy.synced.IHandler;
 import me.lucko.luckperms.api.LuckPermsApi;
 import me.lucko.luckperms.api.event.EventBus;
 import me.lucko.luckperms.api.event.group.GroupDataRecalculateEvent;
@@ -65,6 +68,7 @@ public class Survival extends Core<SurvivalDatabase> {
 	private final InventoryHandler inventoryHandler;
 	private final HelpHandler helpHandler;
 	private final ChatHandler chatHandler;
+	private final TreeFellerHandler treeFellerHandler;
 
 	private LuckPermsApi luckPermsApi;
 
@@ -92,6 +96,7 @@ public class Survival extends Core<SurvivalDatabase> {
 		this.inventoryHandler = new InventoryHandler(this);
 		this.helpHandler = new HelpHandler(this);
 		this.chatHandler = new ChatHandler(this);
+		this.treeFellerHandler = new TreeFellerHandler(this);
 
 		IHandler.getHandlers().forEach(IHandler::init);
 	}
@@ -107,7 +112,7 @@ public class Survival extends Core<SurvivalDatabase> {
 		} catch (SQLException e) {
 			e.printStackTrace();
 
-			Bukkit.getConsoleSender().sendMessage("&8[&aSurival&8] &4Error by connecting to database&8!");
+			Bukkit.getConsoleSender().sendMessage(Survival.PREFIX + "§4Error by connecting to database§8!");
 			return;
 		}
 
@@ -116,7 +121,7 @@ public class Survival extends Core<SurvivalDatabase> {
 		this.registerListener();
 		this.registerCommands();
 
-		Bukkit.getConsoleSender().sendMessage("§8[§aSurival§8] §2Enabled§8!");
+		Bukkit.getConsoleSender().sendMessage(Survival.PREFIX + "§2Enabled§8!");
 		Bukkit.setWhitelist(false);
 	}
 
@@ -125,10 +130,11 @@ public class Survival extends Core<SurvivalDatabase> {
 		Bukkit.setWhitelist(true);
 
 		IHandler.destroy();
-
 		this.getDatabase().closeConnection();
 
-		Bukkit.getConsoleSender().sendMessage("§8[§aSurival§8] §4Disabled§8!");
+		Bukkit.getScheduler().cancelTasks(this);
+
+		Bukkit.getConsoleSender().sendMessage(Survival.PREFIX + "§4Disabled§8!");
 	}
 
 	private void registerListener() {
@@ -143,11 +149,13 @@ public class Survival extends Core<SurvivalDatabase> {
 		Bukkit.getPluginManager().registerEvents(new EntityDamageEventListener(this), this);
 		Bukkit.getPluginManager().registerEvents(new EntityPickupItemEventListener(this), this);
 		Bukkit.getPluginManager().registerEvents(new FoodLevelChangeEventListener(this), this);
+		Bukkit.getPluginManager().registerEvents(new BlockBreakEventListener(this), this);
 	}
 
 	private void registerCommands() {
 		getCommand("ping").setExecutor(new CommandPing());
 		getCommand("spawn").setExecutor(new CommandSpawn());
+		getCommand("treefeller").setExecutor(new CommandTreeFeller(this));
 
 		getCommand("gamemode").setExecutor(new CommandGameMode());
 		getCommand("admintool").setExecutor(new CommandAdminTool());
@@ -205,5 +213,9 @@ public class Survival extends Core<SurvivalDatabase> {
 
 	public ChatHandler getChatHandler() {
 		return this.chatHandler;
+	}
+
+	public TreeFellerHandler getTreeFellerHandler() {
+		return this.treeFellerHandler;
 	}
 }

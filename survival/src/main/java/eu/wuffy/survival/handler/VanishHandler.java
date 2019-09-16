@@ -12,10 +12,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
-import eu.wuffy.core.IHandler;
 import eu.wuffy.core.util.NMSUtil;
 import eu.wuffy.survival.Survival;
 import eu.wuffy.survival.command.admin.CommandAdminTool;
+import eu.wuffy.synced.IHandler;
 import net.minecraft.server.v1_14_R1.ChatMessageType;
 import net.minecraft.server.v1_14_R1.IChatBaseComponent.ChatSerializer;
 import net.minecraft.server.v1_14_R1.PacketPlayOutChat;
@@ -35,12 +35,6 @@ public class VanishHandler extends IHandler<Survival> {
 	public VanishHandler(Survival core) {
 		super(core);
 	}
-
-	@Override
-	public void onInit() { }
-
-	@Override
-	public void onEnable() { }
 
 	@Override
 	public void onDisable() {

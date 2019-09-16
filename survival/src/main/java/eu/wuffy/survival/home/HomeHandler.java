@@ -11,8 +11,8 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
-import eu.wuffy.core.IHandler;
 import eu.wuffy.survival.Survival;
+import eu.wuffy.synced.IHandler;
 
 public class HomeHandler extends IHandler<Survival> {
 
@@ -21,9 +21,6 @@ public class HomeHandler extends IHandler<Survival> {
 	public HomeHandler(Survival core) {
 		super(core);
 	}
-
-	@Override
-	public void onInit() { }
 
 	@Override
 	public void onEnable() {
@@ -35,9 +32,6 @@ public class HomeHandler extends IHandler<Survival> {
 			}
 		});
 	}
-
-	@Override
-	public void onDisable() { }
 
 	public void load(UUID uuid) throws SQLException {
 		if (this.homes.containsKey(uuid))
