@@ -11,6 +11,7 @@ import eu.wuffy.synced.IHandler;
 import me.lucko.luckperms.LuckPerms;
 import me.lucko.luckperms.api.LuckPermsApi;
 import me.lucko.luckperms.api.event.EventBus;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.api.plugin.PluginManager;
@@ -37,6 +38,8 @@ public class Proxy extends Plugin implements ICore {
 		databaseConfig.setAutoCommit(true);
 
 		this.database = new ProxyDatabase(this, databaseConfig);
+
+		IHandler.setMessageAdapter((message) -> ProxyServer.getInstance().getConsole().sendMessage(new TextComponent(Proxy.PREFIX + message)));
 	}
 
 	@Override

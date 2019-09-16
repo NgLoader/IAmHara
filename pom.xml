@@ -29,10 +29,9 @@
 
 	<modules>
 		<module>synced</module>
-		<module>lobby</module>
 		<module>proxy</module>
-		<module>core-proxy</module>
 		<module>core-minecraft</module>
+		<module>lobby</module>
 		<module>survival</module>
 	</modules>
 
