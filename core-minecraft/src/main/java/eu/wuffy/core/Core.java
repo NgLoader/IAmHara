@@ -21,7 +21,7 @@ public abstract class Core<T extends CoreDatabase> extends JavaPlugin implements
 			Core.ADVANCEMENT_LIST.add(advancements.next());
 		}
 
-		IHandler.setMessageAdapter((message) -> Bukkit.broadcastMessage(Core.PREFIX));
+		IHandler.setMessageAdapter((message) -> Bukkit.getConsoleSender().sendMessage(Core.PREFIX));
 	}
 
 	private T database;
