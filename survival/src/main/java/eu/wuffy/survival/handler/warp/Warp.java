@@ -1,4 +1,4 @@
-package eu.wuffy.survival.warp;
+package eu.wuffy.survival.handler.warp;
 
 import java.util.List;
 

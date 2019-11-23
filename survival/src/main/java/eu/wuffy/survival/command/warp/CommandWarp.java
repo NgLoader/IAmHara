@@ -10,7 +10,7 @@ import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 
 import eu.wuffy.survival.Survival;
-import eu.wuffy.survival.warp.Warp;
+import eu.wuffy.survival.handler.warp.Warp;
 import eu.wuffy.synced.util.ArrayUtil;
 
 public class CommandWarp implements CommandExecutor, TabExecutor {

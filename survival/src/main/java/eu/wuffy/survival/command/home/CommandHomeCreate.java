@@ -11,8 +11,8 @@ import org.bukkit.entity.Player;
 
 import eu.wuffy.core.util.GroupUtil;
 import eu.wuffy.survival.Survival;
-import eu.wuffy.survival.home.Home;
-import eu.wuffy.survival.home.HomeHandler;
+import eu.wuffy.survival.handler.home.Home;
+import eu.wuffy.survival.handler.home.HomeHandler;
 import me.lucko.luckperms.api.LuckPermsApi;
 
 public class CommandHomeCreate implements CommandExecutor {
@@ -39,7 +39,7 @@ public class CommandHomeCreate implements CommandExecutor {
 		if (args.length >= 1) {
 			HomeHandler handler = this.core.getHomeHandler();
 			String homeName = args[0];
-			LuckPermsApi luckPermsApi = this.core.getLuckPermsApi();
+			LuckPermsApi luckPermsApi = this.core.getLuckPermsHandler().getApi();
 			int homes = Integer.valueOf(GroupUtil.getGroupMetaSorted(luckPermsApi.getGroup(luckPermsApi.getUserSafe(player.getUniqueId()).get().getPrimaryGroup()), "max-homes", "10"));
 
 			if (!player.hasPermission("wuffy.home.nohomelimit") && handler.getHomesOfPlayer(player.getUniqueId()).size() >= homes) {

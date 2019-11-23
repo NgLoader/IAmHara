@@ -1,5 +1,6 @@
 package eu.wuffy.survival.command.warp;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -10,8 +11,9 @@ import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 
 import eu.wuffy.survival.Survival;
-import eu.wuffy.survival.warp.Warp;
-import eu.wuffy.survival.warp.WarpHandler;
+import eu.wuffy.survival.handler.warp.Warp;
+import eu.wuffy.survival.handler.warp.WarpAlias;
+import eu.wuffy.survival.handler.warp.WarpHandler;
 import eu.wuffy.synced.util.ArrayUtil;
 
 public class CommandWarpDeleteAlias implements CommandExecutor, TabExecutor {
@@ -61,24 +63,20 @@ public class CommandWarpDeleteAlias implements CommandExecutor, TabExecutor {
 	public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
 		switch (args.length) {
 		case 0:
-			return this.core.getWarpHandler().getWarps().stream()
-					.map(warp -> warp.name)
+			List<WarpAlias> aliases = new ArrayList<WarpAlias>();
+			this.core.getWarpHandler().getWarps().forEach(warp -> aliases.addAll(warp.aliases));
+
+			return aliases.stream()
+					.map(alias -> alias.alias.toLowerCase())
 					.collect(Collectors.toList());
 
 		case 1:
-			String search = args[0].toLowerCase();
+			aliases = new ArrayList<WarpAlias>();
+			this.core.getWarpHandler().getWarps().forEach(warp -> aliases.addAll(warp.aliases));
 
-			return this.core.getWarpHandler().getWarps().stream()
-					.map(warp -> warp.name)
-					.filter(warp -> warp.toLowerCase().startsWith(search))
-					.collect(Collectors.toList());
-
-		case 2:
-			search = args[1].toLowerCase();
-
-			return this.core.getWarpHandler().get(args[0].toLowerCase()).aliases.stream()
+			return aliases.stream()
 					.map(alias -> alias.alias)
-					.filter(alias -> alias.startsWith(search))
+					.filter(alias -> alias.toLowerCase().contains(args[0].toLowerCase()))
 					.collect(Collectors.toList());
 		default:
 			return ArrayUtil.EMPTY_ARRAY_LIST;

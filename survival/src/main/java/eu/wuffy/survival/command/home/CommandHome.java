@@ -10,7 +10,7 @@ import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 
 import eu.wuffy.survival.Survival;
-import eu.wuffy.survival.home.Home;
+import eu.wuffy.survival.handler.home.Home;
 import eu.wuffy.synced.util.ArrayUtil;
 
 public class CommandHome implements CommandExecutor, TabExecutor {

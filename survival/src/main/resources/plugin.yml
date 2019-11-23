@@ -2,12 +2,16 @@ name: Survival
 author: TeamWuffy
 version: 0.0.1
 api-version: 1.13
-depend: [LuckPerms, Matrix]
-loadbefore: [LuckPerms, Matrix]
+depend: [LuckPerms, Matrix, Vault, Factions, dynmap, WorldEdit, WorldGuard]
+loadbefore: [LuckPerms, Matrix, Vault, Factions, dynmap, WorldEdit, WorldGuard]
 
 main: eu.wuffy.survival.Survival
 
 commands:
+  balance:
+    aliases: [money]
+  bank:
+    aliases: [banking]
   gamemode:
     aliases: [gm, gmode, gamem]
   invsee:
@@ -56,3 +60,4 @@ commands:
     aliases: [v]
   treefeller:
     aliases: [treef, baumfäller, baumf, t]
+  survival:

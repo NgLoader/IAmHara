@@ -1,4 +1,4 @@
-package eu.wuffy.proxy;
+package eu.wuffy.proxy.command;
 
 import eu.wuffy.synced.util.ArrayUtil;
 import net.md_5.bungee.api.CommandSender;

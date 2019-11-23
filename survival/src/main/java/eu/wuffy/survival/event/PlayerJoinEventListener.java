@@ -9,9 +9,9 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 import eu.wuffy.survival.Survival;
 import eu.wuffy.survival.database.SurvivalDatabase;
-import eu.wuffy.survival.handler.ScoreboardHandler;
 import eu.wuffy.survival.handler.VanishHandler;
-import eu.wuffy.survival.home.HomeHandler;
+import eu.wuffy.survival.handler.home.HomeHandler;
+import eu.wuffy.survival.handler.scoreboard.ScoreboardHandler;
 import me.lucko.luckperms.api.LuckPermsApi;
 import me.lucko.luckperms.api.manager.UserManager;
 
@@ -31,7 +31,7 @@ public class PlayerJoinEventListener implements Listener {
 		this.homeHandler = this.core.getHomeHandler();
 		this.vanishHandler = this.core.getVanishHandler();
 		this.scoreboardHandler = this.core.getScoreboardHandler();
-		this.luckPermsApi = this.core.getLuckPermsApi();
+		this.luckPermsApi = this.core.getLuckPermsHandler().getApi();
 		this.userManager = this.luckPermsApi.getUserManager();
 	}
 

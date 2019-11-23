@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
@@ -130,7 +132,7 @@ public class TreeFellerHandler extends IHandler<Survival> {
 			boolean destroyLeaves = true;
 
 			if (canBreak > 1) {
-				List<Block> logs = getAllLogs(new ArrayList<Block>(), block, logLimit);
+				List<Block> logs = getAllLogs(new HashSet<Block>(), block, logLimit).stream().collect(Collectors.toList());
 				int addItemDamage = logs.size();
 
 				int unbreakingLevel = item.getEnchantmentLevel(Enchantment.DURABILITY);
@@ -159,7 +161,7 @@ public class TreeFellerHandler extends IHandler<Survival> {
 
 				item.setItemMeta((ItemMeta) itemMeta);
 
-				Runnable runnable = this.buildSchedule(block, item, logs.stream().sorted(Comparator.comparingInt(log -> log.getY())).collect(Collectors.toList()), destroyLeaves ? getAllLeaves(logs) : TreeFellerHandler.EMPTY_BLOCK_LIST);
+				Runnable runnable = this.buildSchedule(block, item, logs.stream().sorted(Comparator.comparingInt(log -> log.getY())).collect(Collectors.toList()), destroyLeaves ? getAllLeaves(logs).stream().collect(Collectors.toList()) : TreeFellerHandler.EMPTY_BLOCK_LIST);
 				this.runnables.put(runnable, Bukkit.getScheduler().scheduleSyncRepeatingTask(this.getCore(), runnable, 2, 2));
 
 				return true;
@@ -201,12 +203,9 @@ public class TreeFellerHandler extends IHandler<Survival> {
 	/**
 	 * @return A list of all logs with a limit by (logLimit + 1)
 	 */
-	public List<Block> getAllLogs(List<Block> blocks, Block block, int logLimit) {
+	public Set<Block> getAllLogs(Set<Block> blocks, Block block, int logLimit) {
 		if (logLimit < blocks.size())
 			return blocks;
-
-		if (!blocks.contains(block))
-			blocks.add(block);
 
 		for (int i = 0; i < 2; i++) {
 			Block blockUp = block.getRelative(0, i, 0);
@@ -215,6 +214,7 @@ public class TreeFellerHandler extends IHandler<Survival> {
 				Block blockCheck = blockUp.getRelative(blockFace);
 
 				if (blockCheck.getType() == block.getType() && !blocks.contains(blockCheck)) {
+					blocks.add(blockCheck);
 					this.getAllLogs(blocks, blockCheck, logLimit);
 				}
 			}
@@ -223,8 +223,8 @@ public class TreeFellerHandler extends IHandler<Survival> {
 		return blocks;
 	}
 
-	public List<Block> getAllLeaves(List<Block> blocks) {
-		List<Block> leaves = new ArrayList<Block>();
+	public Set<Block> getAllLeaves(List<Block> blocks) {
+		Set<Block> leaves = new HashSet<Block>();
 		Material leaveMaterial = this.leaveTypes.get(blocks.get(0).getType());
 		int startLogY = blocks.get(0).getY();
 		int highestLogY = blocks.stream().map(block -> block.getY()).sorted(Comparator.reverseOrder()).findFirst().get();
@@ -269,7 +269,7 @@ public class TreeFellerHandler extends IHandler<Survival> {
 					break;
 			}
 
-			this.getLeavesForLog(new ArrayList<Block>(), leaveMaterial, block.getLocation(), block, distance).stream()
+			this.getLeavesForLog(new HashSet<Block>(), leaveMaterial, block.getLocation(), block, distance).stream()
 				.filter(leave -> !leaves.contains(leave))
 				.forEach(leave -> leaves.add(leave));
 		}
@@ -277,22 +277,19 @@ public class TreeFellerHandler extends IHandler<Survival> {
 		return leaves;
 	}
 
-	public List<Block> getLeavesForLog(List<Block> leaves, Material leaveMaterial, Location logLocation, Block lastLeave, int distance) {
-		List<Block> needToCheck = new ArrayList<Block>();
-
+	public Set<Block> getLeavesForLog(Set<Block> leaves, Material leaveMaterial, Location logLocation, Block lastLeave, int distance) {
 		for (int i = -1; i < 2; i++) {
 			Block blockUp = lastLeave.getRelative(0, i, 0);
 
 			for (BlockFace blockFace : this.blockFaceAround) {
 				Block blockCheck = blockUp.getRelative(blockFace);
 
-				if (blockCheck.getType() == leaveMaterial && !leaves.contains(blockCheck) && blockCheck.getLocation().distance(logLocation) < distance)
-					needToCheck.add(blockCheck);
+				if (blockCheck.getType() == leaveMaterial && !leaves.contains(blockCheck) && blockCheck.getLocation().distance(logLocation) < distance) {
+					leaves.add(blockCheck);
+					this.getLeavesForLog(leaves, leaveMaterial, logLocation, blockCheck, distance);
+				}
 			}
 		}
-
-		leaves.addAll(needToCheck);
-		needToCheck.forEach(block -> this.getLeavesForLog(leaves, leaveMaterial, logLocation, block, distance));
 
 		return leaves;
 	}

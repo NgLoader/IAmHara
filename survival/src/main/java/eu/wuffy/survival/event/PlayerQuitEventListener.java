@@ -6,10 +6,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import eu.wuffy.survival.Survival;
-import eu.wuffy.survival.handler.ScoreboardHandler;
 import eu.wuffy.survival.handler.TreeFellerHandler;
 import eu.wuffy.survival.handler.VanishHandler;
-import eu.wuffy.survival.home.HomeHandler;
+import eu.wuffy.survival.handler.home.HomeHandler;
+import eu.wuffy.survival.handler.scoreboard.ScoreboardHandler;
 
 public class PlayerQuitEventListener implements Listener {
 

@@ -12,8 +12,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 
 import eu.wuffy.survival.Survival;
-import eu.wuffy.survival.help.HelpHandler;
-import eu.wuffy.survival.help.HelpLine;
+import eu.wuffy.survival.handler.help.HelpHandler;
+import eu.wuffy.survival.handler.help.HelpLine;
 import eu.wuffy.synced.util.ArrayUtil;
 
 public class CommandHelpUpdate implements CommandExecutor, TabExecutor {

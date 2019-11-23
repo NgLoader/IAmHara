@@ -1,4 +1,4 @@
-package eu.wuffy.survival.help;
+package eu.wuffy.survival.handler.help;
 
 public class HelpLine {
 

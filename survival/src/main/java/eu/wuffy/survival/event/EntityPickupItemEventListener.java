@@ -22,7 +22,9 @@ public class EntityPickupItemEventListener implements Listener {
 	@EventHandler
 	public void onEntityPickupItemEvent(EntityPickupItemEvent event) {
 		if (event.getEntityType() == EntityType.PLAYER) {
-			if (this.vanishHandler.isVanish((Player) event.getEntity())) {
+			Player player = (Player) event.getEntity();
+
+			if (this.vanishHandler.isVanish(player)) {
 				event.setCancelled(true);
 			}
 		}

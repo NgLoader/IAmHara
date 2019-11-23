@@ -9,8 +9,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import eu.wuffy.survival.Survival;
-import eu.wuffy.survival.warp.Warp;
-import eu.wuffy.survival.warp.WarpHandler;
+import eu.wuffy.survival.handler.warp.Warp;
+import eu.wuffy.survival.handler.warp.WarpHandler;
 
 public class CommandWarpCreate implements CommandExecutor {
 

@@ -9,8 +9,8 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
 import eu.wuffy.survival.Survival;
-import eu.wuffy.survival.help.HelpHandler;
-import eu.wuffy.survival.help.HelpLine;
+import eu.wuffy.survival.handler.help.HelpHandler;
+import eu.wuffy.survival.handler.help.HelpLine;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;

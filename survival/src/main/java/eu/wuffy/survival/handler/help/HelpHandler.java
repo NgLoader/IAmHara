@@ -1,4 +1,4 @@
-package eu.wuffy.survival.help;
+package eu.wuffy.survival.handler.help;
 
 import java.sql.SQLException;
 import java.util.ArrayList;

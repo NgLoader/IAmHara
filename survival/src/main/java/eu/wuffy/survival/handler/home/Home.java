@@ -1,4 +1,4 @@
-package eu.wuffy.survival.home;
+package eu.wuffy.survival.handler.home;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

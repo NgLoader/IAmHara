@@ -1,15 +1,20 @@
 package eu.wuffy.survival.command.warp;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 
 import eu.wuffy.survival.Survival;
-import eu.wuffy.survival.warp.Warp;
-import eu.wuffy.survival.warp.WarpHandler;
+import eu.wuffy.survival.handler.warp.Warp;
+import eu.wuffy.survival.handler.warp.WarpHandler;
+import eu.wuffy.synced.util.ArrayUtil;
 
-public class CommandWarpCreateAlias implements CommandExecutor {
+public class CommandWarpCreateAlias implements CommandExecutor, TabExecutor {
 
 	private Survival core;
 
@@ -51,5 +56,23 @@ public class CommandWarpCreateAlias implements CommandExecutor {
 			player.sendMessage(Survival.PREFIX + "§7/CreateAliasesWarp §8<§7warp name§8> §8<§7Untername§8>");
 		}
 		return true;
+	}
+
+	@Override
+	public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
+		switch (args.length) {
+		case 0:
+			return this.core.getWarpHandler().getWarps().stream()
+					.map(warp -> warp.name)
+					.collect(Collectors.toList());
+
+		case 1:
+			return this.core.getWarpHandler().getWarps().stream()
+					.map(warp -> warp.name)
+					.filter(warp -> warp.toLowerCase().contains(args[0].toLowerCase()))
+					.collect(Collectors.toList());
+		default:
+			return ArrayUtil.EMPTY_ARRAY_LIST;
+		}
 	}
 }

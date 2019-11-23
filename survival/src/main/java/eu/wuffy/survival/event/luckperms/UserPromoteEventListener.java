@@ -6,8 +6,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
 import eu.wuffy.survival.Survival;
-import eu.wuffy.survival.handler.ScoreboardHandler;
 import eu.wuffy.survival.handler.VanishHandler;
+import eu.wuffy.survival.handler.scoreboard.ScoreboardHandler;
 import me.lucko.luckperms.api.event.user.track.UserPromoteEvent;
 
 public class UserPromoteEventListener implements Consumer<UserPromoteEvent> {

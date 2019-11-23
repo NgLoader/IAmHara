@@ -17,12 +17,12 @@ public class CommandFly implements CommandExecutor, TabExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		if (!(sender instanceof Player)) {
-			sender.sendMessage(Survival.PREFIX + "§7Die Console kann nicht §cFliegen§8.");
-			return true;
-		}
-
 		if (args.length == 0) {
+			if (!(sender instanceof Player)) {
+				sender.sendMessage(Survival.PREFIX + "§7Die Console kann nicht §cFliegen§8.");
+				return true;
+			}
+
 			if (sender.hasPermission("wuffy.fly")) {
 				Player player = (Player) sender;
 

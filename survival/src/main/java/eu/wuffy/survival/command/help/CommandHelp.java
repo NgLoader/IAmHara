@@ -5,7 +5,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
 import eu.wuffy.survival.Survival;
-import eu.wuffy.survival.help.HelpHandler;
+import eu.wuffy.survival.handler.help.HelpHandler;
 
 public class CommandHelp implements CommandExecutor {
 

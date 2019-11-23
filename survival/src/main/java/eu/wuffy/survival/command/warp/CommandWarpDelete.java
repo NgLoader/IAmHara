@@ -9,8 +9,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 
 import eu.wuffy.survival.Survival;
-import eu.wuffy.survival.warp.Warp;
-import eu.wuffy.survival.warp.WarpHandler;
+import eu.wuffy.survival.handler.warp.Warp;
+import eu.wuffy.survival.handler.warp.WarpHandler;
 import eu.wuffy.synced.util.ArrayUtil;
 
 public class CommandWarpDelete implements CommandExecutor, TabExecutor {

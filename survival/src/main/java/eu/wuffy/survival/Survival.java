@@ -15,7 +15,9 @@ import eu.wuffy.survival.command.admin.CommandFly;
 import eu.wuffy.survival.command.admin.CommandGameMode;
 import eu.wuffy.survival.command.admin.CommandInvsee;
 import eu.wuffy.survival.command.admin.CommandSay;
+import eu.wuffy.survival.command.admin.CommandSurvival;
 import eu.wuffy.survival.command.admin.CommandVanish;
+import eu.wuffy.survival.command.economy.CommandEconomyBalance;
 import eu.wuffy.survival.command.help.CommandHelp;
 import eu.wuffy.survival.command.help.CommandHelpCreate;
 import eu.wuffy.survival.command.help.CommandHelpDelete;
@@ -42,16 +44,17 @@ import eu.wuffy.survival.event.PlayerQuitEventListener;
 import eu.wuffy.survival.event.luckperms.GroupDataRecalculateEventListener;
 import eu.wuffy.survival.event.luckperms.UserLoadEventListener;
 import eu.wuffy.survival.event.luckperms.UserPromoteEventListener;
-import eu.wuffy.survival.handler.ChatHandler;
 import eu.wuffy.survival.handler.InventoryHandler;
-import eu.wuffy.survival.handler.ScoreboardHandler;
+import eu.wuffy.survival.handler.LuckPermsHandler;
 import eu.wuffy.survival.handler.TreeFellerHandler;
 import eu.wuffy.survival.handler.VanishHandler;
-import eu.wuffy.survival.help.HelpHandler;
-import eu.wuffy.survival.home.HomeHandler;
-import eu.wuffy.survival.warp.WarpHandler;
+import eu.wuffy.survival.handler.dynmap.DynmapHandler;
+import eu.wuffy.survival.handler.help.HelpHandler;
+import eu.wuffy.survival.handler.home.HomeHandler;
+import eu.wuffy.survival.handler.scoreboard.ScoreboardHandler;
+import eu.wuffy.survival.handler.vault.VaultHandler;
+import eu.wuffy.survival.handler.warp.WarpHandler;
 import eu.wuffy.synced.IHandler;
-import me.lucko.luckperms.api.LuckPermsApi;
 import me.lucko.luckperms.api.event.EventBus;
 import me.lucko.luckperms.api.event.group.GroupDataRecalculateEvent;
 import me.lucko.luckperms.api.event.user.UserLoadEvent;
@@ -67,10 +70,10 @@ public class Survival extends Core<SurvivalDatabase> {
 	private final VanishHandler vanishHandler;
 	private final InventoryHandler inventoryHandler;
 	private final HelpHandler helpHandler;
-	private final ChatHandler chatHandler;
 	private final TreeFellerHandler treeFellerHandler;
-
-	private LuckPermsApi luckPermsApi;
+	private final LuckPermsHandler luckPermsHandler;
+	private final VaultHandler vaultHandler;
+	private final DynmapHandler dynmapHandler;
 
 	public Survival() {
 		HikariConfig databaseConfig = new HikariConfig();
@@ -89,24 +92,27 @@ public class Survival extends Core<SurvivalDatabase> {
 
 		this.setDatabase(new SurvivalDatabase(this, databaseConfig));
 
+		this.luckPermsHandler = new LuckPermsHandler(this);
+		this.vaultHandler = new VaultHandler(this);
 		this.scoreboardHandler = new ScoreboardHandler(this);
 		this.warpHandler = new WarpHandler(this);
 		this.homeHandler = new HomeHandler(this);
 		this.vanishHandler = new VanishHandler(this);
 		this.inventoryHandler = new InventoryHandler(this);
 		this.helpHandler = new HelpHandler(this);
-		this.chatHandler = new ChatHandler(this);
 		this.treeFellerHandler = new TreeFellerHandler(this);
+		this.dynmapHandler = new DynmapHandler(this);
+	}
+
+	@Override
+	public void onLoad() {
+		Bukkit.setWhitelist(true);
 
 		IHandler.getHandlers().forEach(IHandler::init);
 	}
 
 	@Override
 	public void onEnable() {
-		Bukkit.setWhitelist(true);
-
-		this.luckPermsApi = Bukkit.getServicesManager().getRegistration(LuckPermsApi.class).getProvider();
-
 		try {
 			this.getDatabase().createTables();
 		} catch (SQLException e) {
@@ -138,7 +144,7 @@ public class Survival extends Core<SurvivalDatabase> {
 	}
 
 	private void registerListener() {
-		EventBus eventBus = this.luckPermsApi.getEventBus();
+		EventBus eventBus = this.luckPermsHandler.getApi().getEventBus();
 		eventBus.subscribe(UserPromoteEvent.class, new UserPromoteEventListener(this));
 		eventBus.subscribe(UserLoadEvent.class, new UserLoadEventListener(this));
 		eventBus.subscribe(GroupDataRecalculateEvent.class, new GroupDataRecalculateEventListener(this));
@@ -157,6 +163,7 @@ public class Survival extends Core<SurvivalDatabase> {
 		getCommand("spawn").setExecutor(new CommandSpawn());
 		getCommand("treefeller").setExecutor(new CommandTreeFeller(this));
 
+		getCommand("survival").setExecutor(new CommandSurvival(this));
 		getCommand("gamemode").setExecutor(new CommandGameMode());
 		getCommand("admintool").setExecutor(new CommandAdminTool());
 		getCommand("invsee").setExecutor(new CommandInvsee());
@@ -181,10 +188,8 @@ public class Survival extends Core<SurvivalDatabase> {
 		getCommand("helpdelete").setExecutor(new CommandHelpDelete(this));
 		getCommand("helplist").setExecutor(new CommandHelpList(this));
 		getCommand("helpupdate").setExecutor(new CommandHelpUpdate(this));
-	}
 
-	public LuckPermsApi getLuckPermsApi() {
-		return this.luckPermsApi;
+		getCommand("balance").setExecutor(new CommandEconomyBalance(this));
 	}
 
 	public ScoreboardHandler getScoreboardHandler() {
@@ -211,11 +216,19 @@ public class Survival extends Core<SurvivalDatabase> {
 		return this.helpHandler;
 	}
 
-	public ChatHandler getChatHandler() {
-		return this.chatHandler;
-	}
-
 	public TreeFellerHandler getTreeFellerHandler() {
 		return this.treeFellerHandler;
+	}
+
+	public LuckPermsHandler getLuckPermsHandler() {
+		return this.luckPermsHandler;
+	}
+
+	public VaultHandler getVaultHandler() {
+		return this.vaultHandler;
+	}
+
+	public DynmapHandler getDynmapHandler() {
+		return this.dynmapHandler;
 	}
 }

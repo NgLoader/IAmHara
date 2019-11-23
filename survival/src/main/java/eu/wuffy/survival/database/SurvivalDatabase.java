@@ -13,10 +13,10 @@ import com.zaxxer.hikari.HikariConfig;
 
 import eu.wuffy.core.database.CoreDatabase;
 import eu.wuffy.survival.Survival;
-import eu.wuffy.survival.help.HelpLine;
-import eu.wuffy.survival.home.Home;
-import eu.wuffy.survival.warp.Warp;
-import eu.wuffy.survival.warp.WarpAlias;
+import eu.wuffy.survival.handler.help.HelpLine;
+import eu.wuffy.survival.handler.home.Home;
+import eu.wuffy.survival.handler.warp.Warp;
+import eu.wuffy.survival.handler.warp.WarpAlias;
 import eu.wuffy.synced.database.Database;
 import eu.wuffy.synced.database.DatabaseTable;
 
@@ -125,6 +125,29 @@ public class SurvivalDatabase extends CoreDatabase {
 					+ ") DEFAULT CHARSET = utf8mb4", SurvivalDatabase.DATABASE_PREFIX))
 	};
 
+	private static final DatabaseTable[] TABLES_ECONOMY = {
+			new DatabaseTable(SurvivalDatabase.DATABASE_PREFIX + "economy_players", String.format(
+					"CREATE TABLE `%seconomy_players` ("
+					+ "`economy_id` VARCHAR(255) 		NOT NULL, "
+					+ "`balance` DOUBLE					NOT NULL, "
+					+ "PRIMARY KEY (`economy_id`)"
+					+ ") DEFAULT CHARSET = utf8mb4", SurvivalDatabase.DATABASE_PREFIX, Database.DATABASE_PREFIX)),
+			new DatabaseTable(SurvivalDatabase.DATABASE_PREFIX + "economy_banks", String.format(
+					"CREATE TABLE `%seconomy_banks` ("
+					+ "`bank_id` VARCHAR(255)			NOT NULL, "
+					+ "`owner` VARCHAR(255)				NOT NULL, "
+					+ "`balance` DOUBLE					NOT NULL, "
+					+ "PRIMARY KEY (`bank_id`)"
+					+ ") DEFAULT CHARSET = utf8mb4", SurvivalDatabase.DATABASE_PREFIX, Database.DATABASE_PREFIX)),
+			new DatabaseTable(SurvivalDatabase.DATABASE_PREFIX + "economy_players_banks", String.format(
+					"CREATE TABLE `%seconomy_players_banks` ("
+					+ "`bank_id` VARCHAR(255)			NOT NULL, "
+					+ "`player` VARCHAR(255) 	 		NOT NULL, "
+					+ "PRIMARY KEY (`bank_id`, `player`),"
+					+ "FOREIGN KEY (`bank_id`) REFERENCES %2$seconomy_banks(`bank_id`) ON DELETE CASCADE"
+					+ ") DEFAULT CHARSET = utf8mb4", SurvivalDatabase.DATABASE_PREFIX, SurvivalDatabase.DATABASE_PREFIX))
+	};
+
 	private static final String WARP_LIST = String.format("SELECT * FROM %swarps", SurvivalDatabase.DATABASE_PREFIX);
 	private static final String WARP_INSERT = String.format("INSERT INTO %swarps (name, description, permission, world, x, y, z, yaw, pitch) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)", SurvivalDatabase.DATABASE_PREFIX);
 	private static final String WARP_DELETE = String.format("DELETE FROM %swarps WHERE warp_id=?", SurvivalDatabase.DATABASE_PREFIX);
@@ -147,6 +170,26 @@ public class SurvivalDatabase extends CoreDatabase {
 //	private static final String INVENTORY_UPDATE = String.format("UPDATE %splayerdata SET gamemode = ?, content = ?, armorContent = ?, storageContent = ?, extraContent = ?, enderchestContent = ?", SurvivalDatabase.DATABASE_PREFIX);
 //	private static final String INVENTORY_DELETE = String.format("DELETE FROM %splayerdata WHERE playerdata_id=?", SurvivalDatabase.DATABASE_PREFIX);
 
+	private static final String ECONOMY_PLAYER_EXIST = String.format("SELECT * FROM %seconomy_players WHERE economy_id=? LIMIT 1", SurvivalDatabase.DATABASE_PREFIX);
+	private static final String ECONOMY_PLAYER_CREATE = String.format("INSERT INTO %seconomy_players(economy_id, balance) VALUES(?, ?)", SurvivalDatabase.DATABASE_PREFIX);
+	private static final String ECONOMY_PLAYER_DELETE = String.format("DELETE FROM %seconomy_players WHERE economy_id=?", SurvivalDatabase.DATABASE_PREFIX);
+	private static final String ECONOMY_PLAYER_GET_MONEY = String.format("SELECT balance FROM %seconomy_players WHERE economy_id=? LIMIT 1", SurvivalDatabase.DATABASE_PREFIX);
+	private static final String ECONOMY_PLAYER_SET_MONEY = String.format("UPDATE %seconomy_players SET balance=? WHERE economy_id=?", SurvivalDatabase.DATABASE_PREFIX);
+
+	private static final String ECONOMY_BANK_EXIST = String.format("SELECT * FROM %seconomy_banks WHERE bank_id=? LIMIT 1", SurvivalDatabase.DATABASE_PREFIX);
+	private static final String ECONOMY_BANK_CREATE = String.format("INSERT INTO %seconomy_banks(bank_id, owner, balance) VALUES(?, ?, ?)", SurvivalDatabase.DATABASE_PREFIX);
+	private static final String ECONOMY_BANK_DELETE = String.format("DELETE FROM %seconomy_banks WHERE bank_id=?", SurvivalDatabase.DATABASE_PREFIX);
+	private static final String ECONOMY_BANK_GET_ALL = String.format("SELECT * FROM %seconomy_banks LIMIT 1000", SurvivalDatabase.DATABASE_PREFIX);
+	private static final String ECONOMY_BANK_GET_OWNER = String.format("SELECT owner FROM %seconomy_banks WHERE bank_id=? LIMIT 1", SurvivalDatabase.DATABASE_PREFIX);
+	private static final String ECONOMY_BANK_SET_OWNER = String.format("UPDATE %seconomy_banks SET owner=? WHERE bank_id=?", SurvivalDatabase.DATABASE_PREFIX);
+	private static final String ECONOMY_BANK_GET_MONEY = String.format("SELECT balance FROM %seconomy_banks WHERE bank_id=? LIMIT 1", SurvivalDatabase.DATABASE_PREFIX);
+	private static final String ECONOMY_BANK_SET_MONEY = String.format("UPDATE %seconomy_banks SET balance=? WHERE bank_id=?", SurvivalDatabase.DATABASE_PREFIX);
+
+	private static final String ECONOMY_IS_PLAYER_IN_BANK = String.format("SELECT * FROM %seconomy_players_banks WHERE bank_id=?, player=? LIMIT 1", SurvivalDatabase.DATABASE_PREFIX);
+	private static final String ECONOMY_ADD_PLAYER_TO_BANK = String.format("INSERT INTO %seconomy_players_banks(bank_id, player) VALUES(?, ?)", SurvivalDatabase.DATABASE_PREFIX);
+	private static final String ECONOMY_DELETE_PLAYER_FROM_BANK = String.format("DELETE FROM %seconomy_players_banks WHERE bank_id=?, player=?", SurvivalDatabase.DATABASE_PREFIX);
+	private static final String ECONOMY_GET_BANKS_BY_PLAYER = String.format("SELECT * FROM %seconomy_players_banks WHERE player=?", SurvivalDatabase.DATABASE_PREFIX);
+
 	public SurvivalDatabase(Survival core, HikariConfig config) {
 		super(core, config);
 
@@ -154,6 +197,7 @@ public class SurvivalDatabase extends CoreDatabase {
 		this.addDefaultTable(SurvivalDatabase.TABLES_HOMES);
 		this.addDefaultTable(SurvivalDatabase.TABLES_PLAYERINFO);
 		this.addDefaultTable(SurvivalDatabase.TABLES_HELP);
+		this.addDefaultTable(SurvivalDatabase.TABLES_ECONOMY);
 	}
 
 	/*
@@ -477,6 +521,180 @@ public class SurvivalDatabase extends CoreDatabase {
 		try (Connection connection = this.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(SurvivalDatabase.HELP_DELETE_LINE)) {
 			preparedStatement.setInt(1, helpLine.line);
 			preparedStatement.execute();
+		}
+	}
+
+	public boolean economyPlayerExist(String name) throws SQLException {
+		try (Connection connection = this.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(SurvivalDatabase.ECONOMY_PLAYER_EXIST)) {
+			preparedStatement.setString(1, name);
+
+			try (ResultSet resultSet = preparedStatement.executeQuery()) {
+				return resultSet.next();
+			}
+		}
+	}
+
+	public void economyPlayerCreate(String name, double balance) throws SQLException {
+		try (Connection connection = this.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(SurvivalDatabase.ECONOMY_PLAYER_CREATE)) {
+			preparedStatement.setString(1, name);
+			preparedStatement.setDouble(2, balance);
+			preparedStatement.execute();
+		}
+	}
+
+	public void economyPlayerDelete(String name) throws SQLException {
+		try (Connection connection = this.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(SurvivalDatabase.ECONOMY_PLAYER_DELETE)) {
+			preparedStatement.setString(1, name);
+			preparedStatement.execute();
+		}
+	}
+
+	public double economyPlayerMoneyGet(String name) throws SQLException {
+		try (Connection connection = this.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(SurvivalDatabase.ECONOMY_PLAYER_GET_MONEY)) {
+			preparedStatement.setString(1, name);
+
+			try (ResultSet resultSet = preparedStatement.executeQuery()) {
+				if (resultSet.next()) {
+					return resultSet.getDouble("balance");
+				}
+			}
+		}
+
+		return 0;
+	}
+
+	public void economyPlayerMoneySet(String name, double balance) throws SQLException {
+		try (Connection connection = this.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(SurvivalDatabase.ECONOMY_PLAYER_SET_MONEY)) {
+			preparedStatement.setDouble(1, balance);
+			preparedStatement.setString(2, name);
+			preparedStatement.execute();
+		}
+	}
+
+	public boolean economyBankExist(String name) throws SQLException {
+		try (Connection connection = this.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(SurvivalDatabase.ECONOMY_BANK_EXIST)) {
+			preparedStatement.setString(1, name);
+
+			try (ResultSet resultSet = preparedStatement.executeQuery()) {
+				return resultSet.next();
+			}
+		}
+	}
+
+	public void economyBankCreate(String name, String owner, double balance) throws SQLException {
+		try (Connection connection = this.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(SurvivalDatabase.ECONOMY_BANK_CREATE)) {
+			preparedStatement.setString(1, name);
+			preparedStatement.setString(2, owner);
+			preparedStatement.setDouble(3, balance);
+			preparedStatement.execute();
+		}
+	}
+
+	public void economyBankDelete(String name) throws SQLException {
+		try (Connection connection = this.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(SurvivalDatabase.ECONOMY_BANK_DELETE)) {
+			preparedStatement.setString(1, name);
+			preparedStatement.execute();
+		}
+	}
+
+	public double economyBankMoneyGet(String name) throws SQLException {
+		try (Connection connection = this.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(SurvivalDatabase.ECONOMY_BANK_GET_MONEY)) {
+			preparedStatement.setString(1, name);
+
+			try (ResultSet resultSet = preparedStatement.executeQuery()) {
+				if (resultSet.next()) {
+					return resultSet.getDouble("balance");
+				}
+			}
+		}
+
+		return 0;
+	}
+
+	public void economyBankMoneySet(String name, double balance) throws SQLException {
+		try (Connection connection = this.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(SurvivalDatabase.ECONOMY_BANK_SET_MONEY)) {
+			preparedStatement.setDouble(1, balance);
+			preparedStatement.setString(2, name);
+			preparedStatement.execute();
+		}
+	}
+
+	public String economyBankOwnerGet(String name) throws SQLException {
+		try (Connection connection = this.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(SurvivalDatabase.ECONOMY_BANK_GET_OWNER)) {
+			preparedStatement.setString(1, name);
+
+			try (ResultSet resultSet = preparedStatement.executeQuery()) {
+				if (resultSet.next()) {
+					return resultSet.getString("owner");
+				}
+			}
+		}
+
+		return null;
+	}
+
+	public void economyBankOwnerSet(String name, String owner) throws SQLException {
+		try (Connection connection = this.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(SurvivalDatabase.ECONOMY_BANK_SET_OWNER)) {
+			preparedStatement.setString(1, owner);
+			preparedStatement.setString(2, name);
+			preparedStatement.execute();
+		}
+	}
+
+	public boolean economyBankIsPlayerIn(String name, String player) throws SQLException {
+		try (Connection connection = this.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(SurvivalDatabase.ECONOMY_IS_PLAYER_IN_BANK)) {
+			preparedStatement.setString(1, name);
+			preparedStatement.setString(2, player);
+
+			try (ResultSet resultSet = preparedStatement.executeQuery()) {
+				return resultSet.next();
+			}
+		}
+	}
+
+	public void economyBankAddPlayer(String name, String player) throws SQLException {
+		try (Connection connection = this.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(SurvivalDatabase.ECONOMY_ADD_PLAYER_TO_BANK)) {
+			preparedStatement.setString(1, name);
+			preparedStatement.setString(2, player);
+			preparedStatement.execute();
+		}
+	}
+
+	public void economyBankRemovePlayer(String name, String player) throws SQLException {
+		try (Connection connection = this.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(SurvivalDatabase.ECONOMY_DELETE_PLAYER_FROM_BANK)) {
+			preparedStatement.setString(1, name);
+			preparedStatement.setString(2, player);
+			preparedStatement.execute();
+		}
+	}
+
+	public List<String> economyBanksByPlayer(String player) throws SQLException {
+		try (Connection connection = this.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(SurvivalDatabase.ECONOMY_GET_BANKS_BY_PLAYER)) {
+			preparedStatement.setString(1, player);
+
+			try (ResultSet resultSet = preparedStatement.executeQuery()) {
+				List<String> banks = new ArrayList<String>();
+
+				while (resultSet.next()) {
+					banks.add("bank_id");
+				}
+
+				return banks;
+			}
+		}
+	}
+
+	public List<String> economyBanks() throws SQLException {
+		try (Connection connection = this.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(SurvivalDatabase.ECONOMY_BANK_GET_ALL)) {
+			try (ResultSet resultSet = preparedStatement.executeQuery()) {
+				List<String> banks = new ArrayList<String>();
+
+				while (resultSet.next()) {
+					banks.add("bank_id");
+				}
+
+				return banks;
+			}
 		}
 	}
 }
