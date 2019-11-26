@@ -67,7 +67,7 @@ public class VanishHandler extends IHandler<Survival> {
 
 		this.hiddenPlayers.add(player);
 
-		this.getCore().getDynmapHandler().getDynmap().assertPlayerVisibility(player, false, this.getCore());
+		this.getCore().getDynmapHandler().getDynmap().setPlayerVisiblity(player, false);
 
 		PlayerInventory inventory = player.getInventory();
 		ItemStack[][] storage = new ItemStack[4][];
@@ -95,7 +95,7 @@ public class VanishHandler extends IHandler<Survival> {
 
 		this.hiddenPlayers.remove(player);
 
-		this.getCore().getDynmapHandler().getDynmap().assertPlayerVisibility(player, true, this.getCore());
+		this.getCore().getDynmapHandler().getDynmap().setPlayerVisiblity(player, true);
 
 		player.setGameMode(this.playerGamemode.remove(player));
 

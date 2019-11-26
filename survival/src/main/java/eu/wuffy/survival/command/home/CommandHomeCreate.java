@@ -39,7 +39,7 @@ public class CommandHomeCreate implements CommandExecutor {
 		if (args.length >= 1) {
 			HomeHandler handler = this.core.getHomeHandler();
 			String homeName = args[0];
-			LuckPermsApi luckPermsApi = this.core.getLuckPermsHandler().getApi();
+			LuckPermsApi luckPermsApi = this.core.getLuckPermsHandler().getApi().get();
 			int homes = Integer.valueOf(GroupUtil.getGroupMetaSorted(luckPermsApi.getGroup(luckPermsApi.getUserSafe(player.getUniqueId()).get().getPrimaryGroup()), "max-homes", "10"));
 
 			if (!player.hasPermission("wuffy.home.nohomelimit") && handler.getHomesOfPlayer(player.getUniqueId()).size() >= homes) {

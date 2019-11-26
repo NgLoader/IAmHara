@@ -13,7 +13,6 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.craftbukkit.v1_14_R1.scoreboard.CraftScoreboard;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.Team;
 
 import com.massivecraft.factions.FPlayer;
 import com.massivecraft.factions.FPlayers;
@@ -37,8 +36,6 @@ public class ScoreboardHandler extends IHandler<Survival> {
 	private Scoreboard scoreboard;
 	private ScoreboardObjective objective;
 
-	private Team defaultTeam;
-
 	private Map<UUID, Map<String, SurvivalObjective>> objectiveByIdentifier = new HashMap<UUID, Map<String, SurvivalObjective>>();
 	private Map<Group, String> prefixByGroup = new HashMap<Group, String>();
 	private Map<Group, ChatColor> chatColorByGroup = new HashMap<Group, ChatColor>();
@@ -58,16 +55,8 @@ public class ScoreboardHandler extends IHandler<Survival> {
 				EnumScoreboardHealthDisplay.INTEGER);
 
 		this.scoreboard.getObjectives().forEach(objective -> objective.unregister());
-		this.defaultTeam = this.scoreboard.getTeam("default");
 
-		if (this.defaultTeam == null) {
-			this.defaultTeam = this.scoreboard.registerNewTeam("default");
-		}
-		this.defaultTeam.setAllowFriendlyFire(true);
-		this.defaultTeam.setColor(ChatColor.GRAY);
-		this.defaultTeam.setCanSeeFriendlyInvisibles(false);
-
-		LuckPermsApi luckPermsApi = this.getCore().getLuckPermsHandler().getApi();
+		LuckPermsApi luckPermsApi = this.getCore().getLuckPermsHandler().getApi().get();
 
 		while(luckPermsApi.getGroupManager().loadAllGroups().isDone());
 		Bukkit.getConsoleSender().sendMessage(Survival.PREFIX + "§7Loaded §a" + luckPermsApi.getGroups().size() + " §7groups§8.");
@@ -96,32 +85,38 @@ public class ScoreboardHandler extends IHandler<Survival> {
 
 	public void onPlayerJoin(Player player, Group group) {
 		try {
-			this.defaultTeam.addEntry(player.getName());
 			player.setCustomName(this.getTeamPrefix(group) + player.getName());
 
 			NMSUtil.sendPacket(NMSUtil.addToTabList(player, player.getCustomName()));
 			this.needScoreboardUpdate.put(player, System.currentTimeMillis() + 500);
 
 			this.createObjectiveScoreboard(player);
-			this.createObjective(player, null, "  ", 10);
-			this.addObjective(player, new SurvivalObjectiveFormat(this.objective, player, "money", 0, "§9Geld§8: §e%s", this.getCore().getVaultHandler().getEconomy().format(this.getCore().getVaultHandler().getEconomy().getBalance(player))));
-
-			FPlayer fPlayer = FPlayers.getInstance().getByPlayer(player);
-			if (fPlayer.hasFaction()) {
-				Faction faction = fPlayer.getFaction();
-				this.createObjective(player, "factionSpacer", " ", 56);
-				this.createObjective(player, "faction", "§9Faction§7: §a" + faction.getTag(), 40);
-				this.addObjective(player, new SurvivalObjectiveFormat(this.objective, player, "factionOnline", 31, "§7- §9Online§7: §a%s§7/§c%s", faction.getOnlinePlayers().size(), faction.getFPlayers().size()));
-				this.addObjective(player, new SurvivalObjectiveFormat(this.objective, player, "factionBank", 22, "§7- §9Bank§7: §e%s", this.getCore().getVaultHandler().getEconomy().format(10.42)));
-			}
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
 	}
 
 	public void onPlayerQuit(OfflinePlayer player) {
-		this.defaultTeam.removeEntry(player.getName());
 		this.objectiveByIdentifier.remove(player.getUniqueId());
+	}
+
+	public void updateFaction(Player player) {
+		FPlayer fPlayer = FPlayers.getInstance().getByPlayer(player);
+		if (fPlayer.hasFaction()) {
+			Faction faction = fPlayer.getFaction();
+
+			this.createObjective(player, "factionSpacer", " ", 5);
+			this.createObjective(player, "faction", "§9Faction§7: §a" + faction.getTag(), 4);
+			this.addObjective(player, new SurvivalObjectiveFormat(this.objective, player, "factionOnline", 3, "§7- §9Online§7: §a%s§7/§c%s", faction.getOnlinePlayers().size(), faction.getFPlayers().size()));
+			this.addObjective(player, new SurvivalObjectiveFormat(this.objective, player, "factionBank", 2, "§7- §9Bank§7: §e%s", this.getCore().getVaultHandler().getEconomy().format(10.42)));
+		} else {
+			
+		}
+	}
+
+	public void updateMoney(Player player) {
+		this.createObjective(player, null, "  ", 1);
+		this.addObjective(player, new SurvivalObjectiveFormat(this.objective, player, "money", 0, "§9Geld§8: §e%s", this.getCore().getVaultHandler().getEconomy().format(this.getCore().getVaultHandler().getEconomy().getBalance(player))));
 	}
 
 	public void createObjectiveScoreboard(Player player) {
@@ -217,7 +212,7 @@ public class ScoreboardHandler extends IHandler<Survival> {
 	}
 
 	public void loadAllGroups() {
-		LuckPermsApi luckPermsApi = this.getCore().getLuckPermsHandler().getApi();
+		LuckPermsApi luckPermsApi = this.getCore().getLuckPermsHandler().getApi().get();
 
 		this.prefixByGroup.clear();
 		this.chatColorByGroup.clear();
@@ -225,5 +220,9 @@ public class ScoreboardHandler extends IHandler<Survival> {
 			this.createTeamPrefix(group);
 
 		Bukkit.getOnlinePlayers().forEach(player -> this.onPlayerJoin(player, luckPermsApi.getGroup(luckPermsApi.getUserManager().getUser(player.getUniqueId()).getPrimaryGroup())));
+	}
+
+	public ScoreboardObjective getObjective() {
+		return this.objective;
 	}
 }

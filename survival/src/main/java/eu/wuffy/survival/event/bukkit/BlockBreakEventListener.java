@@ -1,23 +1,26 @@
-package eu.wuffy.survival.event;
+package eu.wuffy.survival.event.bukkit;
 
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 
 import eu.wuffy.survival.Survival;
 import eu.wuffy.survival.handler.TreeFellerHandler;
+import eu.wuffy.survival.handler.event.EventListener;
 
-public class BlockBreakEventListener implements Listener {
+public class BlockBreakEventListener extends EventListener {
 
-	private final Survival core;
-	private final TreeFellerHandler treeFellerHandler;
+	private TreeFellerHandler treeFellerHandler;
 
 	public BlockBreakEventListener(Survival core) {
-		this.core = core;
-		this.treeFellerHandler = this.core.getTreeFellerHandler();
+		super(core);
+	}
+
+	@Override
+	public void onInit() {
+		this.treeFellerHandler = this.getCore().getTreeFellerHandler();
 	}
 
 	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = false)

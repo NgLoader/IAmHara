@@ -1,22 +1,25 @@
-package eu.wuffy.survival.event;
+package eu.wuffy.survival.event.bukkit;
 
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 
 import eu.wuffy.survival.Survival;
 import eu.wuffy.survival.handler.VanishHandler;
+import eu.wuffy.survival.handler.event.EventListener;
 
-public class EntityPickupItemEventListener implements Listener {
+public class EntityPickupItemEventListener extends EventListener {
 
-	private final Survival core;
-	private final VanishHandler vanishHandler;
+	private VanishHandler vanishHandler;
 
 	public EntityPickupItemEventListener(Survival core) {
-		this.core = core;
-		this.vanishHandler = this.core.getVanishHandler();
+		super(core);
+	}
+
+	@Override
+	public void onInit() {
+		this.vanishHandler = this.getCore().getVanishHandler();
 	}
 
 	@EventHandler
@@ -28,9 +31,5 @@ public class EntityPickupItemEventListener implements Listener {
 				event.setCancelled(true);
 			}
 		}
-	}
-
-	public Survival getCore() {
-		return this.core;
 	}
 }

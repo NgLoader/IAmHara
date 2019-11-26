@@ -34,31 +34,19 @@ import eu.wuffy.survival.command.warp.CommandWarpDelete;
 import eu.wuffy.survival.command.warp.CommandWarpDeleteAlias;
 import eu.wuffy.survival.command.warp.CommandWarpList;
 import eu.wuffy.survival.database.SurvivalDatabase;
-import eu.wuffy.survival.event.AsyncPlayerChatEventListener;
-import eu.wuffy.survival.event.BlockBreakEventListener;
-import eu.wuffy.survival.event.EntityDamageEventListener;
-import eu.wuffy.survival.event.EntityPickupItemEventListener;
-import eu.wuffy.survival.event.FoodLevelChangeEventListener;
-import eu.wuffy.survival.event.PlayerJoinEventListener;
-import eu.wuffy.survival.event.PlayerQuitEventListener;
-import eu.wuffy.survival.event.luckperms.GroupDataRecalculateEventListener;
-import eu.wuffy.survival.event.luckperms.UserLoadEventListener;
-import eu.wuffy.survival.event.luckperms.UserPromoteEventListener;
 import eu.wuffy.survival.handler.InventoryHandler;
 import eu.wuffy.survival.handler.LuckPermsHandler;
 import eu.wuffy.survival.handler.TreeFellerHandler;
 import eu.wuffy.survival.handler.VanishHandler;
+import eu.wuffy.survival.handler.WinterHandler;
 import eu.wuffy.survival.handler.dynmap.DynmapHandler;
+import eu.wuffy.survival.handler.event.EventHandler;
 import eu.wuffy.survival.handler.help.HelpHandler;
 import eu.wuffy.survival.handler.home.HomeHandler;
 import eu.wuffy.survival.handler.scoreboard.ScoreboardHandler;
 import eu.wuffy.survival.handler.vault.VaultHandler;
 import eu.wuffy.survival.handler.warp.WarpHandler;
 import eu.wuffy.synced.IHandler;
-import me.lucko.luckperms.api.event.EventBus;
-import me.lucko.luckperms.api.event.group.GroupDataRecalculateEvent;
-import me.lucko.luckperms.api.event.user.UserLoadEvent;
-import me.lucko.luckperms.api.event.user.track.UserPromoteEvent;
 
 public class Survival extends Core<SurvivalDatabase> {
 
@@ -74,6 +62,8 @@ public class Survival extends Core<SurvivalDatabase> {
 	private final LuckPermsHandler luckPermsHandler;
 	private final VaultHandler vaultHandler;
 	private final DynmapHandler dynmapHandler;
+	private final WinterHandler winterHandler;
+	private final EventHandler eventHandler;
 
 	public Survival() {
 		HikariConfig databaseConfig = new HikariConfig();
@@ -102,6 +92,8 @@ public class Survival extends Core<SurvivalDatabase> {
 		this.helpHandler = new HelpHandler(this);
 		this.treeFellerHandler = new TreeFellerHandler(this);
 		this.dynmapHandler = new DynmapHandler(this);
+		this.winterHandler = new WinterHandler(this);
+		this.eventHandler = new EventHandler(this);
 	}
 
 	@Override
@@ -124,7 +116,6 @@ public class Survival extends Core<SurvivalDatabase> {
 
 		IHandler.getHandlers().forEach(IHandler::enable);
 
-		this.registerListener();
 		this.registerCommands();
 
 		Bukkit.getConsoleSender().sendMessage(Survival.PREFIX + "§2Enabled§8!");
@@ -141,21 +132,6 @@ public class Survival extends Core<SurvivalDatabase> {
 		Bukkit.getScheduler().cancelTasks(this);
 
 		Bukkit.getConsoleSender().sendMessage(Survival.PREFIX + "§4Disabled§8!");
-	}
-
-	private void registerListener() {
-		EventBus eventBus = this.luckPermsHandler.getApi().getEventBus();
-		eventBus.subscribe(UserPromoteEvent.class, new UserPromoteEventListener(this));
-		eventBus.subscribe(UserLoadEvent.class, new UserLoadEventListener(this));
-		eventBus.subscribe(GroupDataRecalculateEvent.class, new GroupDataRecalculateEventListener(this));
-
-		Bukkit.getPluginManager().registerEvents(new AsyncPlayerChatEventListener(this), this);
-		Bukkit.getPluginManager().registerEvents(new PlayerJoinEventListener(this), this);
-		Bukkit.getPluginManager().registerEvents(new PlayerQuitEventListener(this), this);
-		Bukkit.getPluginManager().registerEvents(new EntityDamageEventListener(this), this);
-		Bukkit.getPluginManager().registerEvents(new EntityPickupItemEventListener(this), this);
-		Bukkit.getPluginManager().registerEvents(new FoodLevelChangeEventListener(this), this);
-		Bukkit.getPluginManager().registerEvents(new BlockBreakEventListener(this), this);
 	}
 
 	private void registerCommands() {
@@ -230,5 +206,13 @@ public class Survival extends Core<SurvivalDatabase> {
 
 	public DynmapHandler getDynmapHandler() {
 		return this.dynmapHandler;
+	}
+
+	public WinterHandler getWinterHandler() {
+		return this.winterHandler;
+	}
+
+	public EventHandler getEventHandler() {
+		return this.eventHandler;
 	}
 }

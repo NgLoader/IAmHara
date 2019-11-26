@@ -1,30 +1,33 @@
-package eu.wuffy.survival.event;
+package eu.wuffy.survival.event.bukkit;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import eu.wuffy.survival.Survival;
 import eu.wuffy.survival.handler.TreeFellerHandler;
 import eu.wuffy.survival.handler.VanishHandler;
+import eu.wuffy.survival.handler.event.EventListener;
 import eu.wuffy.survival.handler.home.HomeHandler;
 import eu.wuffy.survival.handler.scoreboard.ScoreboardHandler;
 
-public class PlayerQuitEventListener implements Listener {
+public class PlayerQuitEventListener extends EventListener {
 
-	private final Survival core;
-	private final HomeHandler homeHandler;
-	private final ScoreboardHandler scoreboardHandler;
-	private final VanishHandler vanishHandler;
-	private final TreeFellerHandler treeFellerHandler;
+	private HomeHandler homeHandler;
+	private ScoreboardHandler scoreboardHandler;
+	private VanishHandler vanishHandler;
+	private TreeFellerHandler treeFellerHandler;
 
 	public PlayerQuitEventListener(Survival core) {
-		this.core = core;
-		this.homeHandler = this.core.getHomeHandler();
-		this.scoreboardHandler = this.core.getScoreboardHandler();
-		this.vanishHandler = this.core.getVanishHandler();
-		this.treeFellerHandler = this.core.getTreeFellerHandler();
+		super(core);
+	}
+
+	@Override
+	public void onInit() {
+		this.homeHandler = this.getCore().getHomeHandler();
+		this.scoreboardHandler = this.getCore().getScoreboardHandler();
+		this.vanishHandler = this.getCore().getVanishHandler();
+		this.treeFellerHandler = this.getCore().getTreeFellerHandler();
 	}
 
 	@EventHandler
@@ -37,9 +40,5 @@ public class PlayerQuitEventListener implements Listener {
 		this.scoreboardHandler.onPlayerQuit(player);
 		this.treeFellerHandler.onPlayerQuit(player);
 		this.homeHandler.unload(player.getUniqueId());
-	}
-
-	public Survival getCore() {
-		return this.core;
 	}
 }

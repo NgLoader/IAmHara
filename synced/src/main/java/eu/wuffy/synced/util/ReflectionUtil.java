@@ -1,4 +1,4 @@
-package eu.wuffy.core.util;
+package eu.wuffy.synced.util;
 
 import java.lang.reflect.Field;
 

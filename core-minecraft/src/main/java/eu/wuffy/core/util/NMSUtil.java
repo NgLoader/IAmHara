@@ -10,6 +10,7 @@ import org.bukkit.scoreboard.Team;
 
 import com.mojang.authlib.GameProfile;
 
+import eu.wuffy.synced.util.ReflectionUtil;
 import net.minecraft.server.v1_14_R1.ChatComponentText;
 import net.minecraft.server.v1_14_R1.EnumGamemode;
 import net.minecraft.server.v1_14_R1.Packet;

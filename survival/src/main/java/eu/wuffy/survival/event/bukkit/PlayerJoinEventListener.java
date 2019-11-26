@@ -1,37 +1,44 @@
-package eu.wuffy.survival.event;
+package eu.wuffy.survival.event.bukkit;
 
 import java.sql.SQLException;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 import eu.wuffy.survival.Survival;
 import eu.wuffy.survival.database.SurvivalDatabase;
 import eu.wuffy.survival.handler.VanishHandler;
+import eu.wuffy.survival.handler.event.EventListener;
 import eu.wuffy.survival.handler.home.HomeHandler;
 import eu.wuffy.survival.handler.scoreboard.ScoreboardHandler;
 import me.lucko.luckperms.api.LuckPermsApi;
 import me.lucko.luckperms.api.manager.UserManager;
 
-public class PlayerJoinEventListener implements Listener {
+public class PlayerJoinEventListener extends EventListener {
 
-	private final Survival core;
-	private final SurvivalDatabase database;
-	private final HomeHandler homeHandler;
-	private final VanishHandler vanishHandler;
-	private final ScoreboardHandler scoreboardHandler;
-	private final LuckPermsApi luckPermsApi;
-	private final UserManager userManager;
+	private SurvivalDatabase database;
+	private HomeHandler homeHandler;
+	private VanishHandler vanishHandler;
+	private ScoreboardHandler scoreboardHandler;
+	private LuckPermsApi luckPermsApi;
+	private UserManager userManager;
 
 	public PlayerJoinEventListener(Survival core) {
-		this.core = core;
-		this.database = this.core.getDatabase();
-		this.homeHandler = this.core.getHomeHandler();
-		this.vanishHandler = this.core.getVanishHandler();
-		this.scoreboardHandler = this.core.getScoreboardHandler();
-		this.luckPermsApi = this.core.getLuckPermsHandler().getApi();
+		super(core);
+	}
+
+	@Override
+	public void onInit() {
+		this.database = this.getCore().getDatabase();
+		this.homeHandler = this.getCore().getHomeHandler();
+		this.vanishHandler = this.getCore().getVanishHandler();
+		this.scoreboardHandler = this.getCore().getScoreboardHandler();
+	}
+
+	@Override
+	public void onEnable() {
+		this.luckPermsApi = this.getCore().getLuckPermsHandler().getApi().get();
 		this.userManager = this.luckPermsApi.getUserManager();
 	}
 
@@ -51,9 +58,5 @@ public class PlayerJoinEventListener implements Listener {
 			e.printStackTrace();
 			player.kickPlayer(Survival.PREFIX + "§7Es ist ein §cfehler §7beim laden deiner §cspielerdaten §7aufgetreten§8.");
 		}
-	}
-
-	public Survival getCore() {
-		return this.core;
 	}
 }

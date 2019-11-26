@@ -7,19 +7,29 @@ import org.bukkit.OfflinePlayer;
 
 import eu.wuffy.survival.Survival;
 import eu.wuffy.survival.handler.VanishHandler;
+import eu.wuffy.survival.handler.event.EventListener;
 import eu.wuffy.survival.handler.scoreboard.ScoreboardHandler;
 import me.lucko.luckperms.api.event.user.track.UserPromoteEvent;
 
-public class UserPromoteEventListener implements Consumer<UserPromoteEvent> {
+public class UserPromoteEventListener extends EventListener implements Consumer<UserPromoteEvent> {
 
-	private final Survival core;
-	private final ScoreboardHandler scoreboardHandler;
-	private final VanishHandler vanishHandler;
+	private ScoreboardHandler scoreboardHandler;
+	private VanishHandler vanishHandler;
 
 	public UserPromoteEventListener(Survival core) {
-		this.core = core;
+		super(core);
+	}
+
+	@Override
+	public void onInit() {
+
 		this.scoreboardHandler = this.core.getScoreboardHandler();
 		this.vanishHandler = this.core.getVanishHandler();
+	}
+
+	@Override
+	public void onEnable() {
+		this.getCore().getLuckPermsHandler().getApi().get().getEventBus().subscribe(UserPromoteEvent.class, this);
 	}
 
 	@Override
@@ -32,9 +42,5 @@ public class UserPromoteEventListener implements Consumer<UserPromoteEvent> {
 
 			this.vanishHandler.checkTabVisibilityForPlayer(player.getPlayer(), true);
 		}
-	}
-
-	public Survival getCore() {
-		return this.core;
 	}
 }

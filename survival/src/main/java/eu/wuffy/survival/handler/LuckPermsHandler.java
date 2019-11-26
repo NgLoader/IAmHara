@@ -11,7 +11,7 @@ import me.lucko.luckperms.api.LuckPermsApi;
 
 public class LuckPermsHandler extends IHandler<Survival> {
 
-	private LuckPermsApi luckPermsApi;
+	private Optional<LuckPermsApi> luckPermsApi;
 
 	public LuckPermsHandler(Survival core) {
 		super(core);
@@ -22,12 +22,12 @@ public class LuckPermsHandler extends IHandler<Survival> {
 		Optional<LuckPermsApi> optional = LuckPerms.getApiSafe();
 
 		if (optional.isPresent()) {
-			this.luckPermsApi = optional.get();
+			this.luckPermsApi = optional;
 		} else
 			Bukkit.getConsoleSender().sendMessage(Survival.PREFIX + "§4LuckPermsApi §ckonnte nicht gefunden werden§8.");
 	}
 
-	public LuckPermsApi getApi() {
+	public Optional<LuckPermsApi> getApi() {
 		return this.luckPermsApi;
 	}
 }
