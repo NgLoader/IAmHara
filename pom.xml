@@ -20,6 +20,7 @@
 		<project.minecraft.core.version>0.0.1</project.minecraft.core.version>
 		<project.minecraft.lobby.version>0.0.1</project.minecraft.lobby.version>
 		<project.minecraft.survival.version>0.0.1</project.minecraft.survival.version>
+		<project.minecraft.mobpvp.version>0.0.1</project.minecraft.mobpvp.version>
 	</properties>
 
 	<groupId>eu.teamwuffy</groupId>
@@ -33,6 +34,7 @@
 		<module>core-minecraft</module>
 		<module>lobby</module>
 		<module>survival</module>
+		<module>mobpvp</module>
 	</modules>
 
 	<developers>
