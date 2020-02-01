@@ -11,12 +11,12 @@ import org.bukkit.inventory.PlayerInventory;
 import eu.wuffy.core.util.ItemFactory;
 import eu.wuffy.mobpvp.MobPvP;
 import eu.wuffy.mobpvp.kits.Kit;
-import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import eu.wuffy.mobpvp.kits.KitType;
 
 public class KitBlaze extends Kit {
 
 	public KitBlaze(MobPvP core) {
-		super(core, "§4Blaze", DisguiseType.BLAZE);
+		super(core, KitType.BLAZE);
 	}
 
 	@Override

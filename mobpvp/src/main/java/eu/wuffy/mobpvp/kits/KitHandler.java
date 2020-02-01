@@ -35,17 +35,16 @@ public class KitHandler extends IHandler<MobPvP> {
 		Kit oldKit = this.kitByPlayers.put(player.getUniqueId(), kit);
 
 		if (oldKit != null) {
-			oldKit.leave(player);
+			oldKit.remove(player);
 		}
 
+		DisguiseAPI.undisguiseToAll(player);
+		PlayerUtil.resetPlayer(player);
 		if (kit == null) {
-			DisguiseAPI.undisguiseToAll(player);
-			PlayerUtil.resetPlayer(player);
-
-			// TODO teleport to lobby back
+			this.core.getLocationHandler().teleport(player, "spawn");
 		} else {
 			kit.join(player);
-			// TODO teleport to random point in map
+			this.core.getLocationHandler().teleport(player, "map");
 		}
 	}
 
@@ -60,7 +59,12 @@ public class KitHandler extends IHandler<MobPvP> {
 		this.kitByPlayers.remove(player.getUniqueId());
 	}
 
+	public Kit getPlayerKit(Player player) {
+		return this.kitByPlayers.getOrDefault(player.getUniqueId(), null);
+	}
+
 	private void addKit(Kit kit) {
-		this.kitByNames.put(ChatColor.stripColor(kit.getName()), kit);
+		this.kitByNames.put(kit.getType().name.toLowerCase(), kit);
+		this.kitByNames.put(ChatColor.stripColor(kit.getType().name).toLowerCase(), kit);
 	}
 }

@@ -4,13 +4,19 @@ import java.sql.SQLException;
 
 import com.zaxxer.hikari.HikariConfig;
 
+import eu.wuffy.proxy.command.CommandAlert;
+import eu.wuffy.proxy.command.CommandAlertRaw;
+import eu.wuffy.proxy.command.CommandLobby;
+import eu.wuffy.proxy.command.CommandFind;
+import eu.wuffy.proxy.command.CommandSurvival;
+import eu.wuffy.proxy.command.CommandGlobalList;
+import eu.wuffy.proxy.command.CommandMsg;
+import eu.wuffy.proxy.command.CommandSend;
+import eu.wuffy.proxy.command.CommandServer;
 import eu.wuffy.proxy.database.ProxyDatabase;
 import eu.wuffy.proxy.event.ServerSwitchEventListener;
 import eu.wuffy.synced.ICore;
 import eu.wuffy.synced.IHandler;
-import me.lucko.luckperms.LuckPerms;
-import me.lucko.luckperms.api.LuckPermsApi;
-import me.lucko.luckperms.api.event.EventBus;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -18,9 +24,9 @@ import net.md_5.bungee.api.plugin.PluginManager;
 
 public class Proxy extends Plugin implements ICore {
 
-	private final ProxyDatabase database;
 
-	private LuckPermsApi luckPermsApi;
+	public static final String PREFIX = "§8[§2IAmHara§8] ";
+	private final ProxyDatabase database;
 
 	public Proxy() {
 		HikariConfig databaseConfig = new HikariConfig();
@@ -49,8 +55,6 @@ public class Proxy extends Plugin implements ICore {
 
 	@Override
 	public void onEnable() {
-		this.luckPermsApi = LuckPerms.getApi();
-
 		try {
 			this.getDatabase().createTables();
 		} catch(SQLException e) {
@@ -80,20 +84,23 @@ public class Proxy extends Plugin implements ICore {
 
 	public void registerListener() {
 		PluginManager pluginManager = this.getProxy().getPluginManager();
-		EventBus eventBus = this.luckPermsApi.getEventBus();
-
 		pluginManager.registerListener(this, new ServerSwitchEventListener());
 	}
 
 	public void registerCommands() {
 		PluginManager pluginManager = this.getProxy().getPluginManager();
+		pluginManager.registerCommand(this, new CommandServer());
+		pluginManager.registerCommand(this, new CommandSend());
+		pluginManager.registerCommand(this, new CommandGlobalList());
+		pluginManager.registerCommand(this, new CommandSurvival());
+		pluginManager.registerCommand(this, new CommandFind());
+		pluginManager.registerCommand(this, new CommandLobby());
+		pluginManager.registerCommand(this, new CommandAlertRaw());
+		pluginManager.registerCommand(this, new CommandAlert());
+		pluginManager.registerCommand(this, new CommandMsg());
 	}
 
 	public ProxyDatabase getDatabase() {
 		return this.database;
-	}
-
-	public LuckPermsApi getLuckPermsApi() {
-		return this.luckPermsApi;
 	}
 }

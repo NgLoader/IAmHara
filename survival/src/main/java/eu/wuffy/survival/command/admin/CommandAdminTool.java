@@ -13,10 +13,6 @@ import eu.wuffy.survival.Survival;
 
 public class CommandAdminTool implements CommandExecutor {
 
-	private static final ItemStack LOCKBLOCK_TOOLBLOCK = new ItemFactory(Material.BEDROCK).addAllFlag()
-			.setDisplayName("§3Block Info").addLore("§7Kann dir Infos über denn plazierten block geben.").build();
-	private static final ItemStack LOCKBLOCK_TOOL = new ItemFactory(Material.WOODEN_PICKAXE).addAllFlag()
-			.setDisplayName("§3Tool Info").addLore("§7Kann dir Infos über denn angeclickten block geben.").build();
 	private static final ItemStack WORLDEDIT_WAND = new ItemFactory(Material.WOODEN_AXE).addAllFlag()
 			.setDisplayName("§5Magische Axt").addLore("§7Kann zaubern.").build();
 	private static final ItemStack WORLDEDIT_COMPASS = new ItemFactory(Material.COMPASS).addAllFlag()
@@ -43,9 +39,7 @@ public class CommandAdminTool implements CommandExecutor {
 	}
 
 	public static final void setAdminTool(Inventory inventory) {
-		inventory.setItem(0, LOCKBLOCK_TOOLBLOCK);
-		inventory.setItem(1, LOCKBLOCK_TOOL);
-		inventory.setItem(2, WORLDEDIT_WAND);
+		inventory.setItem(0, WORLDEDIT_WAND);
 		inventory.setItem(4, WORLDEDIT_COMPASS);
 		inventory.setItem(7, GRIVERPROVENTION_CLAIMINFO);
 		inventory.setItem(8, GRIVERPROVENTION_CLAIMTOOL);

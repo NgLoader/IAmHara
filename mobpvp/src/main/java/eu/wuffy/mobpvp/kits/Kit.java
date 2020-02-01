@@ -19,17 +19,14 @@ public abstract class Kit implements Listener {
 	private final List<UUID> players = new ArrayList<UUID>();
 
 	protected final MobPvP core;
-
-	protected String name;
-	protected DisguiseType disguiseType;
+	protected final KitType type;
 
 	protected abstract void join(Player player);
 	protected abstract void leave(Player player);
 
-	public Kit(MobPvP core, String name, DisguiseType disguiseType) {
+	public Kit(MobPvP core, KitType type) {
 		this.core = core;
-		this.name = name;
-		this.disguiseType = disguiseType;
+		this.type = type;
 	}
 
 	public void add(Player player) {
@@ -37,6 +34,7 @@ public abstract class Kit implements Listener {
 
 		PlayerUtil.resetPlayer(player);
 		this.join(player);
+		this.disguise(player);
 	}
 
 	public void remove(Player player) {
@@ -59,12 +57,8 @@ public abstract class Kit implements Listener {
 		return this.players.contains(player.getUniqueId());
 	}
 
-	public String getName() {
-		return this.name;
-	}
-
-	public DisguiseType getDisguiseType() {
-		return this.disguiseType;
+	public KitType getType() {
+		return this.type;
 	}
 
 	public MobPvP getCore() {

@@ -5,6 +5,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 import eu.wuffy.mobpvp.MobPvP;
+import eu.wuffy.mobpvp.event.EntityDamageByEntityEventListener;
+import eu.wuffy.mobpvp.event.EntityDamageEventListener;
+import eu.wuffy.mobpvp.event.PlayerDeathEventListener;
+import eu.wuffy.mobpvp.event.PlayerInteractEventListener;
+import eu.wuffy.mobpvp.event.SignChangeEventListener;
 import eu.wuffy.synced.IHandler;
 
 public class EventHandler extends IHandler<MobPvP> {
@@ -17,6 +22,11 @@ public class EventHandler extends IHandler<MobPvP> {
 
 	@Override
 	public void onInit() {
+		this.events.add(new EntityDamageByEntityEventListener(this.core));
+		this.events.add(new EntityDamageEventListener(this.core));
+		this.events.add(new PlayerDeathEventListener(this.core));
+		this.events.add(new PlayerInteractEventListener(this.core));
+		this.events.add(new SignChangeEventListener(this.core));
 
 		this.events.stream().forEach(EventListener::init);
 	}

@@ -19,7 +19,7 @@ public class CommandEconomyBalance implements CommandExecutor, TabExecutor {
 	private final Economy economy;
 
 	public CommandEconomyBalance(Survival core) {
-		this.economy = core.getVaultHandler().getEconomy();
+		this.economy = null;
 	}
 
 	@Override

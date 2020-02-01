@@ -6,13 +6,18 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
+import eu.wuffy.core.handler.ChatHandler;
 import eu.wuffy.survival.Survival;
 import eu.wuffy.survival.handler.event.EventListener;
 
 public class AsyncPlayerChatEventListener extends EventListener {
 
+	private final ChatHandler chatHandler;
+
 	public AsyncPlayerChatEventListener(Survival core) {
 		super(core);
+
+		this.chatHandler = core.getChatHandler();
 	}
 
 	@EventHandler
@@ -21,6 +26,8 @@ public class AsyncPlayerChatEventListener extends EventListener {
 
 		event.setCancelled(true);
 
-		Bukkit.broadcastMessage(player.getCustomName() + "§8» §7" + (player.hasPermission("wuffy.chat.color") ? ChatColor.translateAlternateColorCodes('&', event.getMessage()) : event.getMessage()));
+		Bukkit.broadcastMessage(this.chatHandler.getMessagePattern(player)
+				.replace("%p", player.getName())
+				.replace("%m", player.hasPermission("wuffy.chat.color") ? ChatColor.translateAlternateColorCodes('&', event.getMessage()) : event.getMessage()));
 	}
 }

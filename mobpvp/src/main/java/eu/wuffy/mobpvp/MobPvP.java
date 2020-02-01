@@ -9,6 +9,7 @@ import com.zaxxer.hikari.HikariConfig;
 import eu.wuffy.core.Core;
 import eu.wuffy.core.database.CoreDatabase;
 import eu.wuffy.mobpvp.database.MobPvPDatabase;
+import eu.wuffy.mobpvp.handler.DamageHandler;
 import eu.wuffy.mobpvp.handler.LocationHandler;
 import eu.wuffy.mobpvp.handler.event.EventHandler;
 import eu.wuffy.mobpvp.kits.KitHandler;
@@ -16,10 +17,12 @@ import eu.wuffy.synced.IHandler;
 
 public class MobPvP extends Core<CoreDatabase> {
 
-	public static final String PREFIX = "§8[§cMobPvP§8] ";
+	public static final String PREFIX_SIGN = "Â§8[Â§cMobPvPÂ§8]";
+	public static final String PREFIX = MobPvP.PREFIX_SIGN + " Â§7";
 
 	private final LocationHandler locationHandler;
 	private final KitHandler kitHandler;
+	private final DamageHandler damageHandler;
 	private final EventHandler eventHandler;
 
 	public MobPvP() {
@@ -41,6 +44,7 @@ public class MobPvP extends Core<CoreDatabase> {
 
 		this.locationHandler = new LocationHandler(this);
 		this.kitHandler = new KitHandler(this);
+		this.damageHandler = new DamageHandler(this);
 		this.eventHandler = new EventHandler(this);
 	}
 
@@ -58,13 +62,13 @@ public class MobPvP extends Core<CoreDatabase> {
 		} catch (SQLException e) {
 			e.printStackTrace();
 
-			Bukkit.getConsoleSender().sendMessage(MobPvP.PREFIX + "§4Error by connecting to database§8!");
+			Bukkit.getConsoleSender().sendMessage(MobPvP.PREFIX + "Â§4Error by connecting to databaseÂ§8!");
 			return;
 		}
 
 		IHandler.getHandlers().forEach(IHandler::enable);
 
-		Bukkit.getConsoleSender().sendMessage(MobPvP.PREFIX + "§2Enabled§8!");
+		Bukkit.getConsoleSender().sendMessage(MobPvP.PREFIX + "Â§2EnabledÂ§8!");
 		Bukkit.setWhitelist(false);
 	}
 
@@ -77,7 +81,7 @@ public class MobPvP extends Core<CoreDatabase> {
 
 		Bukkit.getScheduler().cancelTasks(this);
 
-		Bukkit.getConsoleSender().sendMessage(MobPvP.PREFIX + "§4Disabled§8!");
+		Bukkit.getConsoleSender().sendMessage(MobPvP.PREFIX + "Â§4DisabledÂ§8!");
 	}
 
 	public LocationHandler getLocationHandler() {
@@ -86,6 +90,10 @@ public class MobPvP extends Core<CoreDatabase> {
 
 	public KitHandler getKitHandler() {
 		return this.kitHandler;
+	}
+
+	public DamageHandler getDamageHandler() {
+		return this.damageHandler;
 	}
 
 	public EventHandler getEventHandler() {

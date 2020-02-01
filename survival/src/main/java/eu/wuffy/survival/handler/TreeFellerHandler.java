@@ -3,6 +3,7 @@ package eu.wuffy.survival.handler;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -33,11 +34,13 @@ public class TreeFellerHandler extends IHandler<Survival> {
 
 	private final Map<Runnable, Integer> runnables = new HashMap<Runnable, Integer>();
 
-	private final List<BlockFace> blockFaceAround = new ArrayList<BlockFace>();
+	private final EnumSet<BlockFace> blockFaceAround = EnumSet.of(
+			BlockFace.SELF, BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST,
+			BlockFace.NORTH_EAST, BlockFace.NORTH_WEST, BlockFace.SOUTH_EAST, BlockFace.SOUTH_WEST);
 
-	private final List<Material> logTypes = new ArrayList<Material>();
+	private final EnumSet<Material> fellerTypes = EnumSet.of(Material.DIAMOND_AXE, Material.GOLDEN_AXE, Material.IRON_AXE, Material.STONE_AXE, Material.WOODEN_AXE);
+	private final EnumSet<Material> logTypes = EnumSet.of(Material.ACACIA_LOG, Material.BIRCH_LOG, Material.DARK_OAK_LOG, Material.JUNGLE_LOG, Material.OAK_LOG, Material.SPRUCE_LOG);
 	private final Map<Material, Material> leaveTypes = new HashMap<Material, Material>();
-	private final List<Material> fellerTypes = new ArrayList<Material>();
 
 	private final List<Player> playerEnabled = new ArrayList<Player>();
 
@@ -47,39 +50,18 @@ public class TreeFellerHandler extends IHandler<Survival> {
 
 	@Override
 	public void onInit() {
-		this.blockFaceAround.add(BlockFace.SELF);
-		this.blockFaceAround.add(BlockFace.NORTH);
-		this.blockFaceAround.add(BlockFace.EAST);
-		this.blockFaceAround.add(BlockFace.SOUTH);
-		this.blockFaceAround.add(BlockFace.WEST);
-		this.blockFaceAround.add(BlockFace.NORTH_EAST);
-		this.blockFaceAround.add(BlockFace.NORTH_WEST);
-		this.blockFaceAround.add(BlockFace.SOUTH_EAST);
-		this.blockFaceAround.add(BlockFace.SOUTH_WEST);
-
-		this.fellerTypes.add(Material.DIAMOND_AXE);
-		this.fellerTypes.add(Material.GOLDEN_AXE);
-		this.fellerTypes.add(Material.IRON_AXE);
-		this.fellerTypes.add(Material.STONE_AXE);
-		this.fellerTypes.add(Material.WOODEN_AXE);
-
-		this.addLogMaterial(Material.ACACIA_LOG, Material.ACACIA_LEAVES);
-		this.addLogMaterial(Material.BIRCH_LOG, Material.BIRCH_LEAVES);
-		this.addLogMaterial(Material.DARK_OAK_LOG, Material.DARK_OAK_LEAVES);
-		this.addLogMaterial(Material.JUNGLE_LOG, Material.JUNGLE_LEAVES);
-		this.addLogMaterial(Material.OAK_LOG, Material.OAK_LEAVES);
-		this.addLogMaterial(Material.SPRUCE_LOG, Material.SPRUCE_LEAVES);
+		this.leaveTypes.put(Material.ACACIA_LOG, Material.ACACIA_LEAVES);
+		this.leaveTypes.put(Material.BIRCH_LOG, Material.BIRCH_LEAVES);
+		this.leaveTypes.put(Material.DARK_OAK_LOG, Material.DARK_OAK_LEAVES);
+		this.leaveTypes.put(Material.JUNGLE_LOG, Material.JUNGLE_LEAVES);
+		this.leaveTypes.put(Material.OAK_LOG, Material.OAK_LEAVES);
+		this.leaveTypes.put(Material.SPRUCE_LOG, Material.SPRUCE_LEAVES);
 	}
 
 	@Override
 	public void onDisable() {
 		this.playerEnabled.clear();
 		this.runnables.values().forEach(runnableId -> Bukkit.getScheduler().cancelTask(runnableId));
-	}
-
-	private void addLogMaterial(Material log, Material leave) {
-		this.logTypes.add(log);
-		this.leaveTypes.put(log, leave);
 	}
 
 	public boolean togglePlayerUsage(Player player) {
@@ -102,37 +84,10 @@ public class TreeFellerHandler extends IHandler<Survival> {
 			int itemDamage = itemMeta.getDamage();
 			int canBreak = item.getType().getMaxDurability() - itemDamage - 1;
 
-			/*
-			 * 25%
-			 * 1 BLOCK
-			 * 
-			 * 2 BLOCK
-			 * 50%
-			 * 
-			 * 4 BLOCK
-			 * 100%
-			 * 
-			 * 8 BLOCK
-			 * 200%
-			 * 
-			 * 8 / 100
-			 * 
-			 * 32 BLOCK
-			 * 800%
-			 * 
-			 * 32 / 100 * chance
-			 * 8
-			 * 
-			 * 24 NEET
-			 * 
-			 * test = 25 * 32 = 800%
-			 * 
-			 */
-
 			boolean destroyLeaves = true;
 
 			if (canBreak > 1) {
-				List<Block> logs = getAllLogs(new HashSet<Block>(), block, logLimit).stream().collect(Collectors.toList());
+				List<Block> logs = this.getAllLogs(new HashSet<Block>(), block, logLimit).stream().collect(Collectors.toList());
 				int addItemDamage = logs.size();
 
 				int unbreakingLevel = item.getEnchantmentLevel(Enchantment.DURABILITY);

@@ -21,6 +21,11 @@ import eu.wuffy.synced.IHandler;
 
 public class LocationHandler extends IHandler<MobPvP> {
 
+	/*
+	 * Spawn
+	 * Map
+	 */
+
 	private Map<String, List<Location>> locationsByName = new HashMap<String, List<Location>>();
 
 	public LocationHandler(MobPvP core) {
@@ -28,13 +33,11 @@ public class LocationHandler extends IHandler<MobPvP> {
 	}
 
 	@Override
-	public void onInit() {
-		// TODO add default locations!
-		this.addLoaction("spawn", new Location(Bukkit.getWorld("world"), 0, 5.1, 0, 180f, 180f));
-	}
-
-	@Override
 	public void onEnable() {
+		// TODO add default locations!
+		this.addLoaction("spawn", new Location(Bukkit.getWorld("world"), 441, 81.1, -392, 180f, 180f));
+		this.addLoaction("map", new Location(Bukkit.getWorld("world"), 441, 81.1, -392, 180f, 180f));
+
 		// TODO load locations in a better way
 		try {
 			Path src = Paths.get("world/mobpvp.properties");

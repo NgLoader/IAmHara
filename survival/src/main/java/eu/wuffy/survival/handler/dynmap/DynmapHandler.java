@@ -21,6 +21,7 @@ public class DynmapHandler extends IHandler<Survival> {
 		this.dynmapRegion = new DynmapRegion(this.getCore(), this.dynmap);
 
 		this.dynmapRegion.loadWorldGuardRegions();
+		this.dynmapRegion.loadGriefProventionClaims();
 	}
 
 	public DynmapAPI getDynmap() {

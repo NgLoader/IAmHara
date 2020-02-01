@@ -7,6 +7,8 @@ import org.bukkit.Bukkit;
 import com.zaxxer.hikari.HikariConfig;
 
 import eu.wuffy.core.Core;
+import eu.wuffy.core.handler.ChatHandler;
+import eu.wuffy.core.scoreboard.ScoreboardHandler;
 import eu.wuffy.survival.command.CommandPing;
 import eu.wuffy.survival.command.CommandSpawn;
 import eu.wuffy.survival.command.CommandTreeFeller;
@@ -35,7 +37,6 @@ import eu.wuffy.survival.command.warp.CommandWarpDeleteAlias;
 import eu.wuffy.survival.command.warp.CommandWarpList;
 import eu.wuffy.survival.database.SurvivalDatabase;
 import eu.wuffy.survival.handler.InventoryHandler;
-import eu.wuffy.survival.handler.LuckPermsHandler;
 import eu.wuffy.survival.handler.TreeFellerHandler;
 import eu.wuffy.survival.handler.VanishHandler;
 import eu.wuffy.survival.handler.WinterHandler;
@@ -43,8 +44,8 @@ import eu.wuffy.survival.handler.dynmap.DynmapHandler;
 import eu.wuffy.survival.handler.event.EventHandler;
 import eu.wuffy.survival.handler.help.HelpHandler;
 import eu.wuffy.survival.handler.home.HomeHandler;
-import eu.wuffy.survival.handler.scoreboard.ScoreboardHandler;
-import eu.wuffy.survival.handler.vault.VaultHandler;
+import eu.wuffy.survival.handler.notification.NotificationHandler;
+import eu.wuffy.survival.handler.storage.StorageHandler;
 import eu.wuffy.survival.handler.warp.WarpHandler;
 import eu.wuffy.synced.IHandler;
 
@@ -53,16 +54,17 @@ public class Survival extends Core<SurvivalDatabase> {
 	public static final String PREFIX = "§8[§2Survival§8] ";
 
 	private final ScoreboardHandler scoreboardHandler;
+	private final ChatHandler chatHandler;
 	private final WarpHandler warpHandler;
 	private final HomeHandler homeHandler;
 	private final VanishHandler vanishHandler;
 	private final InventoryHandler inventoryHandler;
 	private final HelpHandler helpHandler;
 	private final TreeFellerHandler treeFellerHandler;
-	private final LuckPermsHandler luckPermsHandler;
-	private final VaultHandler vaultHandler;
 	private final DynmapHandler dynmapHandler;
 	private final WinterHandler winterHandler;
+	private final NotificationHandler notificationHandler;
+	private final StorageHandler storageHandler;
 	private final EventHandler eventHandler;
 
 	public Survival() {
@@ -82,9 +84,8 @@ public class Survival extends Core<SurvivalDatabase> {
 
 		this.setDatabase(new SurvivalDatabase(this, databaseConfig));
 
-		this.luckPermsHandler = new LuckPermsHandler(this);
-		this.vaultHandler = new VaultHandler(this);
 		this.scoreboardHandler = new ScoreboardHandler(this);
+		this.chatHandler = new ChatHandler(this);
 		this.warpHandler = new WarpHandler(this);
 		this.homeHandler = new HomeHandler(this);
 		this.vanishHandler = new VanishHandler(this);
@@ -93,6 +94,8 @@ public class Survival extends Core<SurvivalDatabase> {
 		this.treeFellerHandler = new TreeFellerHandler(this);
 		this.dynmapHandler = new DynmapHandler(this);
 		this.winterHandler = new WinterHandler(this);
+		this.notificationHandler = new NotificationHandler(this);
+		this.storageHandler = new StorageHandler(this);
 		this.eventHandler = new EventHandler(this);
 	}
 
@@ -172,6 +175,10 @@ public class Survival extends Core<SurvivalDatabase> {
 		return this.scoreboardHandler;
 	}
 
+	public ChatHandler getChatHandler() {
+		return this.chatHandler;
+	}
+
 	public WarpHandler getWarpHandler() {
 		return this.warpHandler;
 	}
@@ -196,20 +203,20 @@ public class Survival extends Core<SurvivalDatabase> {
 		return this.treeFellerHandler;
 	}
 
-	public LuckPermsHandler getLuckPermsHandler() {
-		return this.luckPermsHandler;
-	}
-
-	public VaultHandler getVaultHandler() {
-		return this.vaultHandler;
-	}
-
 	public DynmapHandler getDynmapHandler() {
 		return this.dynmapHandler;
 	}
 
 	public WinterHandler getWinterHandler() {
 		return this.winterHandler;
+	}
+
+	public NotificationHandler getNotificationHandler() {
+		return this.notificationHandler;
+	}
+
+	public StorageHandler getStorageHandler() {
+		return this.storageHandler;
 	}
 
 	public EventHandler getEventHandler() {

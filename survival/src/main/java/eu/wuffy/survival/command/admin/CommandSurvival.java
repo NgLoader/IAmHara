@@ -3,7 +3,6 @@ package eu.wuffy.survival.command.admin;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import eu.wuffy.survival.Survival;
 
@@ -31,6 +30,7 @@ public class CommandSurvival implements CommandExecutor {
 					case "dynmap":
 						sender.sendMessage(Survival.PREFIX + "§7Dynmap wird §aneugeladen§8.");
 						this.core.getDynmapHandler().getDynmapRegion().loadWorldGuardRegions();
+						this.core.getDynmapHandler().getDynmapRegion().loadGriefProventionClaims();
 						sender.sendMessage(Survival.PREFIX + "§7Dynmap wurde §2neugeladen§8.");
 						return true;
 

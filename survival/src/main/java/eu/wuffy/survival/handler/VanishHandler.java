@@ -16,10 +16,10 @@ import eu.wuffy.core.util.NMSUtil;
 import eu.wuffy.survival.Survival;
 import eu.wuffy.survival.command.admin.CommandAdminTool;
 import eu.wuffy.synced.IHandler;
-import net.minecraft.server.v1_14_R1.ChatMessageType;
-import net.minecraft.server.v1_14_R1.IChatBaseComponent.ChatSerializer;
-import net.minecraft.server.v1_14_R1.PacketPlayOutChat;
-import net.minecraft.server.v1_14_R1.PacketPlayOutPlayerInfo;
+import net.minecraft.server.v1_15_R1.ChatMessageType;
+import net.minecraft.server.v1_15_R1.IChatBaseComponent.ChatSerializer;
+import net.minecraft.server.v1_15_R1.PacketPlayOutChat;
+import net.minecraft.server.v1_15_R1.PacketPlayOutPlayerInfo;
 
 public class VanishHandler extends IHandler<Survival> {
 

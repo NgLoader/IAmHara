@@ -19,7 +19,7 @@ public class WinterHandler extends IHandler<Survival> {
 	}
 
 	@Override
-	public void init() {
+	public void onEnable() {
 		World world = Bukkit.getWorld("world");
 		lampLocations.add(new Location(world, -2109, 104, -4220));
 		lampLocations.add(new Location(world, -2110, 104, -4219));
@@ -38,11 +38,7 @@ public class WinterHandler extends IHandler<Survival> {
 		lampLocations.add(new Location(world, -2112, 106, -4220));
 		lampLocations.add(new Location(world, -2111, 106, -4221));
 		lampLocations.add(new Location(world, -2111, 107, -4220));
-	}
-
-	@Override
-	public void onEnable() {
-		this.lampLocations.forEach(lamp -> this.updateLamp(lamp, true));
+//		this.lampLocations.forEach(lamp -> this.updateLamp(lamp, true));
 	}
 
 	public void updateLamp(Location location, boolean lampOn) {

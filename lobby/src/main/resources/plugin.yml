@@ -1,0 +1,12 @@
+name: Lobby
+author: TeamWuffy
+version: 0.0.1
+api-version: 1.15
+depend: [LuckPerms, Matrix]
+loadbefore: [LuckPerms, Matrix]
+
+main: eu.wuffy.lobby.Lobby
+
+commands:
+  buildmode:
+    aliases: [bm, buildm]

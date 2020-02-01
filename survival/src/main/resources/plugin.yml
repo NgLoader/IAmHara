@@ -1,9 +1,9 @@
 name: Survival
 author: TeamWuffy
 version: 0.0.1
-api-version: 1.13
-depend: [LuckPerms, Matrix, Vault, Factions, dynmap, WorldEdit, WorldGuard]
-loadbefore: [LuckPerms, Matrix, Vault, Factions, dynmap, WorldEdit, WorldGuard]
+api-version: 1.15
+depend: [LuckPerms, Matrix, dynmap, WorldEdit, WorldGuard, GriefPrevention]
+loadbefore: [LuckPerms, Matrix, dynmap, WorldEdit, WorldGuard, GriefPrevention]
 
 main: eu.wuffy.survival.Survival
 

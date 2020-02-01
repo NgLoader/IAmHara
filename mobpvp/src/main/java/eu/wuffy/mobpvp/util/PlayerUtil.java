@@ -16,7 +16,6 @@ public class PlayerUtil {
 		player.resetTitle();
 		player.resetPlayerWeather();
 		player.resetPlayerTime();
-		player.setCompassTarget(null);
 		player.setFlying(false);
 		player.setSwimming(false);
 		player.setWalkSpeed(0.2f);

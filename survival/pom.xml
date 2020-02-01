@@ -23,12 +23,8 @@
 			<url>https://jitpack.io</url>
 		</repository>
 		<repository>
-			<id>illyria</id>
-			<url>https://nexus.illyria.io/repository/maven-public/</url>
-		</repository>
-		<repository>
 			<id>sk89q-repo</id>
-			<url>https://maven.sk89q.com/repo/</url>
+			<url>http://maven.sk89q.com/repo/</url>
 		</repository>
 		<repository>
 			<id>dynmap-repo</id>
@@ -37,6 +33,10 @@
 		<repository>
 			<id>spigot-repo</id>
 			<url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+		</repository>
+		<repository>
+			<id>luckperms-repo</id>
+			<url>https://repo1.maven.org/maven2/net/luckperms/api/</url>
 		</repository>
 	</repositories>
 
@@ -55,22 +55,9 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>me.lucko.luckperms</groupId>
-			<artifactId>luckperms-api</artifactId>
-			<version>4.4</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.github.MilkBowl</groupId>
-			<artifactId>VaultAPI</artifactId>
-			<version>1.7</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.massivecraft</groupId>
-			<artifactId>SavageFactions</artifactId>
-			<version>1.6.9.5-U0.2.1-RC-1.6.2-RC-2.5-RC-6</version>
-			<type>jar</type>
+			<groupId>net.luckperms</groupId>
+			<artifactId>api</artifactId>
+			<version>5.0</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -83,7 +70,7 @@
 		<dependency>
 			<groupId>com.sk89q.worldguard</groupId>
 			<artifactId>worldguard-bukkit</artifactId>
-			<version>7.0.1-SNAPSHOT</version>
+			<version>7.0.2-SNAPSHOT</version>
 			<type>jar</type>
 			<scope>provided</scope>
 		</dependency>
@@ -93,6 +80,26 @@
 			<version>7.1.0-SNAPSHOT</version>
 			<type>jar</type>
 			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.github.TechFortress</groupId>
+			<artifactId>GriefPrevention</artifactId>
+			<version>16.7.1</version>
+			<scope>provided</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>com.sk89q.worldguard</groupId>
+					<artifactId>worldguard-legacy</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.sk89q.worldguard</groupId>
+					<artifactId>worldguard-bukkit</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.sk89q.worldedit</groupId>
+					<artifactId>worldedit-bukkit</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 	</dependencies>
 

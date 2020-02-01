@@ -12,12 +12,8 @@ import eu.wuffy.survival.event.bukkit.EntityPickupItemEventListener;
 import eu.wuffy.survival.event.bukkit.FoodLevelChangeEventListener;
 import eu.wuffy.survival.event.bukkit.PlayerJoinEventListener;
 import eu.wuffy.survival.event.bukkit.PlayerQuitEventListener;
-import eu.wuffy.survival.event.factions.FPlayerEnteredFactionEventListener;
-import eu.wuffy.survival.event.factions.FPlayerJoinEventListener;
-import eu.wuffy.survival.event.factions.FPlayerLeaveEventListener;
-import eu.wuffy.survival.event.factions.FactionCreateEventListener;
 import eu.wuffy.survival.event.luckperms.GroupDataRecalculateEventListener;
-import eu.wuffy.survival.event.luckperms.UserLoadEventListener;
+import eu.wuffy.survival.event.luckperms.UserDataRecalculateEventListener;
 import eu.wuffy.survival.event.luckperms.UserPromoteEventListener;
 import eu.wuffy.synced.IHandler;
 
@@ -33,14 +29,8 @@ public class EventHandler extends IHandler<Survival> {
 	public void onInit() {
 		// LuckPerms
 		this.events.add(new UserPromoteEventListener(this.getCore()));
-		this.events.add(new UserLoadEventListener(this.getCore()));
+		this.events.add(new UserDataRecalculateEventListener(this.getCore()));
 		this.events.add(new GroupDataRecalculateEventListener(this.getCore()));
-
-		// Factions
-		this.events.add(new FactionCreateEventListener(this.getCore()));
-		this.events.add(new FPlayerEnteredFactionEventListener(this.getCore()));
-		this.events.add(new FPlayerJoinEventListener(this.getCore()));
-		this.events.add(new FPlayerLeaveEventListener(this.getCore()));
 
 		// Bukkit
 		this.events.add(new AsyncPlayerChatEventListener(this.getCore()));

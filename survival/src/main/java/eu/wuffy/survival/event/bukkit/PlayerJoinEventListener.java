@@ -6,14 +6,16 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
 
+import eu.wuffy.core.handler.ChatHandler;
+import eu.wuffy.core.scoreboard.ScoreboardHandler;
 import eu.wuffy.survival.Survival;
 import eu.wuffy.survival.database.SurvivalDatabase;
 import eu.wuffy.survival.handler.VanishHandler;
 import eu.wuffy.survival.handler.event.EventListener;
 import eu.wuffy.survival.handler.home.HomeHandler;
-import eu.wuffy.survival.handler.scoreboard.ScoreboardHandler;
-import me.lucko.luckperms.api.LuckPermsApi;
-import me.lucko.luckperms.api.manager.UserManager;
+import net.luckperms.api.LuckPerms;
+import net.luckperms.api.LuckPermsProvider;
+import net.luckperms.api.model.user.UserManager;
 
 public class PlayerJoinEventListener extends EventListener {
 
@@ -21,8 +23,9 @@ public class PlayerJoinEventListener extends EventListener {
 	private HomeHandler homeHandler;
 	private VanishHandler vanishHandler;
 	private ScoreboardHandler scoreboardHandler;
-	private LuckPermsApi luckPermsApi;
+	private LuckPerms luckPerms;
 	private UserManager userManager;
+	private ChatHandler chatHandler;
 
 	public PlayerJoinEventListener(Survival core) {
 		super(core);
@@ -34,12 +37,13 @@ public class PlayerJoinEventListener extends EventListener {
 		this.homeHandler = this.getCore().getHomeHandler();
 		this.vanishHandler = this.getCore().getVanishHandler();
 		this.scoreboardHandler = this.getCore().getScoreboardHandler();
+		this.chatHandler = this.getCore().getChatHandler();
 	}
 
 	@Override
 	public void onEnable() {
-		this.luckPermsApi = this.getCore().getLuckPermsHandler().getApi().get();
-		this.userManager = this.luckPermsApi.getUserManager();
+		this.luckPerms = LuckPermsProvider.get();
+		this.userManager = this.luckPerms.getUserManager();
 	}
 
 	@EventHandler
@@ -49,7 +53,9 @@ public class PlayerJoinEventListener extends EventListener {
 		event.setJoinMessage("§8[§a+§8] " + player.getDisplayName());
 
 		try {
-			this.userManager.loadUser(player.getUniqueId()).thenAcceptAsync(user -> this.scoreboardHandler.onPlayerJoin(player, this.luckPermsApi.getGroup(user.getPrimaryGroup())));
+			this.scoreboardHandler.getTeams().forEach(team -> team.sendCreatePacket(player));
+			this.userManager.loadUser(player.getUniqueId()).thenAcceptAsync(user -> this.scoreboardHandler.getPlayerScoreboard(player).joinTeam(user.getPrimaryGroup()));
+			this.chatHandler.updateMessagePattern(player);
 
 			this.database.getPlayerId(player.getUniqueId());
 			this.homeHandler.load(player.getUniqueId());
