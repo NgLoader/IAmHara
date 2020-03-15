@@ -28,13 +28,13 @@ public class LobbyPortalHandler extends PortalHandler {
 
 		World world = Bukkit.getWorld("world");
 
-		this.portals.add(new LobbyPortal("world", 36, 68, -42, 43, 65, -38,
-				new PortalActionServerChange(this.core, "survival")));
+		this.portals.add(new LobbyPortal("world", -366, 68, -301, -359, 65, -297,
+				new PortalActionServerChange(this.core, "survival"))); // to survival
 
-		this.portals.add(new LobbyPortal("world", -19, 67, 3, -15, 64, -1,
-				new PortalActionTeleport(new Location(world, -33.5, 89.5, 54.5))));
-		this.portals.add(new LobbyPortal("world", -35, 86, 53, -30, 81, 56,
-				new PortalActionTeleport(new Location(world, -18.5, 65.5, 5.5, -56, 0))));
+		this.portals.add(new LobbyPortal("world", -423, 68, -254, -419, 64, -259,
+				new PortalActionTeleport(new Location(world, -435.5, 89.5, -202.5)))); // to outpost position
+		this.portals.add(new LobbyPortal("world", -433, 86, -202, -438, 81, -205,
+				new PortalActionTeleport(new Location(world, -419.5, 65.5, -251.5, -56, 0)))); // back from outpost position
 	}
 
 	private class LobbyPortal extends Portal {

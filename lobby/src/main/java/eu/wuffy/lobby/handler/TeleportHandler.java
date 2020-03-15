@@ -43,10 +43,10 @@ public class TeleportHandler extends IHandler<Lobby> implements Listener {
 	public void onEnable() {
 		Bukkit.getServer().getPluginManager().registerEvents(this, this.core);
 
-		this.addTeleport("world", 29.5, 64.5, -40.5, -90, 0,
+		this.addTeleport("world", -372.5, 64.5, -299.5, -90, 0,
 				new ItemFactory(Material.OAK_SAPLING).setDisplayName("§2S§aurvival").addAllFlag().build(), 0,
 				true);
-		this.addTeleport("world", .5, 64.5, .5, -180, 0,
+		this.addTeleport("world", -402.5, 64.5, -256.5, -180, 0,
 				new ItemFactory(Material.COMPASS).setDisplayName("§3S§bpawn").addAllFlag().build(), 2, true);
 		this.addTeleport("world", -25, 89, -40, 0f, 0, new ItemFactory(Material.DRAGON_EGG)
 				.setDisplayName("§cMob§4P§cv§4P").addLore("§6Coming Soon").addAllFlag().build(), 4, false);

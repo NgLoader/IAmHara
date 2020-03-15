@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.craftbukkit.v1_15_R1.scoreboard.CraftScoreboard;
+import org.bukkit.craftbukkit.v1_13_R2.scoreboard.CraftScoreboard;
 import org.bukkit.entity.Player;
 
 import eu.wuffy.core.Core;
@@ -18,16 +18,16 @@ import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.model.group.Group;
 import net.luckperms.api.model.user.UserManager;
-import net.minecraft.server.v1_15_R1.ChatComponentText;
-import net.minecraft.server.v1_15_R1.EnumChatFormat;
-import net.minecraft.server.v1_15_R1.IScoreboardCriteria;
-import net.minecraft.server.v1_15_R1.IScoreboardCriteria.EnumScoreboardHealthDisplay;
-import net.minecraft.server.v1_15_R1.Scoreboard;
-import net.minecraft.server.v1_15_R1.ScoreboardObjective;
-import net.minecraft.server.v1_15_R1.ScoreboardScore;
-import net.minecraft.server.v1_15_R1.ScoreboardTeam;
-import net.minecraft.server.v1_15_R1.ScoreboardTeamBase.EnumNameTagVisibility;
-import net.minecraft.server.v1_15_R1.ScoreboardTeamBase.EnumTeamPush;
+import net.minecraft.server.v1_13_R2.ChatComponentText;
+import net.minecraft.server.v1_13_R2.EnumChatFormat;
+import net.minecraft.server.v1_13_R2.IScoreboardCriteria;
+import net.minecraft.server.v1_13_R2.IScoreboardCriteria.EnumScoreboardHealthDisplay;
+import net.minecraft.server.v1_13_R2.Scoreboard;
+import net.minecraft.server.v1_13_R2.ScoreboardObjective;
+import net.minecraft.server.v1_13_R2.ScoreboardScore;
+import net.minecraft.server.v1_13_R2.ScoreboardTeam;
+import net.minecraft.server.v1_13_R2.ScoreboardTeamBase.EnumNameTagVisibility;
+import net.minecraft.server.v1_13_R2.ScoreboardTeamBase.EnumTeamPush;
 
 public class ScoreboardHandler extends IHandler<Core<?>> {
 

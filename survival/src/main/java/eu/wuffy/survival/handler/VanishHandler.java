@@ -16,10 +16,10 @@ import eu.wuffy.core.util.NMSUtil;
 import eu.wuffy.survival.Survival;
 import eu.wuffy.survival.command.admin.CommandAdminTool;
 import eu.wuffy.synced.IHandler;
-import net.minecraft.server.v1_15_R1.ChatMessageType;
-import net.minecraft.server.v1_15_R1.IChatBaseComponent.ChatSerializer;
-import net.minecraft.server.v1_15_R1.PacketPlayOutChat;
-import net.minecraft.server.v1_15_R1.PacketPlayOutPlayerInfo;
+import net.minecraft.server.v1_13_R2.ChatMessageType;
+import net.minecraft.server.v1_13_R2.IChatBaseComponent.ChatSerializer;
+import net.minecraft.server.v1_13_R2.PacketPlayOutChat;
+import net.minecraft.server.v1_13_R2.PacketPlayOutPlayerInfo;
 
 public class VanishHandler extends IHandler<Survival> {
 
@@ -67,7 +67,7 @@ public class VanishHandler extends IHandler<Survival> {
 
 		this.hiddenPlayers.add(player);
 
-		this.getCore().getDynmapHandler().getDynmap().setPlayerVisiblity(player, false);
+//		this.getCore().getDynmapHandler().getDynmap().setPlayerVisiblity(player, false);
 
 		PlayerInventory inventory = player.getInventory();
 		ItemStack[][] storage = new ItemStack[4][];
@@ -95,7 +95,7 @@ public class VanishHandler extends IHandler<Survival> {
 
 		this.hiddenPlayers.remove(player);
 
-		this.getCore().getDynmapHandler().getDynmap().setPlayerVisiblity(player, true);
+//		this.getCore().getDynmapHandler().getDynmap().setPlayerVisiblity(player, true);
 
 		player.setGameMode(this.playerGamemode.remove(player));
 

@@ -1,9 +1,10 @@
 name: Survival
 author: TeamWuffy
 version: 0.0.1
-api-version: 1.15
-depend: [LuckPerms, Matrix, dynmap, WorldEdit, WorldGuard, GriefPrevention]
-loadbefore: [LuckPerms, Matrix, dynmap, WorldEdit, WorldGuard, GriefPrevention]
+api-version: 1.13
+depend: [LuckPerms, Lands]
+softdepend: [LuckPerms, Matrix, dynmap, WorldEdit, WorldGuard]
+loadbefore: [LuckPerms, Matrix, dynmap, WorldEdit, WorldGuard, Lands]
 
 main: eu.wuffy.survival.Survival
 
@@ -61,3 +62,14 @@ commands:
   treefeller:
     aliases: [treef, baumfäller, baumf, t]
   survival:
+  enderchest:
+    aliases: [enderc, echest, ec]
+  claimtool:
+    aliases: [claimt, ctool, ct]
+  tp:
+  tphere:
+  tpa:
+  tpaccept:
+  tpadeny:
+  tpahere:
+  tpalist:

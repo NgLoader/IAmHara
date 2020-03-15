@@ -58,6 +58,7 @@ public class Lobby extends Core<LobbyDatabase> {
 
 		getCommand("buildmode").setExecutor(new CommandBuild(this));
 
+		Bukkit.setWhitelist(false);
 		Bukkit.getConsoleSender().sendMessage(Lobby.PREFIX + "§2Enabled§8!");
 	}
 
@@ -66,8 +67,9 @@ public class Lobby extends Core<LobbyDatabase> {
 		Bukkit.setWhitelist(true);
 
 		IHandler.destroy();
-
 		Bukkit.getScheduler().cancelTasks(this);
+
+		this.getDatabase().closeConnection();
 
 		Bukkit.getConsoleSender().sendMessage(Lobby.PREFIX + "§4Disabled§8!");
 	}

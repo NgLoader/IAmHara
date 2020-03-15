@@ -67,53 +67,53 @@ public class SurvivalDatabase extends CoreDatabase {
 					+ ") DEFAULT CHARSET = utf8mb4", SurvivalDatabase.DATABASE_PREFIX, Database.DATABASE_PREFIX))
 	};
 
-	private static final DatabaseTable[] TABLES_PLAYERINFO = {
-			new DatabaseTable(SurvivalDatabase.DATABASE_PREFIX + "playerdata", String.format(
-					"CREATE TABLE `%splayerdata` ("
-					+ "`playerdata_id` INT AUTO_INCREMENT 	NOT NULL, "
-					+ "`player_id` INT 						NOT NULL, "
-					+ "`gamemode` INT 						NOT NULL, "
-					+ "`exp` FLOAT	 						NOT NULL, "
-					+ "`level` INT 							NOT NULL, "
-					+ "`totalExperience` INT 				NOT NULL, "
-					+ "`saturation` FLOAT 					NOT NULL, "
-					+ "`foodLevel` INT 						NOT NULL, "
-					+ "`healthScale` DOUBLE 				NOT NULL, "
-					+ "`healthScaled` BOOLEAN 				NOT NULL, "
-					+ "`flySpeed` FLOAT 					NOT NULL, "
-					+ "`walkSpeed` FLOAT 					NOT NULL, "
-					+ "PRIMARY KEY (`playerdata_id`),"
-					+ "FOREIGN KEY (`player_id`) REFERENCES %2$splayers(`id`) ON DELETE CASCADE"
-					+ ") DEFAULT CHARSET = utf8mb4", SurvivalDatabase.DATABASE_PREFIX, Database.DATABASE_PREFIX)),
-			new DatabaseTable(SurvivalDatabase.DATABASE_PREFIX + "playerdata_inventory", String.format(
-					"CREATE TABLE `%splayerdata_inventory` ("
-					+ "`playerdata_id` INT 							NOT NULL, "
-					+ "`content` VARCHAR(2560) 						NOT NULL, "
-					+ "`armorContent` VARCHAR(2560) 				NOT NULL, "
-					+ "`storageContent` VARCHAR(2560)				NOT NULL, "
-					+ "`extraContent` VARCHAR(2560)					NOT NULL, "
-					+ "`enderchestContent` VARCHAR(2560) 			NOT NULL, "
-					+ "`enderchestStorageContent` VARCHAR(2560) 	NOT NULL, "
-					+ "FOREIGN KEY (`playerdata_id`) REFERENCES %1$splayerdata(`playerdata_id`) ON DELETE CASCADE"
-					+ ") DEFAULT CHARSET = utf8mb4", SurvivalDatabase.DATABASE_PREFIX)),
-			new DatabaseTable(SurvivalDatabase.DATABASE_PREFIX + "playerdata_statistic", String.format(
-					"CREATE TABLE `%splayerdata_statistic` ("
-					+ "`playerdata_id` INT 				NOT NULL, "
-					+ "`name` VARCHAR(255) 				NOT NULL, "
-					+ "`type` VARCHAR(255) 				NOT NULL, "
-					+ "`material` VARCHAR(255), 				  "
-					+ "`value` INT 						NOT NULL, "
-					+ "FOREIGN KEY (`playerdata_id`) REFERENCES %1$splayerdata(`playerdata_id`) ON DELETE CASCADE"
-					+ ") DEFAULT CHARSET = utf8mb4", SurvivalDatabase.DATABASE_PREFIX)),
-			new DatabaseTable(SurvivalDatabase.DATABASE_PREFIX + "playerdata_advancement", String.format(
-					"CREATE TABLE `%splayerdata_advancement` ("
-					+ "`playerdata_id` INT 				NOT NULL, "
-					+ "`advancement` VARCHAR(255) 		NOT NULL, "
-					+ "`criteria` VARCHAR(255) 			NOT NULL, "
-					+ "`date` DATE						NOT NULL, "
-					+ "FOREIGN KEY (`playerdata_id`) REFERENCES %1$splayerdata(`playerdata_id`) ON DELETE CASCADE"
-					+ ") DEFAULT CHARSET = utf8mb4", SurvivalDatabase.DATABASE_PREFIX))
-	};
+//	private static final DatabaseTable[] TABLES_PLAYERINFO = {
+//			new DatabaseTable(SurvivalDatabase.DATABASE_PREFIX + "playerdata", String.format(
+//					"CREATE TABLE `%splayerdata` ("
+//					+ "`playerdata_id` INT AUTO_INCREMENT 	NOT NULL, "
+//					+ "`player_id` INT 						NOT NULL, "
+//					+ "`gamemode` INT 						NOT NULL, "
+//					+ "`exp` FLOAT	 						NOT NULL, "
+//					+ "`level` INT 							NOT NULL, "
+//					+ "`totalExperience` INT 				NOT NULL, "
+//					+ "`saturation` FLOAT 					NOT NULL, "
+//					+ "`foodLevel` INT 						NOT NULL, "
+//					+ "`healthScale` DOUBLE 				NOT NULL, "
+//					+ "`healthScaled` BOOLEAN 				NOT NULL, "
+//					+ "`flySpeed` FLOAT 					NOT NULL, "
+//					+ "`walkSpeed` FLOAT 					NOT NULL, "
+//					+ "PRIMARY KEY (`playerdata_id`),"
+//					+ "FOREIGN KEY (`player_id`) REFERENCES %2$splayers(`id`) ON DELETE CASCADE"
+//					+ ") DEFAULT CHARSET = utf8mb4", SurvivalDatabase.DATABASE_PREFIX, Database.DATABASE_PREFIX)),
+//			new DatabaseTable(SurvivalDatabase.DATABASE_PREFIX + "playerdata_inventory", String.format(
+//					"CREATE TABLE `%splayerdata_inventory` ("
+//					+ "`playerdata_id` INT 							NOT NULL, "
+//					+ "`content` VARCHAR(2560) 						NOT NULL, "
+//					+ "`armorContent` VARCHAR(2560) 				NOT NULL, "
+//					+ "`storageContent` VARCHAR(2560)				NOT NULL, "
+//					+ "`extraContent` VARCHAR(2560)					NOT NULL, "
+//					+ "`enderchestContent` VARCHAR(2560) 			NOT NULL, "
+//					+ "`enderchestStorageContent` VARCHAR(2560) 	NOT NULL, "
+//					+ "FOREIGN KEY (`playerdata_id`) REFERENCES %1$splayerdata(`playerdata_id`) ON DELETE CASCADE"
+//					+ ") DEFAULT CHARSET = utf8mb4", SurvivalDatabase.DATABASE_PREFIX)),
+//			new DatabaseTable(SurvivalDatabase.DATABASE_PREFIX + "playerdata_statistic", String.format(
+//					"CREATE TABLE `%splayerdata_statistic` ("
+//					+ "`playerdata_id` INT 				NOT NULL, "
+//					+ "`name` VARCHAR(255) 				NOT NULL, "
+//					+ "`type` VARCHAR(255) 				NOT NULL, "
+//					+ "`material` VARCHAR(255), 				  "
+//					+ "`value` INT 						NOT NULL, "
+//					+ "FOREIGN KEY (`playerdata_id`) REFERENCES %1$splayerdata(`playerdata_id`) ON DELETE CASCADE"
+//					+ ") DEFAULT CHARSET = utf8mb4", SurvivalDatabase.DATABASE_PREFIX)),
+//			new DatabaseTable(SurvivalDatabase.DATABASE_PREFIX + "playerdata_advancement", String.format(
+//					"CREATE TABLE `%splayerdata_advancement` ("
+//					+ "`playerdata_id` INT 				NOT NULL, "
+//					+ "`advancement` VARCHAR(255) 		NOT NULL, "
+//					+ "`criteria` VARCHAR(255) 			NOT NULL, "
+//					+ "`date` DATE						NOT NULL, "
+//					+ "FOREIGN KEY (`playerdata_id`) REFERENCES %1$splayerdata(`playerdata_id`) ON DELETE CASCADE"
+//					+ ") DEFAULT CHARSET = utf8mb4", SurvivalDatabase.DATABASE_PREFIX))
+//	};
 
 	private static final DatabaseTable[] TABLES_HELP = {
 			new DatabaseTable(SurvivalDatabase.DATABASE_PREFIX + "help", String.format(
@@ -125,28 +125,28 @@ public class SurvivalDatabase extends CoreDatabase {
 					+ ") DEFAULT CHARSET = utf8mb4", SurvivalDatabase.DATABASE_PREFIX))
 	};
 
-	private static final DatabaseTable[] TABLES_ECONOMY = {
-			new DatabaseTable(SurvivalDatabase.DATABASE_PREFIX + "economy_players", String.format(
-					"CREATE TABLE `%seconomy_players` ("
-					+ "`economy_id` VARCHAR(255) 		NOT NULL, "
-					+ "`balance` DOUBLE					NOT NULL, "
-					+ "PRIMARY KEY (`economy_id`)"
-					+ ") DEFAULT CHARSET = utf8mb4", SurvivalDatabase.DATABASE_PREFIX, Database.DATABASE_PREFIX)),
-			new DatabaseTable(SurvivalDatabase.DATABASE_PREFIX + "economy_banks", String.format(
-					"CREATE TABLE `%seconomy_banks` ("
-					+ "`bank_id` VARCHAR(255)			NOT NULL, "
-					+ "`owner` VARCHAR(255)				NOT NULL, "
-					+ "`balance` DOUBLE					NOT NULL, "
-					+ "PRIMARY KEY (`bank_id`)"
-					+ ") DEFAULT CHARSET = utf8mb4", SurvivalDatabase.DATABASE_PREFIX, Database.DATABASE_PREFIX)),
-			new DatabaseTable(SurvivalDatabase.DATABASE_PREFIX + "economy_players_banks", String.format(
-					"CREATE TABLE `%seconomy_players_banks` ("
-					+ "`bank_id` VARCHAR(255)			NOT NULL, "
-					+ "`player` VARCHAR(255) 	 		NOT NULL, "
-					+ "PRIMARY KEY (`bank_id`, `player`),"
-					+ "FOREIGN KEY (`bank_id`) REFERENCES %2$seconomy_banks(`bank_id`) ON DELETE CASCADE"
-					+ ") DEFAULT CHARSET = utf8mb4", SurvivalDatabase.DATABASE_PREFIX, SurvivalDatabase.DATABASE_PREFIX))
-	};
+//	private static final DatabaseTable[] TABLES_ECONOMY = {
+//			new DatabaseTable(SurvivalDatabase.DATABASE_PREFIX + "economy_players", String.format(
+//					"CREATE TABLE `%seconomy_players` ("
+//					+ "`economy_id` VARCHAR(255) 		NOT NULL, "
+//					+ "`balance` DOUBLE					NOT NULL, "
+//					+ "PRIMARY KEY (`economy_id`)"
+//					+ ") DEFAULT CHARSET = utf8mb4", SurvivalDatabase.DATABASE_PREFIX, Database.DATABASE_PREFIX)),
+//			new DatabaseTable(SurvivalDatabase.DATABASE_PREFIX + "economy_banks", String.format(
+//					"CREATE TABLE `%seconomy_banks` ("
+//					+ "`bank_id` VARCHAR(255)			NOT NULL, "
+//					+ "`owner` VARCHAR(255)				NOT NULL, "
+//					+ "`balance` DOUBLE					NOT NULL, "
+//					+ "PRIMARY KEY (`bank_id`)"
+//					+ ") DEFAULT CHARSET = utf8mb4", SurvivalDatabase.DATABASE_PREFIX, Database.DATABASE_PREFIX)),
+//			new DatabaseTable(SurvivalDatabase.DATABASE_PREFIX + "economy_players_banks", String.format(
+//					"CREATE TABLE `%seconomy_players_banks` ("
+//					+ "`bank_id` VARCHAR(255)			NOT NULL, "
+//					+ "`player` VARCHAR(255) 	 		NOT NULL, "
+//					+ "PRIMARY KEY (`bank_id`, `player`),"
+//					+ "FOREIGN KEY (`bank_id`) REFERENCES %2$seconomy_banks(`bank_id`) ON DELETE CASCADE"
+//					+ ") DEFAULT CHARSET = utf8mb4", SurvivalDatabase.DATABASE_PREFIX, SurvivalDatabase.DATABASE_PREFIX))
+//	};
 
 	private static final String WARP_LIST = String.format("SELECT * FROM %swarps", SurvivalDatabase.DATABASE_PREFIX);
 	private static final String WARP_INSERT = String.format("INSERT INTO %swarps (name, description, permission, world, x, y, z, yaw, pitch) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)", SurvivalDatabase.DATABASE_PREFIX);
@@ -195,9 +195,9 @@ public class SurvivalDatabase extends CoreDatabase {
 
 		this.addDefaultTable(SurvivalDatabase.TABLES_WARPS);
 		this.addDefaultTable(SurvivalDatabase.TABLES_HOMES);
-		this.addDefaultTable(SurvivalDatabase.TABLES_PLAYERINFO);
+//		this.addDefaultTable(SurvivalDatabase.TABLES_PLAYERINFO);
 		this.addDefaultTable(SurvivalDatabase.TABLES_HELP);
-		this.addDefaultTable(SurvivalDatabase.TABLES_ECONOMY);
+//		this.addDefaultTable(SurvivalDatabase.TABLES_ECONOMY);
 	}
 
 	/*

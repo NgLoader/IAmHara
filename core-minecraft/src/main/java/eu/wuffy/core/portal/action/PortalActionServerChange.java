@@ -33,7 +33,7 @@ public class PortalActionServerChange extends PortalAction implements Listener {
 	public void execute(Player player) {
 		long delay = this.portalDelay.getOrDefault(player, -1l);
 
-		if (delay != -1 || delay > System.currentTimeMillis()) {
+		if (delay != -1 && delay > System.currentTimeMillis()) {
 			return;
 		}
 		this.portalDelay.put(player, System.currentTimeMillis() + 10000);

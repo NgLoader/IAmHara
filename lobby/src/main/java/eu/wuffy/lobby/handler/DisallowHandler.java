@@ -37,7 +37,7 @@ public class DisallowHandler extends IHandler<Lobby> implements Listener {
 
 	@Override
 	public void onEnable() {
-		this.spawnLocation = new Location(Bukkit.getWorld("world"), .5, 64.5, .5, -180, 0);
+		this.spawnLocation = new Location(Bukkit.getWorld("world"), -402.5, 64.5, -256.5, -180, 0);
 
 		Bukkit.getServer().getPluginManager().registerEvents(this, this.core);
 	}

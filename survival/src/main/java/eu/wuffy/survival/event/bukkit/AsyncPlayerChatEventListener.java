@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import eu.wuffy.core.handler.ChatHandler;
@@ -14,13 +15,20 @@ public class AsyncPlayerChatEventListener extends EventListener {
 
 	private final ChatHandler chatHandler;
 
+//	private LandsIntegration lands;
+
 	public AsyncPlayerChatEventListener(Survival core) {
 		super(core);
 
 		this.chatHandler = core.getChatHandler();
 	}
 
-	@EventHandler
+	@Override
+	public void onEnable() {
+//		this.lands = core.getLandsIntegration();
+	}
+
+	@EventHandler(priority = EventPriority.LOWEST)
 	public void onChat(AsyncPlayerChatEvent event) {
 		Player player = event.getPlayer();
 

@@ -112,7 +112,6 @@ public class CommandGameMode implements CommandExecutor, TabExecutor {
 
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
-
 		switch (args.length) {
 		case 0:
 			return CommandGameMode.GAMEMODE_LIST;

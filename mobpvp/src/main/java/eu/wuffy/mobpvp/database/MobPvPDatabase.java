@@ -34,12 +34,23 @@ public class MobPvPDatabase extends CoreDatabase {
 		return 0;
 	}
 
+	public double getDamageMadeByDamager(UUID uuid, KitType damagerKitType) {
+		return 0;
+	}
+
+	public double getDamageMadeByDamager(UUID uuid, KitType type, KitType damagerKitType) {
+		return 0;
+	}
+
 	public void addKill(UUID uuid, KitType type) {
 	}
 
 	public void addDeath(UUID uuid, KitType type) {
 	}
 
-	public void addDamageMade(UUID uuid, KitType type, double damage) {
+	public void addDamageMade(UUID uuid, KitType kitType, KitType damagedKitType, double damage) {
+	}
+
+	public void addDamageTake(UUID uuid, KitType kitType, KitType damagerKitType, double damage) {
 	}
 }

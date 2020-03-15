@@ -8,8 +8,9 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.projectiles.ProjectileSource;
 
 import eu.wuffy.mobpvp.MobPvP;
-import eu.wuffy.mobpvp.handler.DamageHandler;
+import eu.wuffy.mobpvp.handler.damage.DamageHandler;
 import eu.wuffy.mobpvp.handler.event.EventListener;
+import eu.wuffy.mobpvp.kits.Kit;
 import eu.wuffy.mobpvp.kits.KitHandler;
 
 public class EntityDamageByEntityEventListener extends EventListener {
@@ -47,11 +48,14 @@ public class EntityDamageByEntityEventListener extends EventListener {
 				return;
 			}
 
-			if (this.kitHandler.getPlayerKit(player) == null || this.kitHandler.getPlayerKit(damager) == null) {
+			Kit damagerKit = this.kitHandler.getPlayerKit(damager);
+			if (this.kitHandler.getPlayerKit(player) == null || damagerKit == null) {
 				event.setCancelled(true);
 			}
 
-			this.damageHandler.getDamageState(player).addDamage(damager, event.getFinalDamage());
+			this.damageHandler.get(player).addDamage(damager, damagerKit.getType(), event.getFinalDamage());
+			damager.sendMessage("respawn!");
+			damager.spigot().respawn();
 		}
 	}
 }

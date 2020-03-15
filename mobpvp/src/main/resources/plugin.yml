@@ -2,9 +2,11 @@ name: MobPvP
 author: TeamWuffy
 version: 0.0.1
 api-version: 1.13
+depend: [LibsDisguises]
+loadbefore: [LibsDisguises]
 
 main: eu.wuffy.mobpvp.MobPvP
 
 commands:
   mobpvp:
-    aliases: [ mpvp ]
+    aliases: [mpvp]

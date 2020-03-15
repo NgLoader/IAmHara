@@ -12,6 +12,7 @@ import eu.wuffy.survival.event.bukkit.EntityPickupItemEventListener;
 import eu.wuffy.survival.event.bukkit.FoodLevelChangeEventListener;
 import eu.wuffy.survival.event.bukkit.PlayerJoinEventListener;
 import eu.wuffy.survival.event.bukkit.PlayerQuitEventListener;
+import eu.wuffy.survival.event.lands.PlayerAreaEventListener;
 import eu.wuffy.survival.event.luckperms.GroupDataRecalculateEventListener;
 import eu.wuffy.survival.event.luckperms.UserDataRecalculateEventListener;
 import eu.wuffy.survival.event.luckperms.UserPromoteEventListener;
@@ -40,6 +41,9 @@ public class EventHandler extends IHandler<Survival> {
 		this.events.add(new EntityPickupItemEventListener(this.getCore()));
 		this.events.add(new FoodLevelChangeEventListener(this.getCore()));
 		this.events.add(new BlockBreakEventListener(this.getCore()));
+
+		// Lands
+		this.events.add(new PlayerAreaEventListener(this.getCore()));
 
 		this.events.stream().forEach(EventListener::init);
 	}

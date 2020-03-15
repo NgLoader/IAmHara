@@ -8,10 +8,10 @@ import eu.wuffy.survival.Survival;
 
 public class CommandSurvival implements CommandExecutor {
 
-	private Survival core;
+//	private Survival core;
 
 	public CommandSurvival(Survival core) {
-		this.core = core;
+//		this.core = core;
 	}
 
 	@Override
@@ -29,8 +29,7 @@ public class CommandSurvival implements CommandExecutor {
 					switch (args[1]) {
 					case "dynmap":
 						sender.sendMessage(Survival.PREFIX + "§7Dynmap wird §aneugeladen§8.");
-						this.core.getDynmapHandler().getDynmapRegion().loadWorldGuardRegions();
-						this.core.getDynmapHandler().getDynmapRegion().loadGriefProventionClaims();
+//						this.core.getDynmapHandler().getDynmapRegion().loadWorldGuardRegions();
 						sender.sendMessage(Survival.PREFIX + "§7Dynmap wurde §2neugeladen§8.");
 						return true;
 

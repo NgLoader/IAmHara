@@ -11,9 +11,9 @@ import org.bukkit.entity.Player;
 
 import eu.wuffy.core.util.NMSUtil;
 import net.luckperms.api.model.group.Group;
-import net.minecraft.server.v1_15_R1.PacketPlayOutScoreboardDisplayObjective;
-import net.minecraft.server.v1_15_R1.PacketPlayOutScoreboardObjective;
-import net.minecraft.server.v1_15_R1.ScoreboardObjective;
+import net.minecraft.server.v1_13_R2.PacketPlayOutScoreboardDisplayObjective;
+import net.minecraft.server.v1_13_R2.PacketPlayOutScoreboardObjective;
+import net.minecraft.server.v1_13_R2.ScoreboardObjective;
 
 public class PlayerScoreboard {
 

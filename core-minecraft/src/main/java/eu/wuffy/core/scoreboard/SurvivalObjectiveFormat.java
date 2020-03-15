@@ -2,7 +2,7 @@ package eu.wuffy.core.scoreboard;
 
 import org.bukkit.entity.Player;
 
-import net.minecraft.server.v1_15_R1.ScoreboardObjective;
+import net.minecraft.server.v1_13_R2.ScoreboardObjective;
 
 public class SurvivalObjectiveFormat extends SurvivalObjective {
 

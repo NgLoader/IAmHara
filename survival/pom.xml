@@ -82,24 +82,10 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.github.TechFortress</groupId>
-			<artifactId>GriefPrevention</artifactId>
-			<version>16.7.1</version>
+			<groupId>com.github.Angeschossen</groupId>
+			<artifactId>LandsAPI</artifactId>
+			<version>4.5.2.0</version>
 			<scope>provided</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>com.sk89q.worldguard</groupId>
-					<artifactId>worldguard-legacy</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.sk89q.worldguard</groupId>
-					<artifactId>worldguard-bukkit</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.sk89q.worldedit</groupId>
-					<artifactId>worldedit-bukkit</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 	</dependencies>
 

@@ -1,0 +1,17 @@
+name: Disco
+author: TeamWuffy
+version: 0.0.1
+api-version: 1.13
+depend: [LuckPerms, ProdigyNightClub]
+softdepend: []
+loadbefore: [LuckPerms, ProdigyNightClub]
+
+main: eu.wuffy.disco.Disco
+
+commands:
+  buildmode:
+    aliases: [bm, buildm]
+  ping:
+  fly:
+  gamemode:
+    aliases: [gm, gmode, gamem]

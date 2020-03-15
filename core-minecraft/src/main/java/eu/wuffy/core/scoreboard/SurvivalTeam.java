@@ -6,8 +6,8 @@ import java.util.List;
 import org.bukkit.entity.Player;
 
 import eu.wuffy.core.util.NMSUtil;
-import net.minecraft.server.v1_15_R1.PacketPlayOutScoreboardTeam;
-import net.minecraft.server.v1_15_R1.ScoreboardTeam;
+import net.minecraft.server.v1_13_R2.PacketPlayOutScoreboardTeam;
+import net.minecraft.server.v1_13_R2.ScoreboardTeam;
 
 public class SurvivalTeam {
 

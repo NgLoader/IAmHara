@@ -9,6 +9,8 @@ import com.zaxxer.hikari.HikariConfig;
 import eu.wuffy.core.Core;
 import eu.wuffy.core.handler.ChatHandler;
 import eu.wuffy.core.scoreboard.ScoreboardHandler;
+import eu.wuffy.survival.command.CommandClaimTool;
+import eu.wuffy.survival.command.CommandEnderchest;
 import eu.wuffy.survival.command.CommandPing;
 import eu.wuffy.survival.command.CommandSpawn;
 import eu.wuffy.survival.command.CommandTreeFeller;
@@ -29,6 +31,13 @@ import eu.wuffy.survival.command.home.CommandHome;
 import eu.wuffy.survival.command.home.CommandHomeCreate;
 import eu.wuffy.survival.command.home.CommandHomeDelete;
 import eu.wuffy.survival.command.home.CommandHomeList;
+import eu.wuffy.survival.command.tp.CommandTp;
+import eu.wuffy.survival.command.tp.CommandTpHere;
+import eu.wuffy.survival.command.tpa.CommandTpa;
+import eu.wuffy.survival.command.tpa.CommandTpaccept;
+import eu.wuffy.survival.command.tpa.CommandTpadeny;
+import eu.wuffy.survival.command.tpa.CommandTpahere;
+import eu.wuffy.survival.command.tpa.CommandTpalist;
 import eu.wuffy.survival.command.warp.CommandWarp;
 import eu.wuffy.survival.command.warp.CommandWarpCreate;
 import eu.wuffy.survival.command.warp.CommandWarpCreateAlias;
@@ -37,6 +46,7 @@ import eu.wuffy.survival.command.warp.CommandWarpDeleteAlias;
 import eu.wuffy.survival.command.warp.CommandWarpList;
 import eu.wuffy.survival.database.SurvivalDatabase;
 import eu.wuffy.survival.handler.InventoryHandler;
+import eu.wuffy.survival.handler.SurvivalHologramHandler;
 import eu.wuffy.survival.handler.TreeFellerHandler;
 import eu.wuffy.survival.handler.VanishHandler;
 import eu.wuffy.survival.handler.WinterHandler;
@@ -46,12 +56,16 @@ import eu.wuffy.survival.handler.help.HelpHandler;
 import eu.wuffy.survival.handler.home.HomeHandler;
 import eu.wuffy.survival.handler.notification.NotificationHandler;
 import eu.wuffy.survival.handler.storage.StorageHandler;
+import eu.wuffy.survival.handler.tpa.TPAHandler;
 import eu.wuffy.survival.handler.warp.WarpHandler;
 import eu.wuffy.synced.IHandler;
+import me.angeschossen.lands.api.integration.LandsIntegration;
 
 public class Survival extends Core<SurvivalDatabase> {
 
-	public static final String PREFIX = "§8[§2Survival§8] ";
+	public static final String PREFIX = "§8[§2Survival§8] §7";
+
+	private final boolean whitelist;
 
 	private final ScoreboardHandler scoreboardHandler;
 	private final ChatHandler chatHandler;
@@ -66,8 +80,15 @@ public class Survival extends Core<SurvivalDatabase> {
 	private final NotificationHandler notificationHandler;
 	private final StorageHandler storageHandler;
 	private final EventHandler eventHandler;
+	private final SurvivalHologramHandler hologramHandler;
+	private final TPAHandler tpaHandler;
+
+	private LandsIntegration landsIntegration;
 
 	public Survival() {
+		this.whitelist = Bukkit.hasWhitelist();
+		Bukkit.setWhitelist(true);
+
 		HikariConfig databaseConfig = new HikariConfig();
 		databaseConfig.setDataSourceClassName("org.mariadb.jdbc.MariaDbDataSource");
 		databaseConfig.addDataSourceProperty("serverName", "173.249.17.9");
@@ -97,12 +118,12 @@ public class Survival extends Core<SurvivalDatabase> {
 		this.notificationHandler = new NotificationHandler(this);
 		this.storageHandler = new StorageHandler(this);
 		this.eventHandler = new EventHandler(this);
+		this.hologramHandler = new SurvivalHologramHandler(this);
+		this.tpaHandler = new TPAHandler(this);
 	}
 
 	@Override
 	public void onLoad() {
-		Bukkit.setWhitelist(true);
-
 		IHandler.getHandlers().forEach(IHandler::init);
 	}
 
@@ -117,12 +138,17 @@ public class Survival extends Core<SurvivalDatabase> {
 			return;
 		}
 
+		this.landsIntegration = new LandsIntegration(this, false);
+
 		IHandler.getHandlers().forEach(IHandler::enable);
 
 		this.registerCommands();
 
 		Bukkit.getConsoleSender().sendMessage(Survival.PREFIX + "§2Enabled§8!");
-		Bukkit.setWhitelist(false);
+
+		if (!this.whitelist) {
+			Bukkit.setWhitelist(false);
+		}
 	}
 
 	@Override
@@ -141,6 +167,8 @@ public class Survival extends Core<SurvivalDatabase> {
 		getCommand("ping").setExecutor(new CommandPing());
 		getCommand("spawn").setExecutor(new CommandSpawn());
 		getCommand("treefeller").setExecutor(new CommandTreeFeller(this));
+		getCommand("claimtool").setExecutor(new CommandClaimTool());
+		getCommand("enderchest").setExecutor(new CommandEnderchest());
 
 		getCommand("survival").setExecutor(new CommandSurvival(this));
 		getCommand("gamemode").setExecutor(new CommandGameMode());
@@ -169,6 +197,14 @@ public class Survival extends Core<SurvivalDatabase> {
 		getCommand("helpupdate").setExecutor(new CommandHelpUpdate(this));
 
 		getCommand("balance").setExecutor(new CommandEconomyBalance(this));
+
+		getCommand("tp").setExecutor(new CommandTp());
+		getCommand("tphere").setExecutor(new CommandTpHere());
+		getCommand("tpa").setExecutor(new CommandTpa(this));
+		getCommand("tpaccept").setExecutor(new CommandTpaccept(this));
+		getCommand("tpadeny").setExecutor(new CommandTpadeny(this));
+		getCommand("tpahere").setExecutor(new CommandTpahere(this));
+		getCommand("tpalist").setExecutor(new CommandTpalist(this));
 	}
 
 	public ScoreboardHandler getScoreboardHandler() {
@@ -221,5 +257,17 @@ public class Survival extends Core<SurvivalDatabase> {
 
 	public EventHandler getEventHandler() {
 		return this.eventHandler;
+	}
+
+	public SurvivalHologramHandler getHologramHandler() {
+		return this.hologramHandler;
+	}
+
+	public LandsIntegration getLandsIntegration() {
+		return this.landsIntegration;
+	}
+
+	public TPAHandler getTpaHandler() {
+		return this.tpaHandler;
 	}
 }

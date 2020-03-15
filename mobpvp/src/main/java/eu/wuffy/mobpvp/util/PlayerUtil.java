@@ -1,5 +1,6 @@
 package eu.wuffy.mobpvp.util;
 
+import org.bukkit.GameMode;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 
@@ -24,5 +25,6 @@ public class PlayerUtil {
 		player.setHealth(20);
 		player.setHealthScaled(false);
 		player.setGlowing(false);
+		player.setGameMode(GameMode.ADVENTURE);
 	}
 }

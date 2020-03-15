@@ -9,6 +9,9 @@ import eu.wuffy.mobpvp.event.EntityDamageByEntityEventListener;
 import eu.wuffy.mobpvp.event.EntityDamageEventListener;
 import eu.wuffy.mobpvp.event.PlayerDeathEventListener;
 import eu.wuffy.mobpvp.event.PlayerInteractEventListener;
+import eu.wuffy.mobpvp.event.PlayerJoinEventListener;
+import eu.wuffy.mobpvp.event.PlayerQuitEventListener;
+import eu.wuffy.mobpvp.event.PlayerRespawnEventListener;
 import eu.wuffy.mobpvp.event.SignChangeEventListener;
 import eu.wuffy.synced.IHandler;
 
@@ -27,6 +30,9 @@ public class EventHandler extends IHandler<MobPvP> {
 		this.events.add(new PlayerDeathEventListener(this.core));
 		this.events.add(new PlayerInteractEventListener(this.core));
 		this.events.add(new SignChangeEventListener(this.core));
+		this.events.add(new PlayerJoinEventListener(this.core));
+		this.events.add(new PlayerQuitEventListener(this.core));
+		this.events.add(new PlayerRespawnEventListener(this.core));
 
 		this.events.stream().forEach(EventListener::init);
 	}

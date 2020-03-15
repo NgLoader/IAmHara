@@ -5,9 +5,9 @@ import java.util.UUID;
 import org.bukkit.entity.Player;
 
 import eu.wuffy.core.util.NMSUtil;
-import net.minecraft.server.v1_15_R1.PacketPlayOutScoreboardScore;
-import net.minecraft.server.v1_15_R1.ScoreboardObjective;
-import net.minecraft.server.v1_15_R1.ScoreboardServer.Action;
+import net.minecraft.server.v1_13_R2.PacketPlayOutScoreboardScore;
+import net.minecraft.server.v1_13_R2.ScoreboardObjective;
+import net.minecraft.server.v1_13_R2.ScoreboardServer.Action;
 
 public class SurvivalObjective {
 

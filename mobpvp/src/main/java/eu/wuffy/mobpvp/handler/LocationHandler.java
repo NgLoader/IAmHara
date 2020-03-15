@@ -36,7 +36,8 @@ public class LocationHandler extends IHandler<MobPvP> {
 	public void onEnable() {
 		// TODO add default locations!
 		this.addLoaction("spawn", new Location(Bukkit.getWorld("world"), 441, 81.1, -392, 180f, 180f));
-		this.addLoaction("map", new Location(Bukkit.getWorld("world"), 441, 81.1, -392, 180f, 180f));
+		this.addLoaction("map", new Location(Bukkit.getWorld("world"), 444, 81.1, -392, 180f, 180f));
+		this.addLoaction("map", new Location(Bukkit.getWorld("world"), 436, 81.1, -392, 180f, 180f));
 
 		// TODO load locations in a better way
 		try {
@@ -125,5 +126,15 @@ public class LocationHandler extends IHandler<MobPvP> {
 		}
 
 		// TODO send message that no location was found
+	}
+
+	public Location get(String locationName) {
+		List<Location> locations = this.locationsByName.get(locationName.toLowerCase());
+
+		if (locations != null && locations.size() > 0) {
+			return locations.get(locations.size() < 2 ? 0 : RandomUtils.nextInt(locations.size()));
+		}
+
+		return null;
 	}
 }

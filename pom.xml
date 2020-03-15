@@ -8,7 +8,7 @@
 		<maven.compiler.target>1.8</maven.compiler.target>
 
 		<bungeecord.version>1.15-SNAPSHOT</bungeecord.version>
-		<minecraft.version>1.15.1-R0.1-SNAPSHOT</minecraft.version>
+		<minecraft.version>1.13.2-R0.1-SNAPSHOT</minecraft.version>
 
 		<project.version>0.0.1</project.version>
 
@@ -21,6 +21,7 @@
 		<project.minecraft.lobby.version>0.0.1</project.minecraft.lobby.version>
 		<project.minecraft.survival.version>0.0.1</project.minecraft.survival.version>
 		<project.minecraft.mobpvp.version>0.0.1</project.minecraft.mobpvp.version>
+		<project.minecraft.disco.version>0.0.1</project.minecraft.disco.version>
 	</properties>
 
 	<groupId>eu.teamwuffy</groupId>
@@ -35,6 +36,7 @@
 		<module>lobby</module>
 		<module>survival</module>
 		<module>mobpvp</module>
+		<module>disco</module>
 	</modules>
 
 	<developers>

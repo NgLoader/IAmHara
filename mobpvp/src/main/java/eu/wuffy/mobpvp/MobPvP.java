@@ -7,15 +7,14 @@ import org.bukkit.Bukkit;
 import com.zaxxer.hikari.HikariConfig;
 
 import eu.wuffy.core.Core;
-import eu.wuffy.core.database.CoreDatabase;
 import eu.wuffy.mobpvp.database.MobPvPDatabase;
-import eu.wuffy.mobpvp.handler.DamageHandler;
 import eu.wuffy.mobpvp.handler.LocationHandler;
+import eu.wuffy.mobpvp.handler.damage.DamageHandler;
 import eu.wuffy.mobpvp.handler.event.EventHandler;
 import eu.wuffy.mobpvp.kits.KitHandler;
 import eu.wuffy.synced.IHandler;
 
-public class MobPvP extends Core<CoreDatabase> {
+public class MobPvP extends Core<MobPvPDatabase> {
 
 	public static final String PREFIX_SIGN = "§8[§cMobPvP§8]";
 	public static final String PREFIX = MobPvP.PREFIX_SIGN + " §7";

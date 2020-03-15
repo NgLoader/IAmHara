@@ -4,19 +4,19 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_13_R2.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Team;
 
 import com.mojang.authlib.GameProfile;
 
 import eu.wuffy.synced.util.ReflectionUtil;
-import net.minecraft.server.v1_15_R1.ChatComponentText;
-import net.minecraft.server.v1_15_R1.EnumGamemode;
-import net.minecraft.server.v1_15_R1.Packet;
-import net.minecraft.server.v1_15_R1.PacketPlayOutPlayerInfo;
-import net.minecraft.server.v1_15_R1.PacketPlayOutPlayerInfo.EnumPlayerInfoAction;
-import net.minecraft.server.v1_15_R1.PlayerConnection;
+import net.minecraft.server.v1_13_R2.ChatComponentText;
+import net.minecraft.server.v1_13_R2.EnumGamemode;
+import net.minecraft.server.v1_13_R2.Packet;
+import net.minecraft.server.v1_13_R2.PacketPlayOutPlayerInfo;
+import net.minecraft.server.v1_13_R2.PacketPlayOutPlayerInfo.EnumPlayerInfoAction;
+import net.minecraft.server.v1_13_R2.PlayerConnection;
 
 public class NMSUtil {
 
