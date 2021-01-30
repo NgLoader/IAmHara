@@ -25,6 +25,7 @@ import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import eu.wuffy.survival.Survival;
+import eu.wuffy.survival.common.SurvivalHelpCategory;
 import eu.wuffy.synced.IHandler;
 
 public class TreeFellerHandler extends IHandler<Survival> {
@@ -56,6 +57,8 @@ public class TreeFellerHandler extends IHandler<Survival> {
 		this.leaveTypes.put(Material.JUNGLE_LOG, Material.JUNGLE_LEAVES);
 		this.leaveTypes.put(Material.OAK_LOG, Material.OAK_LEAVES);
 		this.leaveTypes.put(Material.SPRUCE_LOG, Material.SPRUCE_LEAVES);
+
+		this.core.getHelpSystem().addCategory(SurvivalHelpCategory.TREE_FELLER.getCategory());
 	}
 
 	@Override

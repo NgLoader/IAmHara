@@ -32,7 +32,7 @@ public class PlayerInteractEventListener extends EventListener {
 			Player player = event.getPlayer();
 			Block block = event.getClickedBlock();
 
-			if (block.getType() == Material.WALL_SIGN) {
+			if (block.getType() == Material.OAK_WALL_SIGN) {
 				Sign sign = (Sign) block.getState();
 
 				if (!sign.getLine(0).equals(MobPvP.PREFIX_SIGN)) {

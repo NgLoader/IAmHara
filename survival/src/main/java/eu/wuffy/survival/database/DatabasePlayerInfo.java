@@ -9,8 +9,6 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 
-import eu.wuffy.core.util.ItemFactory;
-
 public class DatabasePlayerInfo {
 
 	public final int inventory_id;
@@ -48,12 +46,12 @@ public class DatabasePlayerInfo {
 	}
 
 	public void loadInventory(ResultSet resultSet) throws SQLException {
-		this.content = ItemFactory.itemStackArrayFromBase64(resultSet.getString("content"));
-		this.armorContent = ItemFactory.itemStackArrayFromBase64(resultSet.getString("armorContent"));
-		this.storageContent = ItemFactory.itemStackArrayFromBase64(resultSet.getString("storageContent"));
-		this.extraContent = ItemFactory.itemStackArrayFromBase64(resultSet.getString("extraContent"));
-		this.enderchestContent = ItemFactory.itemStackArrayFromBase64(resultSet.getString("enderchestContent"));
-		this.enderchestStorageContent = ItemFactory.itemStackArrayFromBase64(resultSet.getString("enderchestStorageContent"));
+//		this.content = ItemFactory.itemStackArrayFromBase64(resultSet.getString("content"));
+//		this.armorContent = ItemFactory.itemStackArrayFromBase64(resultSet.getString("armorContent"));
+//		this.storageContent = ItemFactory.itemStackArrayFromBase64(resultSet.getString("storageContent"));
+//		this.extraContent = ItemFactory.itemStackArrayFromBase64(resultSet.getString("extraContent"));
+//		this.enderchestContent = ItemFactory.itemStackArrayFromBase64(resultSet.getString("enderchestContent"));
+//		this.enderchestStorageContent = ItemFactory.itemStackArrayFromBase64(resultSet.getString("enderchestStorageContent"));
 	}
 
 	public void loadStatistic(ResultSet resultSet) {

@@ -11,6 +11,7 @@ import eu.wuffy.disco.Disco;
 import eu.wuffy.disco.event.BuildModeChangeEvent;
 import eu.wuffy.disco.listener.InventoryHandler.InventoryEnum;
 import eu.wuffy.synced.IHandler;
+import fr.cocoraid.prodigynightclub.nightclub.NightClub;
 
 public class BuildHandler extends IHandler<Disco> {
 
@@ -25,6 +26,12 @@ public class BuildHandler extends IHandler<Disco> {
 
 		player.getInventory().clear();
 		player.setGameMode(GameMode.CREATIVE);
+
+		NightClub nightClub = NightClub.getNightclubs().get(player.getWorld());
+
+		if (nightClub != null) {
+			nightClub.despawn(player);
+		}
 
 		Bukkit.getScheduler().runTask(this.core,
 				() -> Bukkit.getPluginManager().callEvent(new BuildModeChangeEvent(player, true)));

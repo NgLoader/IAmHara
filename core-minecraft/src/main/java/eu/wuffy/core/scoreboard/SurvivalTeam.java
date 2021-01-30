@@ -3,11 +3,12 @@ package eu.wuffy.core.scoreboard;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import eu.wuffy.core.util.NMSUtil;
-import net.minecraft.server.v1_13_R2.PacketPlayOutScoreboardTeam;
-import net.minecraft.server.v1_13_R2.ScoreboardTeam;
+import eu.wuffy.core.util.PlayerUtil;
+import net.minecraft.server.v1_16_R3.PacketPlayOutScoreboardTeam;
+import net.minecraft.server.v1_16_R3.ScoreboardTeam;
 
 public class SurvivalTeam {
 
@@ -36,19 +37,19 @@ public class SurvivalTeam {
 	public SurvivalTeam(ScoreboardTeam team) {
 		this.team = team;
 
-		NMSUtil.sendPacket(new PacketPlayOutScoreboardTeam(this.team, SurivalTeamStatus.TEAM_CREATE.getValue()));
+		PlayerUtil.sendPacket(Bukkit.getOnlinePlayers(), new PacketPlayOutScoreboardTeam(this.team, SurivalTeamStatus.TEAM_CREATE.getValue()));
 	}
 
 	public void sendCreatePacket(Player player) {
-		NMSUtil.sendPacket(player, new PacketPlayOutScoreboardTeam(this.team, SurivalTeamStatus.TEAM_CREATE.getValue()));
+		PlayerUtil.sendPacket(player, new PacketPlayOutScoreboardTeam(this.team, SurivalTeamStatus.TEAM_CREATE.getValue()));
 
 		if (!this.entrys.isEmpty()) {
-			NMSUtil.sendPacket(player, new PacketPlayOutScoreboardTeam(this.team, this.entrys, SurivalTeamStatus.ENTRY_ADD.getValue()));
+			PlayerUtil.sendPacket(player, new PacketPlayOutScoreboardTeam(this.team, this.entrys, SurivalTeamStatus.ENTRY_ADD.getValue()));
 		}
 	}
 
 	public void sendRemovePacket(Player player) {
-		NMSUtil.sendPacket(player, new PacketPlayOutScoreboardTeam(this.team, SurivalTeamStatus.TEAM_REMOVE.getValue()));
+		PlayerUtil.sendPacket(player, new PacketPlayOutScoreboardTeam(this.team, SurivalTeamStatus.TEAM_REMOVE.getValue()));
 	}
 
 	public void addEntry(List<String> entrys) {
@@ -74,7 +75,7 @@ public class SurvivalTeam {
 
 	private void updateEntry(List<String> entrys, SurivalTeamStatus status) {
 		PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = new PacketPlayOutScoreboardTeam(this.team, entrys, status.getValue());
-		NMSUtil.sendPacket(packetPlayOutScoreboardTeam);
+		PlayerUtil.sendPacket(Bukkit.getOnlinePlayers(), packetPlayOutScoreboardTeam);
 	}
 
 	public List<String> getEntrys() {

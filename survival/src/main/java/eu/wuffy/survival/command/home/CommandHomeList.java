@@ -10,9 +10,9 @@ import org.bukkit.entity.Player;
 import eu.wuffy.survival.Survival;
 import eu.wuffy.survival.handler.home.Home;
 import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.hover.content.Text;
 
 public class CommandHomeList implements CommandExecutor {
 
@@ -37,7 +37,7 @@ public class CommandHomeList implements CommandExecutor {
 
 			for (Home home : homes) {
 				TextComponent textComponent = new TextComponent(Survival.PREFIX + "§8- §a" + home.name + (home.description.isEmpty() ? "" : " §8(§7" + home.description + "§8)"));
-				textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§aKlick zum §2teleportieren").create()));
+				textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§aKlick zum §2teleportieren")));
 				textComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/home " + home.name));
 				player.spigot().sendMessage(textComponent);
 			}

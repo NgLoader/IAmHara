@@ -15,10 +15,10 @@ import eu.wuffy.survival.handler.tpa.TPAHandler;
 import eu.wuffy.survival.handler.tpa.TPAInfo;
 import eu.wuffy.survival.handler.tpa.TPARequests;
 import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.HoverEvent.Action;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.hover.content.Text;
 
 public class CommandTpalist implements CommandExecutor, TabExecutor {
 
@@ -64,13 +64,13 @@ public class CommandTpalist implements CommandExecutor, TabExecutor {
 			String displayName = entry.getKey().getDisplayName();
 
 			TextComponent textComponent = new TextComponent(Survival.PREFIX + "§8- §a" + displayName + " §8(§6" + (info.location != null ? "Nach ihn" : "Zu dir") + "§8)\n");
-			textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§aLeuft in §6" + (int) ((info.expired - System.currentTimeMillis()) / 1000) + " §asekunden §aab").create()));
+			textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§aLeuft in §6" + (int) ((info.expired - System.currentTimeMillis()) / 1000) + " §asekunden §aab")));
 			TextComponent acceptComponent = new TextComponent("§aAnnehmen");
 			acceptComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tpaccept " + displayName));
-			acceptComponent.setHoverEvent(new HoverEvent(Action.SHOW_TEXT, new ComponentBuilder("§7Teleportanfrage von §8\"§6" + displayName + "§8\" §aannehmen").create()));
+			acceptComponent.setHoverEvent(new HoverEvent(Action.SHOW_TEXT, new Text("§7Teleportanfrage von §8\"§6" + displayName + "§8\" §aannehmen")));
 			TextComponent denyComponent = new TextComponent("§cAblehnen");
 			denyComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tpadeny " + displayName));
-			denyComponent.setHoverEvent(new HoverEvent(Action.SHOW_TEXT, new ComponentBuilder("§7Teleportanfrage von §8\"§6" + displayName + "§8\" §cablehnen").create()));
+			denyComponent.setHoverEvent(new HoverEvent(Action.SHOW_TEXT, new Text("§7Teleportanfrage von §8\"§6" + displayName + "§8\" §cablehnen")));
 
 			textComponent.addExtra(this.prefixComponent);
 			textComponent.addExtra(acceptComponent);

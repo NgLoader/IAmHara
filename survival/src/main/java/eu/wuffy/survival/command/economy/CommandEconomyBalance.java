@@ -35,6 +35,7 @@ public class CommandEconomyBalance implements CommandExecutor, TabExecutor {
 //		} else {
 //			sender.sendMessage(Survival.PREFIX + "§7Der angegebene Spieler §a" + args[0] + " §7ist nicht online§8.");
 //		}
+		sender.sendMessage(Survival.PREFIX + "§7Dieses Feature ist derzeitig §cnicht §7aktiviert§8.");
 		return true;
 	}
 

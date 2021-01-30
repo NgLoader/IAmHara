@@ -8,6 +8,8 @@ import com.zaxxer.hikari.HikariConfig;
 
 import eu.wuffy.core.Core;
 import eu.wuffy.core.handler.ChatHandler;
+import eu.wuffy.core.help.HelpSystem;
+import eu.wuffy.core.inventory.InventorySystem;
 import eu.wuffy.core.scoreboard.ScoreboardHandler;
 import eu.wuffy.survival.command.CommandClaimTool;
 import eu.wuffy.survival.command.CommandEnderchest;
@@ -23,10 +25,6 @@ import eu.wuffy.survival.command.admin.CommandSurvival;
 import eu.wuffy.survival.command.admin.CommandVanish;
 import eu.wuffy.survival.command.economy.CommandEconomyBalance;
 import eu.wuffy.survival.command.help.CommandHelp;
-import eu.wuffy.survival.command.help.CommandHelpCreate;
-import eu.wuffy.survival.command.help.CommandHelpDelete;
-import eu.wuffy.survival.command.help.CommandHelpList;
-import eu.wuffy.survival.command.help.CommandHelpUpdate;
 import eu.wuffy.survival.command.home.CommandHome;
 import eu.wuffy.survival.command.home.CommandHomeCreate;
 import eu.wuffy.survival.command.home.CommandHomeDelete;
@@ -45,21 +43,17 @@ import eu.wuffy.survival.command.warp.CommandWarpDelete;
 import eu.wuffy.survival.command.warp.CommandWarpDeleteAlias;
 import eu.wuffy.survival.command.warp.CommandWarpList;
 import eu.wuffy.survival.database.SurvivalDatabase;
-import eu.wuffy.survival.handler.InventoryHandler;
+import eu.wuffy.survival.handler.ChairHandler;
+import eu.wuffy.survival.handler.SleepHandler;
 import eu.wuffy.survival.handler.SurvivalHologramHandler;
+import eu.wuffy.survival.handler.SurvivalNotificationHandler;
 import eu.wuffy.survival.handler.TreeFellerHandler;
 import eu.wuffy.survival.handler.VanishHandler;
-import eu.wuffy.survival.handler.WinterHandler;
-import eu.wuffy.survival.handler.dynmap.DynmapHandler;
 import eu.wuffy.survival.handler.event.EventHandler;
-import eu.wuffy.survival.handler.help.HelpHandler;
 import eu.wuffy.survival.handler.home.HomeHandler;
-import eu.wuffy.survival.handler.notification.NotificationHandler;
-import eu.wuffy.survival.handler.storage.StorageHandler;
 import eu.wuffy.survival.handler.tpa.TPAHandler;
 import eu.wuffy.survival.handler.warp.WarpHandler;
 import eu.wuffy.synced.IHandler;
-import me.angeschossen.lands.api.integration.LandsIntegration;
 
 public class Survival extends Core<SurvivalDatabase> {
 
@@ -67,23 +61,22 @@ public class Survival extends Core<SurvivalDatabase> {
 
 	private final boolean whitelist;
 
+	private final InventorySystem inventorySystem;
+	private final HelpSystem helpSystem;
 	private final ScoreboardHandler scoreboardHandler;
 	private final ChatHandler chatHandler;
 	private final WarpHandler warpHandler;
 	private final HomeHandler homeHandler;
 	private final VanishHandler vanishHandler;
-	private final InventoryHandler inventoryHandler;
-	private final HelpHandler helpHandler;
+//	private final InventoryHandler inventoryHandler;
 	private final TreeFellerHandler treeFellerHandler;
-	private final DynmapHandler dynmapHandler;
-	private final WinterHandler winterHandler;
-	private final NotificationHandler notificationHandler;
-	private final StorageHandler storageHandler;
+	private final SurvivalNotificationHandler notificationHandler;
+//	private final StorageHandler storageHandler;
 	private final EventHandler eventHandler;
 	private final SurvivalHologramHandler hologramHandler;
 	private final TPAHandler tpaHandler;
-
-	private LandsIntegration landsIntegration;
+	private final ChairHandler chairHandler;
+	private final SleepHandler sleepHandler;
 
 	public Survival() {
 		this.whitelist = Bukkit.hasWhitelist();
@@ -93,9 +86,9 @@ public class Survival extends Core<SurvivalDatabase> {
 		databaseConfig.setDataSourceClassName("org.mariadb.jdbc.MariaDbDataSource");
 		databaseConfig.addDataSourceProperty("serverName", "173.249.17.9");
 		databaseConfig.addDataSourceProperty("port", 3306);
-		databaseConfig.addDataSourceProperty("databaseName", "minecraft");
-		databaseConfig.setUsername("minecraft");
-		databaseConfig.setPassword("GjVFNgg7zzVZuGKVLGue2sTM8K6GZchxdwuDk4Xkcb2ymFGrsVnhn3RLgzwfcgYB6cuCPC72x9ehxHUpjLccLNm5dSwUTuekUMxnNsVkcKA3SJaC5qyGpQ3n6w8S9PSD");
+		databaseConfig.addDataSourceProperty("databaseName", "minecraft_zanrux");
+		databaseConfig.setUsername("minecraft_zanrux");
+		databaseConfig.setPassword("AZjjdO23IrsIVThw");
 
 		databaseConfig.setMaxLifetime(300000);
 		databaseConfig.setConnectionTimeout(5000);
@@ -105,21 +98,22 @@ public class Survival extends Core<SurvivalDatabase> {
 
 		this.setDatabase(new SurvivalDatabase(this, databaseConfig));
 
+		this.inventorySystem = new InventorySystem(this);
+		this.helpSystem = new HelpSystem(this, PREFIX);
 		this.scoreboardHandler = new ScoreboardHandler(this);
 		this.chatHandler = new ChatHandler(this);
 		this.warpHandler = new WarpHandler(this);
 		this.homeHandler = new HomeHandler(this);
 		this.vanishHandler = new VanishHandler(this);
-		this.inventoryHandler = new InventoryHandler(this);
-		this.helpHandler = new HelpHandler(this);
+//		this.inventoryHandler = new InventoryHandler(this);
 		this.treeFellerHandler = new TreeFellerHandler(this);
-		this.dynmapHandler = new DynmapHandler(this);
-		this.winterHandler = new WinterHandler(this);
-		this.notificationHandler = new NotificationHandler(this);
-		this.storageHandler = new StorageHandler(this);
+		this.notificationHandler = new SurvivalNotificationHandler(this);
+//		this.storageHandler = new StorageHandler(this);
 		this.eventHandler = new EventHandler(this);
 		this.hologramHandler = new SurvivalHologramHandler(this);
 		this.tpaHandler = new TPAHandler(this);
+		this.chairHandler = new ChairHandler(this, PREFIX);
+		this.sleepHandler = new SleepHandler(this, PREFIX);
 	}
 
 	@Override
@@ -137,8 +131,6 @@ public class Survival extends Core<SurvivalDatabase> {
 			Bukkit.getConsoleSender().sendMessage(Survival.PREFIX + "§4Error by connecting to database§8!");
 			return;
 		}
-
-		this.landsIntegration = new LandsIntegration(this, false);
 
 		IHandler.getHandlers().forEach(IHandler::enable);
 
@@ -191,10 +183,6 @@ public class Survival extends Core<SurvivalDatabase> {
 		getCommand("warpdeletealias").setExecutor(new CommandWarpDeleteAlias(this));
 
 		getCommand("help").setExecutor(new CommandHelp(this));
-		getCommand("helpcreate").setExecutor(new CommandHelpCreate(this));
-		getCommand("helpdelete").setExecutor(new CommandHelpDelete(this));
-		getCommand("helplist").setExecutor(new CommandHelpList(this));
-		getCommand("helpupdate").setExecutor(new CommandHelpUpdate(this));
 
 		getCommand("balance").setExecutor(new CommandEconomyBalance(this));
 
@@ -205,6 +193,14 @@ public class Survival extends Core<SurvivalDatabase> {
 		getCommand("tpadeny").setExecutor(new CommandTpadeny(this));
 		getCommand("tpahere").setExecutor(new CommandTpahere(this));
 		getCommand("tpalist").setExecutor(new CommandTpalist(this));
+	}
+
+	public InventorySystem getInventorySystem() {
+		return this.inventorySystem;
+	}
+
+	public HelpSystem getHelpSystem() {
+		return this.helpSystem;
 	}
 
 	public ScoreboardHandler getScoreboardHandler() {
@@ -227,33 +223,21 @@ public class Survival extends Core<SurvivalDatabase> {
 		return this.vanishHandler;
 	}
 
-	public InventoryHandler getInventoryHandler() {
-		return this.inventoryHandler;
-	}
-
-	public HelpHandler getHelpHandler() {
-		return this.helpHandler;
-	}
+//	public InventoryHandler getInventoryHandler() {
+//		return this.inventoryHandler;
+//	}
 
 	public TreeFellerHandler getTreeFellerHandler() {
 		return this.treeFellerHandler;
 	}
 
-	public DynmapHandler getDynmapHandler() {
-		return this.dynmapHandler;
-	}
-
-	public WinterHandler getWinterHandler() {
-		return this.winterHandler;
-	}
-
-	public NotificationHandler getNotificationHandler() {
+	public SurvivalNotificationHandler getNotificationHandler() {
 		return this.notificationHandler;
 	}
 
-	public StorageHandler getStorageHandler() {
-		return this.storageHandler;
-	}
+//	public StorageHandler getStorageHandler() {
+//		return this.storageHandler;
+//	}
 
 	public EventHandler getEventHandler() {
 		return this.eventHandler;
@@ -263,11 +247,15 @@ public class Survival extends Core<SurvivalDatabase> {
 		return this.hologramHandler;
 	}
 
-	public LandsIntegration getLandsIntegration() {
-		return this.landsIntegration;
-	}
-
 	public TPAHandler getTpaHandler() {
 		return this.tpaHandler;
+	}
+
+	public ChairHandler getChairHandler() {
+		return this.chairHandler;
+	}
+
+	public SleepHandler getSleepHandler() {
+		return this.sleepHandler;
 	}
 }

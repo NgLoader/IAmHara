@@ -9,9 +9,9 @@ import eu.wuffy.survival.handler.warp.Warp;
 import eu.wuffy.survival.handler.warp.WarpAlias;
 import eu.wuffy.survival.handler.warp.WarpHandler;
 import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.hover.content.Text;
 
 public class CommandWarpList implements CommandExecutor {
 
@@ -44,13 +44,13 @@ public class CommandWarpList implements CommandExecutor {
 			else {
 //				sender.sendMessage(Freebuild.PREFIX + "§8- §a" + warp.getName() + (warp.getDescription().isEmpty() ? "" : " §8(§7" + warp.getDescription() + "§8)"));
 				TextComponent textComponent = new TextComponent(Survival.PREFIX + "§8- §a" + warp.name + (warp.description.isEmpty() ? "" : " §8(§7" + warp.description + "§8)"));
-				textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§aKlick zum §2teleportieren").create()));
+				textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§aKlick zum §2teleportieren")));
 				textComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/warp " + warp.name));
 				sender.spigot().sendMessage(textComponent);
 
 				for (WarpAlias alias : warp.aliases) {
 					TextComponent textComponent2 = new TextComponent(Survival.PREFIX + "     §8> §a" + alias.alias);
-					textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§aKlick zum §2teleportieren").create()));
+					textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§aKlick zum §2teleportieren")));
 					textComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/warp " + warp.name));
 					sender.spigot().sendMessage(textComponent2);
 				}

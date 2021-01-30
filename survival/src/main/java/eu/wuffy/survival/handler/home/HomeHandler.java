@@ -10,8 +10,13 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 
+import eu.wuffy.core.help.IHelp;
+import eu.wuffy.core.util.ItemFactory;
 import eu.wuffy.survival.Survival;
+import eu.wuffy.survival.common.SurvivalHelpCategory;
 import eu.wuffy.synced.IHandler;
 
 public class HomeHandler extends IHandler<Survival> {
@@ -20,6 +25,98 @@ public class HomeHandler extends IHandler<Survival> {
 
 	public HomeHandler(Survival core) {
 		super(core);
+	}
+
+	@Override
+	public void onInit() {
+		core.getHelpSystem().addHelp(SurvivalHelpCategory.HOME.getCategory(), new IHelp() {
+			
+			@Override
+			public String getName() {
+				return "Home";
+			}
+			
+			@Override
+			public ItemStack getDisplayItem() {
+				return new ItemFactory(Material.ENDER_PEARL, "§8/§7home §e<§7name§e>").build();
+			}
+			
+			@Override
+			public String getDescription() {
+				return "Mit diesen befehl kannst du dich zu ein home teleportieren.";
+			}
+			
+			@Override
+			public String[] getAliases() {
+				return new String[0];
+			}
+		});
+		core.getHelpSystem().addHelp(SurvivalHelpCategory.HOME.getCategory(), new IHelp() {
+			
+			@Override
+			public String getName() {
+				return "Homes";
+			}
+			
+			@Override
+			public ItemStack getDisplayItem() {
+				return new ItemFactory(Material.PAPER, "§8/§7homes").build();
+			}
+			
+			@Override
+			public String getDescription() {
+				return "Mit diesen befehl kannst du dir deine homes auflisten lassen.";
+			}
+			
+			@Override
+			public String[] getAliases() {
+				return new String[0];
+			}
+		});
+		core.getHelpSystem().addHelp(SurvivalHelpCategory.HOME.getCategory(), new IHelp() {
+			
+			@Override
+			public String getName() {
+				return "Create";
+			}
+			
+			@Override
+			public ItemStack getDisplayItem() {
+				return new ItemFactory(Material.END_CRYSTAL, "§8/§7addhome §e<§7name§e> §e[§7beschreibung§e]").build();
+			}
+			
+			@Override
+			public String getDescription() {
+				return "Mit diesen befehl kannst du dir ein home erstellen.";
+			}
+			
+			@Override
+			public String[] getAliases() {
+				return new String[0];
+			}
+		});
+		core.getHelpSystem().addHelp(SurvivalHelpCategory.HOME.getCategory(), new IHelp() {
+			
+			@Override
+			public String getName() {
+				return "Delete";
+			}
+			
+			@Override
+			public ItemStack getDisplayItem() {
+				return new ItemFactory(Material.BARRIER, "§8/§7delhome §e<§7name§e>").build();
+			}
+			
+			@Override
+			public String getDescription() {
+				return "Mit diesen befehl kannst du ein home löschen.";
+			}
+			
+			@Override
+			public String[] getAliases() {
+				return new String[0];
+			}
+		});
 	}
 
 	@Override

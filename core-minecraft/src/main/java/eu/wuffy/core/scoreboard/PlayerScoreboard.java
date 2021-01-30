@@ -9,11 +9,11 @@ import java.util.stream.Collectors;
 
 import org.bukkit.entity.Player;
 
-import eu.wuffy.core.util.NMSUtil;
+import eu.wuffy.core.util.PlayerUtil;
 import net.luckperms.api.model.group.Group;
-import net.minecraft.server.v1_13_R2.PacketPlayOutScoreboardDisplayObjective;
-import net.minecraft.server.v1_13_R2.PacketPlayOutScoreboardObjective;
-import net.minecraft.server.v1_13_R2.ScoreboardObjective;
+import net.minecraft.server.v1_16_R3.PacketPlayOutScoreboardDisplayObjective;
+import net.minecraft.server.v1_16_R3.PacketPlayOutScoreboardObjective;
+import net.minecraft.server.v1_16_R3.ScoreboardObjective;
 
 public class PlayerScoreboard {
 
@@ -65,7 +65,7 @@ public class PlayerScoreboard {
 		PacketPlayOutScoreboardObjective packetPlayOutScoreboardObjectiveCreate = new PacketPlayOutScoreboardObjective(this.objective, 0);
 		PacketPlayOutScoreboardDisplayObjective packetPlayOutScoreboardDisplayObjective = new PacketPlayOutScoreboardDisplayObjective(1, this.objective);
 
-		NMSUtil.sendPacket(this.player, packetPlayOutScoreboardObjectiveDelete, packetPlayOutScoreboardObjectiveCreate, packetPlayOutScoreboardDisplayObjective);
+		PlayerUtil.sendPacket(this.player, packetPlayOutScoreboardObjectiveDelete, packetPlayOutScoreboardObjectiveCreate, packetPlayOutScoreboardDisplayObjective);
 	}
 
 	public SurvivalObjective createObjective(String identifier, String scoreValue, int score) {

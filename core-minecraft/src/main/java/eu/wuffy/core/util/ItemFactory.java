@@ -1,26 +1,23 @@
 package eu.wuffy.core.util;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Material;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.Damageable;
@@ -31,82 +28,22 @@ import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionEffect;
-import org.bukkit.util.io.BukkitObjectInputStream;
-import org.bukkit.util.io.BukkitObjectOutputStream;
-import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
+
+import eu.wuffy.synced.util.ReflectionUtil;
+
+/**
+ * @author Ingrim4
+ * @author NgLoader
+ */
 public class ItemFactory extends ItemStack {
 
-	public static final List<Material> MATERIAL_ITEMS = Arrays.stream(Material.values()).filter(material -> material.isItem()).collect(Collectors.toList());
-	public static final List<Material> MATERIAL_BLOCKS = Arrays.stream(Material.values()).filter(material -> material.isBlock()).collect(Collectors.toList());
+	private static final Method CRAFTMETASKULL_SET_PROFILE = ReflectionUtil.getMethod(MCReflectionUtil.getCraftBukkitClass("inventory.CraftMetaSkull"), "setProfile", GameProfile.class);
 
-	public static String[] playerInventoryToBase64(PlayerInventory playerInventory) {
-		return new String[] { toBase64(playerInventory), itemStackArrayToBase64(playerInventory.getArmorContents()) };
-	}
-
-	public static String itemStackArrayToBase64(ItemStack[] items) {
-		try {
-			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-			BukkitObjectOutputStream dataOutput = new BukkitObjectOutputStream(outputStream);
-
-			dataOutput.writeInt(items.length);
-			for (int i = 0; i < items.length; i++)
-				dataOutput.writeObject(items[i]);
-			dataOutput.close();
-			
-			return Base64Coder.encodeLines(outputStream.toByteArray());
-		} catch (Exception e) {
-			throw new IllegalStateException("Unable to save item stacks.", e);
-		}
-	}
-
-	public static String toBase64(Inventory inventory) {
-		try {
-			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-			BukkitObjectOutputStream dataOutput = new BukkitObjectOutputStream(outputStream);
-
-			dataOutput.writeInt(inventory.getSize());
-			for (int i = 0; i < inventory.getSize(); i++)
-				dataOutput.writeObject(inventory.getItem(i));
-			dataOutput.close();
-			
-			return Base64Coder.encodeLines(outputStream.toByteArray());
-		} catch (Exception e) {
-			throw new IllegalStateException("Unable to save item stacks.", e);
-		}
-	}
-
-	public static Inventory fromBase64(String data) throws IOException {
-		try {
-			ByteArrayInputStream inputStream = new ByteArrayInputStream(Base64Coder.decodeLines(data));
-			BukkitObjectInputStream dataInput = new BukkitObjectInputStream(inputStream);
-			Inventory inventory = Bukkit.getServer().createInventory(null, dataInput.readInt());
-			
-			for (int i = 0; i < inventory.getSize(); i++)
-				inventory.setItem(i, (ItemStack) dataInput.readObject());
-			dataInput.close();
-			
-			return inventory;
-		} catch (ClassNotFoundException e) {
-			throw new IOException("Unable to decode class type.", e);
-		}
-	}
-
-	public static ItemStack[] itemStackArrayFromBase64(String data) {
-		try {
-			ByteArrayInputStream inputStream = new ByteArrayInputStream(Base64Coder.decodeLines(data));
-			BukkitObjectInputStream dataInput = new BukkitObjectInputStream(inputStream);
-			ItemStack[] items = new ItemStack[dataInput.readInt()];
-			
-			for (int i = 0; i < items.length; i++)
-				items[i] = (ItemStack) dataInput.readObject();
-			dataInput.close();
-			
-			return items;
-		} catch (Exception e) {
-			return null;
-		}
-	}
+	public static final List<Material> MATERIAL_ITEMS = Collections.unmodifiableList(Arrays.stream(Material.values()).filter(Material::isItem).collect(Collectors.toList()));
+	public static final List<Material> MATERIAL_BLOCKS = Collections.unmodifiableList(Arrays.stream(Material.values()).filter(Material::isBlock).collect(Collectors.toList()));
 
 	private ItemMeta meta;
 
@@ -123,11 +60,12 @@ public class ItemFactory extends ItemStack {
 	}
 	
 	public ItemFactory(Material material) {
-		this(material, 1);
+		this(material, 1, 0);
 	}
 	
-	public ItemFactory(Material material, int amount) {
-		this(material, amount, 0);
+	public ItemFactory(Material material, String name) {
+		this(material);
+		this.setDisplayName(name);
 	}
 
 	public ItemFactory(Material material, int amount, String name, int damage) {
@@ -140,23 +78,27 @@ public class ItemFactory extends ItemStack {
 		this.setDisplayName(name);
 	}
 
+	public ItemFactory(Material material, int damage) {
+		this(material, 1, damage);
+	}
+
 	public ItemFactory(Material material, int amount, int damage) {
 		this.setType(material);
 		this.setAmount(amount);
 		this.setDamage(damage);
 		this.meta = this.getItemMeta();
 	}
-	
+
 	public ItemFactory setMaterial(Material material) {
 		this.setType(material);
 		return this;
 	}
-	
+
 	public ItemFactory setNumber(int amount) {
 		this.setAmount(amount);
 		return this;
 	}
-	
+
 	public ItemFactory setDamage(int damage) {
 		if (this.meta != null)
 			((Damageable) this.meta).setDamage(damage);
@@ -169,10 +111,14 @@ public class ItemFactory extends ItemStack {
 		}
 		return this;
 	}
-
+	
 	public ItemFactory setDisplayName(String name) {
 		this.meta.setDisplayName(name);
 		return this;
+	}
+
+	public String getDisplayName() {
+		return this.meta.getDisplayName();
 	}
 	
 	public ItemFactory setLore(int index, String lore) {
@@ -371,6 +317,11 @@ public class ItemFactory extends ItemStack {
 		return this;
 	}
 	
+	public ItemFactory setUnbreakable(Boolean unbreakable) {
+		this.meta.setUnbreakable(unbreakable);
+		return this;
+	}
+	
 	public ItemFactory addEnchant(Enchantment enchantment, int level, boolean see) {
 		ItemMeta meta = this.meta;
 		meta.addEnchant(enchantment, level, see);
@@ -399,7 +350,20 @@ public class ItemFactory extends ItemStack {
 		meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
 		return this;
 	}
-	
+
+	public ItemFactory setSkullProfile(String texture) {
+		try {
+			SkullMeta meta = (SkullMeta) this.meta;
+			GameProfile gameProfile = new GameProfile(UUID.randomUUID(), "");
+			gameProfile.getProperties().put("textures", new Property("textures", texture));
+			CRAFTMETASKULL_SET_PROFILE.invoke(meta, gameProfile);
+		} catch (Exception e) {
+			throw new ClassCastException("Error by setting skull profile");
+		}
+
+		return this;
+	}
+
 	public ItemFactory clone() {
 		return new ItemFactory(this.build());
 	}

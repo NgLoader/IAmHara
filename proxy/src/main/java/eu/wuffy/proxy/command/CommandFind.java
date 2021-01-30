@@ -7,6 +7,7 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.hover.content.Text;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 
@@ -26,7 +27,7 @@ public class CommandFind extends Command {
 			if(player != null&& player.getServer() != null) {
 				sender.sendMessage(new ComponentBuilder(Proxy.PREFIX + "§7Der §aSpieler §8\"§a" + player.getName() + "§8\" §7ist §aOnline §7auf ")
 						.append(player.getServer().getInfo().getName())
-						.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§aKlick zum verbinden").create()))
+						.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§aKlick zum verbinden")))
 						.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/server " + player.getServer().getInfo().getName())).create());
 			}
 			else

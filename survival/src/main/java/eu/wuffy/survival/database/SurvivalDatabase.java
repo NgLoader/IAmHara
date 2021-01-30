@@ -13,7 +13,6 @@ import com.zaxxer.hikari.HikariConfig;
 
 import eu.wuffy.core.database.CoreDatabase;
 import eu.wuffy.survival.Survival;
-import eu.wuffy.survival.handler.help.HelpLine;
 import eu.wuffy.survival.handler.home.Home;
 import eu.wuffy.survival.handler.warp.Warp;
 import eu.wuffy.survival.handler.warp.WarpAlias;
@@ -115,16 +114,6 @@ public class SurvivalDatabase extends CoreDatabase {
 //					+ ") DEFAULT CHARSET = utf8mb4", SurvivalDatabase.DATABASE_PREFIX))
 //	};
 
-	private static final DatabaseTable[] TABLES_HELP = {
-			new DatabaseTable(SurvivalDatabase.DATABASE_PREFIX + "help", String.format(
-					"CREATE TABLE `%shelp` ("
-					+ "`line` INT					NOT NULL, "
-					+ "`message` VARCHAR(255) 		NOT NULL, "
-					+ "`permission` VARCHAR(255) 	NOT NULL, "
-					+ "PRIMARY KEY (`line`)"
-					+ ") DEFAULT CHARSET = utf8mb4", SurvivalDatabase.DATABASE_PREFIX))
-	};
-
 //	private static final DatabaseTable[] TABLES_ECONOMY = {
 //			new DatabaseTable(SurvivalDatabase.DATABASE_PREFIX + "economy_players", String.format(
 //					"CREATE TABLE `%seconomy_players` ("
@@ -160,11 +149,6 @@ public class SurvivalDatabase extends CoreDatabase {
 	private static final String HOME_INSERT = String.format("INSERT INTO %shomes (player_id, name, description, world, x, y, z, yaw, pitch) VALUES((SELECT id FROM %splayers WHERE uuid=?), ?, ?, ?, ?, ?, ?, ?, ?)", SurvivalDatabase.DATABASE_PREFIX, Database.DATABASE_PREFIX);
 	private static final String HOME_DELETE = String.format("DELETE FROM %shomes WHERE home_id=?", SurvivalDatabase.DATABASE_PREFIX);
 
-	private static final String HELP_LIST = String.format("SELECT * FROM %shelp LIMIT 255", SurvivalDatabase.DATABASE_PREFIX);
-	private static final String HELP_INSERT_LINE = String.format("INSERT INTO %shelp (line, message, permission) VALUES(?, ?, ?)", SurvivalDatabase.DATABASE_PREFIX);
-	private static final String HELP_UPDATE_LINE = String.format("UPDATE %shelp SET line=?, message=?, permission=? WHERE line=?", SurvivalDatabase.DATABASE_PREFIX);
-	private static final String HELP_DELETE_LINE = String.format("DELETE FROM %shelp WHERE line=?", SurvivalDatabase.DATABASE_PREFIX);
-
 //	private static final String PLAYERDATA_GET_BY_UUID = String.format("SELECT * FROM %splayerdata WHERE player_id IN (SELECT id FROM %splayers WHERE uuid=?)", SurvivalDatabase.DATABASE_PREFIX, Database.DATABASE_PREFIX);
 //	private static final String INVENTORY_INSERT = String.format("INSERT INTO %splayerdata (player_id, gamemode, content, armorContent, storageContent, extraContent, enderchestContent) VALUES((SELECT id FROM %splayers WHERE uuid=?), ?, ?, ?, ?, ?, ?)", SurvivalDatabase.DATABASE_PREFIX, Database.DATABASE_PREFIX);
 //	private static final String INVENTORY_UPDATE = String.format("UPDATE %splayerdata SET gamemode = ?, content = ?, armorContent = ?, storageContent = ?, extraContent = ?, enderchestContent = ?", SurvivalDatabase.DATABASE_PREFIX);
@@ -196,7 +180,6 @@ public class SurvivalDatabase extends CoreDatabase {
 		this.addDefaultTable(SurvivalDatabase.TABLES_WARPS);
 		this.addDefaultTable(SurvivalDatabase.TABLES_HOMES);
 //		this.addDefaultTable(SurvivalDatabase.TABLES_PLAYERINFO);
-		this.addDefaultTable(SurvivalDatabase.TABLES_HELP);
 //		this.addDefaultTable(SurvivalDatabase.TABLES_ECONOMY);
 	}
 
@@ -474,55 +457,6 @@ public class SurvivalDatabase extends CoreDatabase {
 		}
 	}
 	*/
-
-	public List<HelpLine> loadHelpLines() throws SQLException {
-		List<HelpLine> homes = new ArrayList<HelpLine>();
-
-		try (Connection connection = this.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(SurvivalDatabase.HELP_LIST)) {
-			try (ResultSet resultSet = preparedStatement.executeQuery()) {
-				while (resultSet.next()) {
-					homes.add(new HelpLine(
-							resultSet.getInt("line"),
-							resultSet.getString("message"),
-							resultSet.getString("permission")));
-				}
-			}
-		}
-
-		return homes;
-	}
-
-	public HelpLine createHelpLine(int line, String message, String permission) throws SQLException {
-		try (Connection connection = this.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(SurvivalDatabase.HELP_INSERT_LINE)) {
-			preparedStatement.setInt(1, line);
-			preparedStatement.setString(2, message);
-			preparedStatement.setString(3, permission);
-			preparedStatement.execute();
-
-			return new HelpLine(line, message, permission);
-		}
-	}
-
-	public void updateHelpLine(HelpLine helpLine, int line, String message, String permission) throws SQLException {
-		try (Connection connection = this.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(SurvivalDatabase.HELP_UPDATE_LINE)) {
-			preparedStatement.setInt(1, line);
-			preparedStatement.setString(2, message);
-			preparedStatement.setString(3, permission);
-			preparedStatement.setInt(4, helpLine.line);
-			preparedStatement.execute();
-
-			helpLine.line = line;
-			helpLine.message = message;
-			helpLine.permission = permission;
-		}
-	}
-
-	public void deleteHelpLine(HelpLine helpLine) throws SQLException {
-		try (Connection connection = this.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(SurvivalDatabase.HELP_DELETE_LINE)) {
-			preparedStatement.setInt(1, helpLine.line);
-			preparedStatement.execute();
-		}
-	}
 
 	public boolean economyPlayerExist(String name) throws SQLException {
 		try (Connection connection = this.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(SurvivalDatabase.ECONOMY_PLAYER_EXIST)) {

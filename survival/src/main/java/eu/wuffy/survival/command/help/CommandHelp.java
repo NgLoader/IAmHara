@@ -3,26 +3,30 @@ package eu.wuffy.survival.command.help;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
+import eu.wuffy.core.help.HelpSystem;
+import eu.wuffy.core.inventory.InventorySystem;
 import eu.wuffy.survival.Survival;
-import eu.wuffy.survival.handler.help.HelpHandler;
 
 public class CommandHelp implements CommandExecutor {
 
-	private final Survival core;
-	private final HelpHandler handler;
+	private final HelpSystem helpSystem;
+	private final InventorySystem inventorySystem;
 
 	public CommandHelp(Survival core) {
-		this.core = core;
-		this.handler = this.core.getHelpHandler();
+		this.helpSystem = core.getHelpSystem();
+		this.inventorySystem = core.getInventorySystem();
 	}
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-		if (sender.hasPermission("wuffy.help"))
-			sender.sendMessage(this.handler.build(sender));
-		else
-			sender.sendMessage(Survival.PREFIX + "§7Du hast keine §cRechte §7um diesen §cCommand §7zu nutzen§8.");
+		if (!(sender instanceof Player)) {
+			sender.sendMessage(Survival.PREFIX + "§7Die Console hat keinen §4Ping§8.");
+			return true;
+		}
+
+		this.inventorySystem.openInventory((Player) sender, this.helpSystem.getInventory());
 		return true;
 	}
 }

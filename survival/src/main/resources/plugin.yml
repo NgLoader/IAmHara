@@ -1,10 +1,10 @@
 name: Survival
-author: TeamWuffy
-version: 0.0.1
-api-version: 1.13
-depend: [LuckPerms, Lands]
-softdepend: [LuckPerms, Matrix, dynmap, WorldEdit, WorldGuard]
-loadbefore: [LuckPerms, Matrix, dynmap, WorldEdit, WorldGuard, Lands]
+author: NgLoader
+version: 1.0.0
+api-version: 1.16
+depend: [LuckPerms, ProtocolLib]
+softdepend: [LuckPerms, WorldEdit, WorldGuard]
+loadbefore: [LuckPerms, WorldEdit, WorldGuard, Lands]
 
 main: eu.wuffy.survival.Survival
 
@@ -46,14 +46,6 @@ commands:
     aliases: [listhomes, lhomes, lhome, lh, listh, homes, homelist, homel, hl]
   help:
     aliases: [h]
-  helpcreate:
-    aliases: [helpadd, helpc]
-  helpdelete:
-    aliases: [helpdel, helpremove, helpd]
-  helpupdate:
-    aliases: [helpu]
-  helplist:
-    aliases: [hlist, helpl]
   say:
   ping:
   spawn:

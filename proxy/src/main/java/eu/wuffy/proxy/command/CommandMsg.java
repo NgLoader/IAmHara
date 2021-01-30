@@ -8,6 +8,7 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.hover.content.Text;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 
@@ -29,17 +30,17 @@ public class CommandMsg extends Command {
 					
 					sender.sendMessage(new ComponentBuilder("§8[§cMsg§8] §7Du §8§l▶ §a" + target.getName() + " §8» §7" + message)
 							.event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/msg " + target.getName() + " "))
-							.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§7Schreibe §7eine §7weitere §aNachricht §7an §a" + target.getName()).create())).create());
+							.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§7Schreibe §7eine §7weitere §aNachricht §7an §a" + target.getName()))).create());
 					
 					ComponentBuilder componentBuilder = new ComponentBuilder("§8[§cMsg§8] " + senderName + " §8» §7" + message);
 					
 					if(sender instanceof ProxiedPlayer)
 						componentBuilder
-						.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§7Antworte §a" + sender.getName()).create()))
+						.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§7Antworte §a" + sender.getName())))
 						.event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/msg " + sender.getName() + " "));
 					else
 						componentBuilder
-						.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§7Du §7kannst §7der §cConsole §7nicht §cantworten").create()));
+						.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§7Du §7kannst §7der §cConsole §7nicht §cantworten")));
 					
 					target.sendMessage(componentBuilder.create());
 				} else

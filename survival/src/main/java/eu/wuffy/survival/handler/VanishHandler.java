@@ -12,28 +12,36 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
-import eu.wuffy.core.util.NMSUtil;
+import eu.wuffy.core.util.GroupUtil;
+import eu.wuffy.core.util.PlayerUtil;
 import eu.wuffy.survival.Survival;
 import eu.wuffy.survival.command.admin.CommandAdminTool;
 import eu.wuffy.synced.IHandler;
-import net.minecraft.server.v1_13_R2.ChatMessageType;
-import net.minecraft.server.v1_13_R2.IChatBaseComponent.ChatSerializer;
-import net.minecraft.server.v1_13_R2.PacketPlayOutChat;
-import net.minecraft.server.v1_13_R2.PacketPlayOutPlayerInfo;
+import net.luckperms.api.LuckPerms;
+import net.luckperms.api.LuckPermsProvider;
+import net.luckperms.api.model.group.Group;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.minecraft.server.v1_16_R3.PacketPlayOutPlayerInfo;
 
 public class VanishHandler extends IHandler<Survival> {
-
-	private static final PacketPlayOutChat ACTION_BAR_IN_VANISH = new PacketPlayOutChat(ChatSerializer.a("{\"text\": \"§aDu bist §2unsichtbar\"}"), ChatMessageType.GAME_INFO);
 
 	private final List<Player> hiddenPlayers = new ArrayList<Player>();
 
 	private final Map<Player, GameMode> playerGamemode = new HashMap<Player, GameMode>();
 	private final Map<Player, ItemStack[][]> playerInventory = new HashMap<Player, ItemStack[][]>();
 
+	private LuckPerms luckPerms;
+
 	private int scheduleId;
 
 	public VanishHandler(Survival core) {
 		super(core);
+	}
+
+	@Override
+	public void onEnable() {
+		this.luckPerms = LuckPermsProvider.get();
 	}
 
 	@Override
@@ -67,8 +75,6 @@ public class VanishHandler extends IHandler<Survival> {
 
 		this.hiddenPlayers.add(player);
 
-//		this.getCore().getDynmapHandler().getDynmap().setPlayerVisiblity(player, false);
-
 		PlayerInventory inventory = player.getInventory();
 		ItemStack[][] storage = new ItemStack[4][];
 
@@ -83,10 +89,10 @@ public class VanishHandler extends IHandler<Survival> {
 		player.getInventory().clear();
 		CommandAdminTool.setAdminTool(inventory);
 
-		player.setGameMode(GameMode.SPECTATOR);
-
 		this.makePlayerInTabInvisible(player);
 		this.startScheduler();
+
+		player.setGameMode(GameMode.SPECTATOR);
 	}
 
 	public void removePlayer(Player player) {
@@ -94,8 +100,6 @@ public class VanishHandler extends IHandler<Survival> {
 			return;
 
 		this.hiddenPlayers.remove(player);
-
-//		this.getCore().getDynmapHandler().getDynmap().setPlayerVisiblity(player, true);
 
 		player.setGameMode(this.playerGamemode.remove(player));
 
@@ -112,57 +116,76 @@ public class VanishHandler extends IHandler<Survival> {
 	}
 
 	public void makePlayerInTabInvisible(Player player) {
-		PacketPlayOutPlayerInfo visiblePacket = NMSUtil.addToTabList(player, player.getDisplayName() + " §8[§cVanish§8]§7");
-		PacketPlayOutPlayerInfo hidePacket = NMSUtil.addToTabList(player, player.getDisplayName());
+		Group group = this.luckPerms.getGroupManager().getGroup(this.luckPerms.getUserManager().getUser(player.getUniqueId()).getPrimaryGroup());
+		String prefix = GroupUtil.getGroupPrefix(group).orElseGet(() -> "§a");
+		String color = GroupUtil.getGroupMetaSorted(group, "tablist-color", "a");
+		PacketPlayOutPlayerInfo visiblePacket = PlayerUtil.addToTabList(player, String.format("%s§%s%s §8[§cV§8]", prefix, color, player.getDisplayName()));
+		PacketPlayOutPlayerInfo hidePacket = PlayerUtil.addToTabList(player, String.format("%s§%s%s", prefix, color, player.getDisplayName()));
 
 		for (Player all : Bukkit.getOnlinePlayers()) {
 			if (all.hasPermission("wuffy.vanish.see.other") || player.equals(all) || this.hiddenPlayers.contains(all)) {
 				all.showPlayer(this.getCore(), player);
-				NMSUtil.sendPacket(all, visiblePacket);
+				PlayerUtil.sendPacket(all, visiblePacket);
 			} else {
 				all.hidePlayer(this.getCore(), player);
-				NMSUtil.sendPacket(all, hidePacket);
+				PlayerUtil.sendPacket(all, hidePacket);
 			}
 		}
 	}
 
 	public void makePlayerInTabVisible(Player player) {
-		NMSUtil.sendPacket(NMSUtil.addToTabList(player, player.getDisplayName()));
+		Group group = this.luckPerms.getGroupManager().getGroup(this.luckPerms.getUserManager().getUser(player.getUniqueId()).getPrimaryGroup());
+		String prefix = GroupUtil.getGroupPrefix(group).orElseGet(() -> "§a");
+		String color = GroupUtil.getGroupMetaSorted(group, "tablist-color", "a");
 
+		PlayerUtil.sendPacket(Bukkit.getOnlinePlayers(), PlayerUtil.addToTabList(player, String.format("%s§%s%s", prefix, color, player.getDisplayName())));
 		for (Player all : Bukkit.getOnlinePlayers()) {
 			all.showPlayer(this.getCore(), player);
 		}
 	}
 
 	public void checkTabVisibilityForPlayer(Player player, boolean force) {
-		if (force)
-			Bukkit.getOnlinePlayers().forEach(all -> NMSUtil.sendPacket(player, NMSUtil.addToTabList(all, all.getName())));
-
-		for (Player hidden : this.hiddenPlayers) {
-			if (player.hasPermission("wuffy.vanish.see.other") || hidden.equals(player) || this.hiddenPlayers.contains(player)) {
-				player.showPlayer(this.getCore(), hidden);
-				NMSUtil.sendPacket(player, NMSUtil.addToTabList(player, player.getDisplayName() + " §8[§cVanish§8]§7"));
-			} else {
-				player.hidePlayer(this.getCore(), hidden);
-				NMSUtil.sendPacket(player, NMSUtil.addToTabList(player, player.getDisplayName()));
-			}
-		}
+//		Group group = this.luckPerms.getGroupManager().getGroup(this.luckPerms.getUserManager().getUser(player.getUniqueId()).getPrimaryGroup());
+//		String prefix = GroupUtil.getGroupPrefix(group).orElseGet(() -> "§a");
+//		String color = GroupUtil.getGroupMetaSorted(group, "tablist-color", "a");
+//		PacketPlayOutPlayerInfo visiblePacket = PlayerUtil.addToTabList(player, String.format("%s§%s%s §8[§cV§8]§7", prefix, color, player.getDisplayName()));
+//		PacketPlayOutPlayerInfo hidePacket = PlayerUtil.addToTabList(player, String.format("%s§%s%s", prefix, color, player.getDisplayName()));
+//
+//		if (force) {
+//			Bukkit.getOnlinePlayers().forEach(all -> PlayerUtil.sendPacket(player, PlayerUtil.addToTabList(all, all.getName())));
+//		}
+//
+//		for (Player hidden : this.hiddenPlayers) {
+//			if (player.hasPermission("wuffy.vanish.see.other") || hidden.equals(player) || this.hiddenPlayers.contains(player)) {
+//				player.showPlayer(this.getCore(), hidden);
+//				PlayerUtil.sendPacket(player, visiblePacket);
+//			} else {
+//				player.hidePlayer(this.getCore(), hidden);
+//				PlayerUtil.sendPacket(player, hidePacket);
+//			}
+//		}
 	}
 
 	public void hardCheckVisible() {
-		for (Player all : Bukkit.getOnlinePlayers()) {
-			NMSUtil.sendPacket(NMSUtil.addToTabList(all, all.getDisplayName()));
-
-			for (Player hidden : this.hiddenPlayers) {
-				if (all.hasPermission("wuffy.vanish.see.other") || hidden.equals(all)) {
-					all.showPlayer(this.getCore(), hidden);
-					NMSUtil.sendPacket(all, NMSUtil.addToTabList(hidden, hidden.getDisplayName() + " §8[§cVanish§8]§7"));
-				} else {
-					all.hidePlayer(this.getCore(), hidden);
-					NMSUtil.sendPacket(all, NMSUtil.addToTabList(hidden, hidden.getDisplayName()));
-				}
-			}
-		}
+//		for (Player all : Bukkit.getOnlinePlayers()) {
+//			PlayerUtil.sendPacket(Bukkit.getOnlinePlayers(), PlayerUtil.addToTabList(all, all.getDisplayName()));
+//
+//			for (Player hidden : this.hiddenPlayers) {
+//				Group group = this.luckPerms.getGroupManager().getGroup(this.luckPerms.getUserManager().getUser(hidden.getUniqueId()).getPrimaryGroup());
+//				String prefix = GroupUtil.getGroupPrefix(group).orElseGet(() -> "§a");
+//				String color = GroupUtil.getGroupMetaSorted(group, "tablist-color", "a");
+//				PacketPlayOutPlayerInfo visiblePacket = PlayerUtil.addToTabList(hidden, String.format("%s§%s%s §8[§cV§8]§7", prefix, color, hidden.getDisplayName()));
+//				PacketPlayOutPlayerInfo hidePacket = PlayerUtil.addToTabList(hidden, String.format("%s§%s%s", prefix, color, hidden.getDisplayName()));
+//
+//				if (all.hasPermission("wuffy.vanish.see.other") || hidden.equals(all)) {
+//					all.showPlayer(this.getCore(), hidden);
+//					PlayerUtil.sendPacket(all, visiblePacket);
+//				} else {
+//					all.hidePlayer(this.getCore(), hidden);
+//					PlayerUtil.sendPacket(all, hidePacket);
+//				}
+//			}
+//		}
 	}
 
 	public void startScheduler() {
@@ -176,7 +199,7 @@ public class VanishHandler extends IHandler<Survival> {
 						scheduleId = -1;
 					} else {
 						for (Player player : hiddenPlayers) {
-							NMSUtil.sendPacket(player, VanishHandler.ACTION_BAR_IN_VANISH);
+							player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText("§aDu bist §2unsichtbar"));
 
 							for (Player all : Bukkit.getOnlinePlayers()) {
 								if (!player.equals(all) && all.hasPermission("wuffy.vanish.see.other")) {

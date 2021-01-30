@@ -1,6 +1,7 @@
 package eu.wuffy.core;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -14,12 +15,14 @@ import eu.wuffy.synced.IHandler;
 
 public abstract class Core<T extends CoreDatabase> extends JavaPlugin implements ICore {
 
-	public static final List<Advancement> ADVANCEMENT_LIST = new ArrayList<Advancement>();
+	public static final List<Advancement> ADVANCEMENT_LIST;
 
 	static {
-		for (Iterator<Advancement> advancements = Bukkit.advancementIterator(); advancements.hasNext();) {
-			Core.ADVANCEMENT_LIST.add(advancements.next());
+		List<Advancement> advancements = new ArrayList<>();
+		for (Iterator<Advancement> advancement = Bukkit.advancementIterator(); advancement.hasNext();) {
+			advancements.add(advancement.next());
 		}
+		ADVANCEMENT_LIST = Collections.unmodifiableList(advancements);
 
 		IHandler.setMessageAdapter((message) -> Bukkit.getConsoleSender().sendMessage(Core.PREFIX + message));
 	}

@@ -1,7 +1,6 @@
 package eu.wuffy.core.portal;
 
 import org.apache.commons.lang.math.DoubleRange;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -38,7 +37,6 @@ public class Portal {
 
 	public boolean isInPortal(Location location) {
 		if (!location.getWorld().getName().contentEquals(this.world)) {
-			Bukkit.broadcastMessage("false world");
 			return false;
 		}
 

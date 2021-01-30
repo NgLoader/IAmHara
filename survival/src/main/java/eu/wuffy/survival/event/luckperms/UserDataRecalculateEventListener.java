@@ -8,6 +8,7 @@ import org.bukkit.OfflinePlayer;
 import eu.wuffy.core.handler.ChatHandler;
 import eu.wuffy.core.scoreboard.ScoreboardHandler;
 import eu.wuffy.survival.Survival;
+import eu.wuffy.survival.handler.VanishHandler;
 import eu.wuffy.survival.handler.event.EventListener;
 import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.event.user.UserDataRecalculateEvent;
@@ -15,7 +16,7 @@ import net.luckperms.api.event.user.UserDataRecalculateEvent;
 public class UserDataRecalculateEventListener extends EventListener implements Consumer<UserDataRecalculateEvent> {
 
 	private ScoreboardHandler scoreboardHandler;
-//	private VanishHandler vanishHandler;
+	private VanishHandler vanishHandler;
 	private ChatHandler chatHandler;
 
 	public UserDataRecalculateEventListener(Survival core) {
@@ -25,7 +26,7 @@ public class UserDataRecalculateEventListener extends EventListener implements C
 	@Override
 	public void onInit() {
 		this.scoreboardHandler = this.core.getScoreboardHandler();
-//		this.vanishHandler = this.core.getVanishHandler();
+		this.vanishHandler = this.core.getVanishHandler();
 		this.chatHandler = this.core.getChatHandler();
 	}
 
@@ -41,7 +42,7 @@ public class UserDataRecalculateEventListener extends EventListener implements C
 		if (player != null && player.isOnline()) {
 			Bukkit.getScheduler().runTask(this.core, () -> {
 				this.scoreboardHandler.getPlayerScoreboard(player.getPlayer()).joinTeam(event.getUser().getPrimaryGroup());
-//				this.vanishHandler.checkTabVisibilityForPlayer(player.getPlayer(), true);
+				this.vanishHandler.checkTabVisibilityForPlayer(player.getPlayer(), true);
 				this.chatHandler.updateMessagePattern(player.getPlayer());
 			});
 		}

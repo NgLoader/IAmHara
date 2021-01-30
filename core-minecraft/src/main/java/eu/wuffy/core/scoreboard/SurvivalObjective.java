@@ -4,10 +4,10 @@ import java.util.UUID;
 
 import org.bukkit.entity.Player;
 
-import eu.wuffy.core.util.NMSUtil;
-import net.minecraft.server.v1_13_R2.PacketPlayOutScoreboardScore;
-import net.minecraft.server.v1_13_R2.ScoreboardObjective;
-import net.minecraft.server.v1_13_R2.ScoreboardServer.Action;
+import eu.wuffy.core.util.PlayerUtil;
+import net.minecraft.server.v1_16_R3.PacketPlayOutScoreboardScore;
+import net.minecraft.server.v1_16_R3.ScoreboardObjective;
+import net.minecraft.server.v1_16_R3.ScoreboardServer.Action;
 
 public class SurvivalObjective {
 
@@ -43,12 +43,12 @@ public class SurvivalObjective {
 
 	public void update() {
 		PacketPlayOutScoreboardScore packetPlayOutScoreboardScore = new PacketPlayOutScoreboardScore(Action.CHANGE, this.objective.getName(), this.scoreValue, this.score);
-		NMSUtil.sendPacket(player, packetPlayOutScoreboardScore);
+		PlayerUtil.sendPacket(player, packetPlayOutScoreboardScore);
 	}
 
 	public void remove() {
 		PacketPlayOutScoreboardScore packetPlayOutScoreboardScore = new PacketPlayOutScoreboardScore(Action.REMOVE, this.objective.getName(), this.scoreValue, this.score);
-		NMSUtil.sendPacket(player, packetPlayOutScoreboardScore);
+		PlayerUtil.sendPacket(player, packetPlayOutScoreboardScore);
 	}
 
 	public String getScoreValue() {
