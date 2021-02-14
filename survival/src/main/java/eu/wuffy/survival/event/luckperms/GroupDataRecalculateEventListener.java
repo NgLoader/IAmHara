@@ -9,12 +9,15 @@ import eu.wuffy.core.scoreboard.ScoreboardHandler;
 import eu.wuffy.survival.Survival;
 import eu.wuffy.survival.handler.event.EventListener;
 import net.luckperms.api.LuckPermsProvider;
+import net.luckperms.api.event.EventSubscription;
 import net.luckperms.api.event.group.GroupDataRecalculateEvent;
 
 public class GroupDataRecalculateEventListener extends EventListener implements Consumer<GroupDataRecalculateEvent> {
 
 	private ScoreboardHandler scoreboardHandler;
 	private ChatHandler chatHandler;
+
+	private EventSubscription<GroupDataRecalculateEvent> subscription;
 
 	public GroupDataRecalculateEventListener(Survival core) {
 		super(core);
@@ -28,7 +31,14 @@ public class GroupDataRecalculateEventListener extends EventListener implements 
 
 	@Override
 	public void onEnable() {
-		LuckPermsProvider.get().getEventBus().subscribe(GroupDataRecalculateEvent.class, this);
+		this.subscription = LuckPermsProvider.get().getEventBus().subscribe(GroupDataRecalculateEvent.class, this);
+	}
+
+	@Override
+	public void onDisable() {
+		if (this.subscription != null) {
+			this.subscription.close();
+		}
 	}
 
 	@Override

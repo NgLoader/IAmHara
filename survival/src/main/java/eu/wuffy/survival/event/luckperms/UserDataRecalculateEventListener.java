@@ -11,6 +11,7 @@ import eu.wuffy.survival.Survival;
 import eu.wuffy.survival.handler.VanishHandler;
 import eu.wuffy.survival.handler.event.EventListener;
 import net.luckperms.api.LuckPermsProvider;
+import net.luckperms.api.event.EventSubscription;
 import net.luckperms.api.event.user.UserDataRecalculateEvent;
 
 public class UserDataRecalculateEventListener extends EventListener implements Consumer<UserDataRecalculateEvent> {
@@ -18,6 +19,8 @@ public class UserDataRecalculateEventListener extends EventListener implements C
 	private ScoreboardHandler scoreboardHandler;
 	private VanishHandler vanishHandler;
 	private ChatHandler chatHandler;
+
+	private EventSubscription<UserDataRecalculateEvent> subscription;
 
 	public UserDataRecalculateEventListener(Survival core) {
 		super(core);
@@ -32,7 +35,14 @@ public class UserDataRecalculateEventListener extends EventListener implements C
 
 	@Override
 	public void onEnable() {
-		LuckPermsProvider.get().getEventBus().subscribe(UserDataRecalculateEvent.class, this);
+		this.subscription = LuckPermsProvider.get().getEventBus().subscribe(UserDataRecalculateEvent.class, this);
+	}
+
+	@Override
+	public void onDisable() {
+		if (this.subscription != null) {
+			this.subscription.close();
+		}
 	}
 
 	@Override

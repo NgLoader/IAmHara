@@ -17,7 +17,9 @@ import org.bukkit.event.world.TimeSkipEvent.SkipReason;
 import org.bukkit.scheduler.BukkitTask;
 
 import eu.wuffy.survival.Survival;
+import eu.wuffy.survival.config.ConfigSleep;
 import eu.wuffy.synced.IHandler;
+import eu.wuffy.synced.config.ConfigService;
 
 public class SleepHandler extends IHandler<Survival> implements Listener, Runnable {
 
@@ -34,6 +36,9 @@ public class SleepHandler extends IHandler<Survival> implements Listener, Runnab
 
 	@Override
 	public void onEnable() {
+		ConfigSleep sleep = ConfigService.getConfig(ConfigSleep.class);
+		this.sleepPercent = sleep.sleepPercent;
+
 		Bukkit.getServer().getPluginManager().registerEvents(this, this.core);
 	}
 
@@ -91,7 +96,7 @@ public class SleepHandler extends IHandler<Survival> implements Listener, Runnab
 		int difference = needed - sleeping;
 
 		if (difference > 1) {
-			this.sendMessage(world, String.format("%s§e%s §7liegt nun im §6Bett§8.\n%sEs m§ssen noch §e%d §aSpieler §7schlafen§8.",
+			this.sendMessage(world, String.format("%s§e%s §7liegt nun im §6Bett§8.\n%sEs müssen noch §e%d §aSpieler §7schlafen§8.",
 					this.prefix,
 					event.getPlayer().getName(),
 					this.prefix,

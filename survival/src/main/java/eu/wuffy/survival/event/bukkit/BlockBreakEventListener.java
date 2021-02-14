@@ -31,8 +31,10 @@ public class BlockBreakEventListener extends EventListener {
 		Player player = event.getPlayer();
 
 		if (!player.isSneaking() && player.getGameMode() == GameMode.SURVIVAL && player.hasPermission("wuffy.tree.feller") && this.treeFellerHandler.isEnabledForPlayer(player)) {
-			if (this.treeFellerHandler.onBlockBreak(event.getBlock(), player.getInventory().getItemInMainHand(), 149))
+			if (this.treeFellerHandler.onBlockBreak(event.getBlock(), player.getInventory().getItemInMainHand(), 149)) {
 				event.setCancelled(true);
+				return;
+			}
 		}
 	}
 }

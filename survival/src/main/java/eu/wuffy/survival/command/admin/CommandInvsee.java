@@ -18,7 +18,7 @@ public class CommandInvsee implements CommandExecutor, TabExecutor {
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (!(sender instanceof Player)) {
-			sender.sendMessage(Survival.PREFIX + "§7Die Console kann ihren §aGameMode §7nicht ändern§8.");
+			sender.sendMessage(Survival.PREFIX + "§7Die Console kann kein §cInventar §7öffnen§8.");
 			return true;
 		}
 

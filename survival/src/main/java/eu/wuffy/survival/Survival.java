@@ -4,14 +4,11 @@ import java.sql.SQLException;
 
 import org.bukkit.Bukkit;
 
-import com.zaxxer.hikari.HikariConfig;
-
 import eu.wuffy.core.Core;
 import eu.wuffy.core.handler.ChatHandler;
 import eu.wuffy.core.help.HelpSystem;
 import eu.wuffy.core.inventory.InventorySystem;
 import eu.wuffy.core.scoreboard.ScoreboardHandler;
-import eu.wuffy.survival.command.CommandClaimTool;
 import eu.wuffy.survival.command.CommandEnderchest;
 import eu.wuffy.survival.command.CommandPing;
 import eu.wuffy.survival.command.CommandSpawn;
@@ -42,10 +39,15 @@ import eu.wuffy.survival.command.warp.CommandWarpCreateAlias;
 import eu.wuffy.survival.command.warp.CommandWarpDelete;
 import eu.wuffy.survival.command.warp.CommandWarpDeleteAlias;
 import eu.wuffy.survival.command.warp.CommandWarpList;
+import eu.wuffy.survival.crafting.CraftingRecipeManager;
 import eu.wuffy.survival.database.SurvivalDatabase;
+import eu.wuffy.survival.enchantment.EnchantmentList;
+import eu.wuffy.survival.handler.BoatHandler;
 import eu.wuffy.survival.handler.ChairHandler;
+import eu.wuffy.survival.handler.DeathMessageHandler;
+import eu.wuffy.survival.handler.HelpHandler;
+import eu.wuffy.survival.handler.MOTDHandler;
 import eu.wuffy.survival.handler.SleepHandler;
-import eu.wuffy.survival.handler.SurvivalHologramHandler;
 import eu.wuffy.survival.handler.SurvivalNotificationHandler;
 import eu.wuffy.survival.handler.TreeFellerHandler;
 import eu.wuffy.survival.handler.VanishHandler;
@@ -54,12 +56,13 @@ import eu.wuffy.survival.handler.home.HomeHandler;
 import eu.wuffy.survival.handler.tpa.TPAHandler;
 import eu.wuffy.survival.handler.warp.WarpHandler;
 import eu.wuffy.synced.IHandler;
+import eu.wuffy.synced.config.ConfigService;
+import eu.wuffy.synced.database.ConfigDatabase;
 
 public class Survival extends Core<SurvivalDatabase> {
 
+	public static final String CONFIG_FOLDER = "Survival";
 	public static final String PREFIX = "§8[§2Survival§8] §7";
-
-	private final boolean whitelist;
 
 	private final InventorySystem inventorySystem;
 	private final HelpSystem helpSystem;
@@ -73,30 +76,20 @@ public class Survival extends Core<SurvivalDatabase> {
 	private final SurvivalNotificationHandler notificationHandler;
 //	private final StorageHandler storageHandler;
 	private final EventHandler eventHandler;
-	private final SurvivalHologramHandler hologramHandler;
 	private final TPAHandler tpaHandler;
 	private final ChairHandler chairHandler;
 	private final SleepHandler sleepHandler;
+	private final BoatHandler boatHandler;
+	private final MOTDHandler motdHandler;
+	private final HelpHandler helpHandler;
+	private final DeathMessageHandler deathMessageHandler;
+
+	private final CraftingRecipeManager craftingRecipeManager;
 
 	public Survival() {
-		this.whitelist = Bukkit.hasWhitelist();
 		Bukkit.setWhitelist(true);
 
-		HikariConfig databaseConfig = new HikariConfig();
-		databaseConfig.setDataSourceClassName("org.mariadb.jdbc.MariaDbDataSource");
-		databaseConfig.addDataSourceProperty("serverName", "173.249.17.9");
-		databaseConfig.addDataSourceProperty("port", 3306);
-		databaseConfig.addDataSourceProperty("databaseName", "minecraft_zanrux");
-		databaseConfig.setUsername("minecraft_zanrux");
-		databaseConfig.setPassword("AZjjdO23IrsIVThw");
-
-		databaseConfig.setMaxLifetime(300000);
-		databaseConfig.setConnectionTimeout(5000);
-		databaseConfig.setMinimumIdle(10);
-		databaseConfig.setMaximumPoolSize(10);
-		databaseConfig.setAutoCommit(true);
-
-		this.setDatabase(new SurvivalDatabase(this, databaseConfig));
+		this.setDatabase(new SurvivalDatabase(this, ConfigService.reloadConfig(ConfigDatabase.class)));
 
 		this.inventorySystem = new InventorySystem(this);
 		this.helpSystem = new HelpSystem(this, PREFIX);
@@ -110,10 +103,15 @@ public class Survival extends Core<SurvivalDatabase> {
 		this.notificationHandler = new SurvivalNotificationHandler(this);
 //		this.storageHandler = new StorageHandler(this);
 		this.eventHandler = new EventHandler(this);
-		this.hologramHandler = new SurvivalHologramHandler(this);
 		this.tpaHandler = new TPAHandler(this);
 		this.chairHandler = new ChairHandler(this, PREFIX);
 		this.sleepHandler = new SleepHandler(this, PREFIX);
+		this.boatHandler = new BoatHandler(this);
+		this.motdHandler = new MOTDHandler(this);
+		this.helpHandler = new HelpHandler(this);
+		this.deathMessageHandler = new DeathMessageHandler(this);
+
+		this.craftingRecipeManager = new CraftingRecipeManager(this);
 	}
 
 	@Override
@@ -123,6 +121,8 @@ public class Survival extends Core<SurvivalDatabase> {
 
 	@Override
 	public void onEnable() {
+		EnchantmentList.init();
+
 		try {
 			this.getDatabase().createTables();
 		} catch (SQLException e) {
@@ -138,9 +138,7 @@ public class Survival extends Core<SurvivalDatabase> {
 
 		Bukkit.getConsoleSender().sendMessage(Survival.PREFIX + "§2Enabled§8!");
 
-		if (!this.whitelist) {
-			Bukkit.setWhitelist(false);
-		}
+		Bukkit.setWhitelist(false);
 	}
 
 	@Override
@@ -159,7 +157,6 @@ public class Survival extends Core<SurvivalDatabase> {
 		getCommand("ping").setExecutor(new CommandPing());
 		getCommand("spawn").setExecutor(new CommandSpawn());
 		getCommand("treefeller").setExecutor(new CommandTreeFeller(this));
-		getCommand("claimtool").setExecutor(new CommandClaimTool());
 		getCommand("enderchest").setExecutor(new CommandEnderchest());
 
 		getCommand("survival").setExecutor(new CommandSurvival(this));
@@ -243,10 +240,6 @@ public class Survival extends Core<SurvivalDatabase> {
 		return this.eventHandler;
 	}
 
-	public SurvivalHologramHandler getHologramHandler() {
-		return this.hologramHandler;
-	}
-
 	public TPAHandler getTpaHandler() {
 		return this.tpaHandler;
 	}
@@ -257,5 +250,25 @@ public class Survival extends Core<SurvivalDatabase> {
 
 	public SleepHandler getSleepHandler() {
 		return this.sleepHandler;
+	}
+
+	public BoatHandler getBoatHandler() {
+		return this.boatHandler;
+	}
+
+	public MOTDHandler getMotdHandler() {
+		return this.motdHandler;
+	}
+
+	public HelpHandler getHelpHandler() {
+		return this.helpHandler;
+	}
+
+	public DeathMessageHandler getDeathMessageHandler() {
+		return this.deathMessageHandler;
+	}
+
+	public CraftingRecipeManager getCraftingRecipeManager() {
+		return this.craftingRecipeManager;
 	}
 }

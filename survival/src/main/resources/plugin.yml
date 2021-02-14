@@ -56,8 +56,6 @@ commands:
   survival:
   enderchest:
     aliases: [enderc, echest, ec]
-  claimtool:
-    aliases: [claimt, ctool, ct]
   tp:
   tphere:
   tpa:

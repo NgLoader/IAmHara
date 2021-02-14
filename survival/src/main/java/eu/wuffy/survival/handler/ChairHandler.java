@@ -43,8 +43,15 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.spigotmc.event.entity.EntityDismountEvent;
 
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.events.PacketAdapter;
+import com.comphenix.protocol.events.PacketEvent;
+
 import eu.wuffy.survival.Survival;
+import eu.wuffy.survival.config.ConfigChair;
 import eu.wuffy.synced.IHandler;
+import eu.wuffy.synced.config.ConfigService;
 
 public class ChairHandler extends IHandler<Survival> implements Listener, Runnable {
 
@@ -70,8 +77,10 @@ public class ChairHandler extends IHandler<Survival> implements Listener, Runnab
 
 	private final Map<Player, Long> cooldown = new WeakHashMap<>();
 
+	private ChairProtocolListener chairProtocolListener;
+
 	protected String prefix;
-	protected long delay = 500;
+	protected ConfigChair config;
 
 	public ChairHandler(Survival plugin, String prefix)  {
 		super(plugin);
@@ -81,17 +90,21 @@ public class ChairHandler extends IHandler<Survival> implements Listener, Runnab
 	}
 
 	@Override
-	public void onInit() {
-		this.addChairsByMaterialName("_STAIRS", .5, BlockFace.EAST, BlockFace.NORTH, BlockFace.WEST, BlockFace.SOUTH);
-		this.addChairsByMaterialName("_CARPET", 0.85);
-	}
-
-	@Override
 	public void onEnable() {
+		this.config = ConfigService.getConfig(ConfigChair.class);
+		this.config.chairs.forEach(chair -> this.addChairsByMaterialName(chair.suffix, chair.height, chair.blockFaces));
+
 		Bukkit.getPluginManager().registerEvents(this, this.core);
 
 		Bukkit.getScheduler().runTaskTimer(this.core, this, 20 * 10, 20 * 10);
 		Bukkit.getScheduler().runTaskTimerAsynchronously(this.core, this::runWorldCheck, 20 * 60 * 2, 20 * 60 * 2);
+
+		this.chairProtocolListener = new ChairProtocolListener(this);
+	}
+
+	@Override
+	public void onDisable() {
+		this.chairProtocolListener.unregister();
 	}
 
 	@Override
@@ -127,7 +140,6 @@ public class ChairHandler extends IHandler<Survival> implements Listener, Runnab
 		}
 	}
 
-	@SuppressWarnings("unused")
 	@EventHandler
 	public void onPlayerInteractEvent(PlayerInteractEvent event) {
 		if (event.getAction() != Action.RIGHT_CLICK_BLOCK ||
@@ -142,16 +154,16 @@ public class ChairHandler extends IHandler<Survival> implements Listener, Runnab
 
 		Player player = event.getPlayer();
 		PlayerInventory playerInventory = player.getInventory();
-		if ((true/*!this.config.isChairsSneak()*/ && player.isSneaking()) ||
-				(true/*!this.config.isChairsMainHand()*/ && playerInventory.getItemInMainHand().getType() != Material.AIR) ||
-				(false/*!this.config.isChairsOffHand()*/ && playerInventory.getItemInOffHand().getType() != Material.AIR)) {
+		if ((this.config.allowSneaking && player.isSneaking()) ||
+				(!this.config.allowMainHand && playerInventory.getItemInMainHand().getType() != Material.AIR) ||
+				(!this.config.allowOffHand && playerInventory.getItemInOffHand().getType() != Material.AIR)) {
 			return;
 		}
 
 
 		Location clickedBlockLocation = clickedBlock.getLocation();
-		if (clickedBlockLocation.clone().add(0, 1, 0).getBlock().getType() != Material.AIR ||
-				clickedBlockLocation.clone().subtract(0, 1, 0).getBlock().getType() == Material.AIR) {
+		if (!this.isSitable(clickedBlockLocation.clone().add(0, 1, 0).getBlock()) ||
+				this.isSitable(clickedBlockLocation.clone().subtract(0, 1, 0).getBlock())) {
 			return;
 		}
 
@@ -186,11 +198,11 @@ public class ChairHandler extends IHandler<Survival> implements Listener, Runnab
 			player.sendMessage(this.prefix + "Bitte warte noch einen augenblick§8.");
 			return;
 		}
-		this.cooldown.put(player, System.currentTimeMillis() + this.delay);
+		this.cooldown.put(player, System.currentTimeMillis() + this.config.delay);
 
-		event.setCancelled(true);
 		event.setUseInteractedBlock(Result.DENY);
 		event.setUseItemInHand(Result.DENY);
+		event.setCancelled(true);
 
 		Location armorStandLocation = clickedBlockLocation.clone().add(.5, -this.chairArmorStandDistance.getOrDefault(clickedBlock.getType(), 1d), .5);
 		sitter = this.chairInUseByPlayer.get(player);
@@ -256,7 +268,7 @@ public class ChairHandler extends IHandler<Survival> implements Listener, Runnab
 			return;
 		}
 		this.removeChair(sitter);
-		this.cooldown.put(player, System.currentTimeMillis() + this.delay);
+		this.cooldown.put(player, System.currentTimeMillis() + this.config.delay);
 
 		Bukkit.getScheduler().runTask(this.core, () -> {
 			Location location = sitter.location.clone();
@@ -364,6 +376,10 @@ public class ChairHandler extends IHandler<Survival> implements Listener, Runnab
 		return false;
 	}
 
+	private boolean isSitable(Block block) {
+		return block.getType() == Material.AIR || block.isPassable();
+	}
+
 	private class ChairSitter {
 
 		public final Player player;
@@ -382,6 +398,30 @@ public class ChairHandler extends IHandler<Survival> implements Listener, Runnab
 
 			(((CraftEntity) this.armorStand)).getHandle().setPosition(armorstandLoaction.getX(), armorstandLoaction.getY(), armorstandLoaction.getZ());
 			(((CraftEntity) this.armorStand)).getHandle().positionChanged = true;
+		}
+	}
+
+	private class ChairProtocolListener extends PacketAdapter {
+
+		private final ChairHandler handler;
+
+		public ChairProtocolListener(ChairHandler handler) {
+			super(handler.getCore(), PacketType.Play.Client.LOOK);
+			this.handler = handler;
+
+			ProtocolLibrary.getProtocolManager().addPacketListener(this);
+		}
+
+		public void unregister() {
+			ProtocolLibrary.getProtocolManager().removePacketListener(this);
+		}
+
+		@Override
+		public void onPacketReceiving(PacketEvent event) {
+			ChairSitter chair = this.handler.chairInUseByPlayer.get(event.getPlayer());
+			if (chair != null) {
+				chair.armorStand.setRotation(event.getPacket().getFloat().read(0), 0);
+			}
 		}
 	}
 }

@@ -33,8 +33,13 @@ public class CommandTpa implements CommandExecutor, TabExecutor {
 			return true;
 		}
 
+		if (!(args.length > 0)) {
+			sender.sendMessage(Survival.PREFIX + "§7/tpa §8<§aSpieler§8>§8.");
+			return true;
+		}
+
 		Player player = (Player) sender;
-		Player target = args.length > 0 ? Bukkit.getPlayer(args[0]) : null;
+		Player target = Bukkit.getPlayer(args[0]);
 
 		if (target == null) {
 			sender.sendMessage(Survival.PREFIX + "§7Der angegebene §aSpieler §7ist nicht online§8.");

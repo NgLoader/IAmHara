@@ -16,7 +16,7 @@ public class NotificationHandler<T extends Core<?>> extends IHandler<T> implemen
 	protected final List<String> messages = new ArrayList<String>();
 	protected final List<NotificationMode<T>> modes = new ArrayList<NotificationMode<T>>();
 
-	protected int delay = 1000 * 60 * 30;
+	protected long delay = 1000 * 60 * 30;
 
 	protected NotificationMode<T> currentMode;
 	protected long nextNotification = 0;

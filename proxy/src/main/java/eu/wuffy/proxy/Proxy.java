@@ -2,14 +2,11 @@ package eu.wuffy.proxy;
 
 import java.sql.SQLException;
 
-import com.zaxxer.hikari.HikariConfig;
-
 import eu.wuffy.proxy.command.CommandAlert;
 import eu.wuffy.proxy.command.CommandAlertRaw;
-import eu.wuffy.proxy.command.CommandLobby;
 import eu.wuffy.proxy.command.CommandFind;
-import eu.wuffy.proxy.command.CommandSurvival;
 import eu.wuffy.proxy.command.CommandGlobalList;
+import eu.wuffy.proxy.command.CommandLobby;
 import eu.wuffy.proxy.command.CommandMsg;
 import eu.wuffy.proxy.command.CommandSend;
 import eu.wuffy.proxy.command.CommandServer;
@@ -17,6 +14,8 @@ import eu.wuffy.proxy.database.ProxyDatabase;
 import eu.wuffy.proxy.event.ServerSwitchEventListener;
 import eu.wuffy.synced.ICore;
 import eu.wuffy.synced.IHandler;
+import eu.wuffy.synced.config.ConfigService;
+import eu.wuffy.synced.database.ConfigDatabase;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -24,26 +23,11 @@ import net.md_5.bungee.api.plugin.PluginManager;
 
 public class Proxy extends Plugin implements ICore {
 
-
-	public static final String PREFIX = "§8[§2IAmHara§8] ";
+	public static final String PREFIX = "§8[§2Zanrux§8] §7";
 	private final ProxyDatabase database;
 
 	public Proxy() {
-		HikariConfig databaseConfig = new HikariConfig();
-		databaseConfig.setDataSourceClassName("org.mariadb.jdbc.MariaDbDataSource");
-		databaseConfig.addDataSourceProperty("serverName", "173.249.17.9");
-		databaseConfig.addDataSourceProperty("port", 3306);
-		databaseConfig.addDataSourceProperty("databaseName", "minecraft");
-		databaseConfig.setUsername("minecraft");
-		databaseConfig.setPassword("GjVFNgg7zzVZuGKVLGue2sTM8K6GZchxdwuDk4Xkcb2ymFGrsVnhn3RLgzwfcgYB6cuCPC72x9ehxHUpjLccLNm5dSwUTuekUMxnNsVkcKA3SJaC5qyGpQ3n6w8S9PSD");
-
-		databaseConfig.setMaxLifetime(300000);
-		databaseConfig.setConnectionTimeout(5000);
-		databaseConfig.setMinimumIdle(10);
-		databaseConfig.setMaximumPoolSize(10);
-		databaseConfig.setAutoCommit(true);
-
-		this.database = new ProxyDatabase(this, databaseConfig);
+		this.database = new ProxyDatabase(this, ConfigService.getConfig(ConfigDatabase.class));
 
 		IHandler.setMessageAdapter((message) -> ProxyServer.getInstance().getConsole().sendMessage(new TextComponent(Proxy.PREFIX + message)));
 	}
@@ -92,7 +76,6 @@ public class Proxy extends Plugin implements ICore {
 		pluginManager.registerCommand(this, new CommandServer());
 		pluginManager.registerCommand(this, new CommandSend());
 		pluginManager.registerCommand(this, new CommandGlobalList());
-		pluginManager.registerCommand(this, new CommandSurvival());
 		pluginManager.registerCommand(this, new CommandFind());
 		pluginManager.registerCommand(this, new CommandLobby());
 		pluginManager.registerCommand(this, new CommandAlertRaw());

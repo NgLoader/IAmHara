@@ -11,6 +11,7 @@ import eu.wuffy.survival.Survival;
 import eu.wuffy.survival.handler.VanishHandler;
 import eu.wuffy.survival.handler.event.EventListener;
 import net.luckperms.api.LuckPermsProvider;
+import net.luckperms.api.event.EventSubscription;
 import net.luckperms.api.event.user.track.UserPromoteEvent;
 
 public class UserPromoteEventListener extends EventListener implements Consumer<UserPromoteEvent> {
@@ -18,6 +19,8 @@ public class UserPromoteEventListener extends EventListener implements Consumer<
 	private ScoreboardHandler scoreboardHandler;
 	private VanishHandler vanishHandler;
 	private ChatHandler chatHandler;
+
+	private EventSubscription<UserPromoteEvent> subscription;
 
 	public UserPromoteEventListener(Survival core) {
 		super(core);
@@ -32,7 +35,14 @@ public class UserPromoteEventListener extends EventListener implements Consumer<
 
 	@Override
 	public void onEnable() {
-		LuckPermsProvider.get().getEventBus().subscribe(UserPromoteEvent.class, this);
+		this.subscription = LuckPermsProvider.get().getEventBus().subscribe(UserPromoteEvent.class, this);
+	}
+
+	@Override
+	public void onDisable() {
+		if (this.subscription != null) {
+			this.subscription.close();
+		}
 	}
 
 	@Override

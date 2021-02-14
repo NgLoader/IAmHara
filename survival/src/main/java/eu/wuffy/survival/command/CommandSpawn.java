@@ -15,8 +15,8 @@ public class CommandSpawn implements CommandExecutor {
 
 	public CommandSpawn() {
 		this.spawnLocation = Bukkit.getWorld("world").getSpawnLocation().add(.5, 0, .5);
-		this.spawnLocation.setYaw(-62.1f);
-		this.spawnLocation.setPitch(8.2f);
+		this.spawnLocation.setYaw(90f);
+		this.spawnLocation.setPitch(0f);
 	}
 
 	@Override

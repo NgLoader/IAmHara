@@ -25,7 +25,6 @@ import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import eu.wuffy.survival.Survival;
-import eu.wuffy.survival.common.SurvivalHelpCategory;
 import eu.wuffy.synced.IHandler;
 
 public class TreeFellerHandler extends IHandler<Survival> {
@@ -39,8 +38,8 @@ public class TreeFellerHandler extends IHandler<Survival> {
 			BlockFace.SELF, BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST,
 			BlockFace.NORTH_EAST, BlockFace.NORTH_WEST, BlockFace.SOUTH_EAST, BlockFace.SOUTH_WEST);
 
-	private final EnumSet<Material> fellerTypes = EnumSet.of(Material.DIAMOND_AXE, Material.GOLDEN_AXE, Material.IRON_AXE, Material.STONE_AXE, Material.WOODEN_AXE);
-	private final EnumSet<Material> logTypes = EnumSet.of(Material.ACACIA_LOG, Material.BIRCH_LOG, Material.DARK_OAK_LOG, Material.JUNGLE_LOG, Material.OAK_LOG, Material.SPRUCE_LOG);
+	private final EnumSet<Material> fellerTypes = EnumSet.noneOf(Material.class);
+	private final EnumSet<Material> logTypes = EnumSet.noneOf(Material.class);
 	private final Map<Material, Material> leaveTypes = new HashMap<Material, Material>();
 
 	private final List<Player> playerEnabled = new ArrayList<Player>();
@@ -51,14 +50,17 @@ public class TreeFellerHandler extends IHandler<Survival> {
 
 	@Override
 	public void onInit() {
-		this.leaveTypes.put(Material.ACACIA_LOG, Material.ACACIA_LEAVES);
-		this.leaveTypes.put(Material.BIRCH_LOG, Material.BIRCH_LEAVES);
-		this.leaveTypes.put(Material.DARK_OAK_LOG, Material.DARK_OAK_LEAVES);
-		this.leaveTypes.put(Material.JUNGLE_LOG, Material.JUNGLE_LEAVES);
-		this.leaveTypes.put(Material.OAK_LOG, Material.OAK_LEAVES);
-		this.leaveTypes.put(Material.SPRUCE_LOG, Material.SPRUCE_LEAVES);
-
-		this.core.getHelpSystem().addCategory(SurvivalHelpCategory.TREE_FELLER.getCategory());
+		for (Material material : Material.values()) {
+			String name = material.name();
+			if (!name.startsWith("LEGACY_") && !name.startsWith("STRIPPED_")) {
+				if (name.endsWith("_LOG")) {
+					this.logTypes.add(material);
+					this.leaveTypes.put(material, Material.valueOf(name.replace("_LOG", "") + "_LEAVES"));
+				} else if (name.endsWith("_AXE")) {
+					this.fellerTypes.add(material);
+				}
+			}
+		}
 	}
 
 	@Override

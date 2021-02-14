@@ -8,12 +8,10 @@ import eu.wuffy.core.util.ItemFactory;
 public class HelpBuilder {
 
 	private static final String DEFAULT_NAME = "undefinied";
-	private static final String[] DEFAULT_ALIASES = new String[] { };
 	private static final String DEFAULT_DESCRIPTION = "";
 	private static final ItemFactory DEFAULT_ITEM_FACTORY = new ItemFactory(Material.BARRIER).addAllFlag();
 
 	private String name = HelpBuilder.DEFAULT_NAME;
-	private String[] aliases = HelpBuilder.DEFAULT_ALIASES;
 
 	private String description = HelpBuilder.DEFAULT_DESCRIPTION;
 	private ItemFactory displayItem = HelpBuilder.DEFAULT_ITEM_FACTORY;
@@ -24,28 +22,18 @@ public class HelpBuilder {
 		this.setName(name);
 	}
 
-	public HelpBuilder(String name, String[] aliases) {
+	public HelpBuilder(String name, String description) {
 		this(name);
-		this.setAliases(aliases);
-	}
-
-	public HelpBuilder(String name, String[] aliases, String description) {
-		this(name, aliases);
 		this.setDescription(description);
 	}
 
-	public HelpBuilder(String name, String[] aliases, String description, ItemFactory displayItem) {
-		this(name, aliases, description);
+	public HelpBuilder(String name, String description, ItemFactory displayItem) {
+		this(name, description);
 		this.setDisplayItem(displayItem);
 	}
 
 	public HelpBuilder setName(String name) {
 		this.name = name;
-		return this;
-	}
-
-	public HelpBuilder setAliases(String[] aliases) {
-		this.aliases = aliases;
 		return this;
 	}
 
@@ -76,20 +64,11 @@ public class HelpBuilder {
 			public String getDescription() {
 				return HelpBuilder.this.description;
 			}
-			
-			@Override
-			public String[] getAliases() {
-				return HelpBuilder.this.aliases;
-			}
 		};
 	}
 
 	public String getName() {
 		return this.name;
-	}
-
-	public String[] getAliases() {
-		return this.aliases;
 	}
 
 	public String getDescription() {

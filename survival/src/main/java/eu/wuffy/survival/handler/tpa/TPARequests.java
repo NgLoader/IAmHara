@@ -30,7 +30,6 @@ public class TPARequests implements Runnable {
 	@Override
 	public void run() {
 		Long currentTime = System.currentTimeMillis();
-
 		for (Map.Entry<Player, TPAInfo> entry : this.requests.entrySet()) {
 			Player player = entry.getKey();
 
@@ -48,7 +47,6 @@ public class TPARequests implements Runnable {
 
 	public Player getLastRequest() {
 		Entry<Player, TPAInfo> latest = null;
-
 		for (Entry<Player, TPAInfo> entry : this.requests.entrySet()) {
 			if (latest == null) {
 				latest = entry;
@@ -65,7 +63,6 @@ public class TPARequests implements Runnable {
 
 	public boolean canRequest(Player player) {
 		TPAInfo info = this.requests.getOrDefault(player, null);
-
 		if (info == null || info.expired == -1) {
 			return true;
 		}
@@ -92,7 +89,7 @@ public class TPARequests implements Runnable {
 		this.requests.put(player, new TPAInfo(System.currentTimeMillis() + 60000, location));
 
 		TextComponent textComponent = new TextComponent(Survival.PREFIX + (location != null ? 
-				"§7Du hast eine §aTeleportanfrage §azu §8\"§6" + player.getName() + "§8\" §abekommen§8.\n" :
+				"§7Du hast eine §aTeleportanfrage §czu §8\"§6" + player.getName() + "§8\" §abekommen§8.\n" :
 				"§7Du hast eine §aTeleportanfrage §avon §8\"§6" + player.getName() + "§8\" §abekommen§8.\n"));
 		TextComponent acceptComponent = new TextComponent("§aAnnehmen");
 		acceptComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tpaccept " + player.getName()));
@@ -110,11 +107,9 @@ public class TPARequests implements Runnable {
 	}
 
 	public boolean denyRequest(Player player) {
-		if (!this.requests.containsKey(player)) {
+		if (this.requests.remove(player) == null) {
 			return false;
 		}
-
-		this.requests.remove(player);
 
 		this.player.sendMessage(Survival.PREFIX + "§7Du hast die §aTeleportanfrage §7von §8\"§6" + player.getName() + "§8\" §cabgelehnt§8.");
 		player.sendMessage(Survival.PREFIX + "§7Deine §aTeleportanfrage §7an §8\"§6" + this.player.getName() + "§8\" §7wurde §cabgelehnt§8.");
@@ -122,12 +117,7 @@ public class TPARequests implements Runnable {
 	}
 
 	public boolean acceptRequest(Player player) {
-		if (!this.requests.containsKey(player)) {
-			return false;
-		}
-
 		TPAInfo info = this.requests.remove(player);
-
 		if (info == null) {
 			return false;
 		}
@@ -145,7 +135,6 @@ public class TPARequests implements Runnable {
 
 	public List<Player> getRequests() {
 		Long currentTime = System.currentTimeMillis();
-
 		return this.requests.entrySet().stream().filter(entry -> entry.getValue().expired > currentTime).map(entry -> entry.getKey()).collect(Collectors.toList());
 	}
 

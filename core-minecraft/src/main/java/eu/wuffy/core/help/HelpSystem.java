@@ -1,6 +1,8 @@
 package eu.wuffy.core.help;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import eu.wuffy.core.Core;
@@ -46,32 +48,45 @@ public class HelpSystem extends IHandler<Core<?>> {
 
 	public void addHelp(HelpCategory category, IHelp help) {
 		StringBuilder stringBuilder = new StringBuilder();
-		stringBuilder.append(this.prefix + "§8[§7]§a§l-----§e{ §a" + help.getName() + " §e}§a§l-----§7[§8]\n");
-		stringBuilder.append(this.prefix + "\n");
+		if (!help.getDescription().isEmpty()) {
+			stringBuilder.append(this.prefix + "§8[§7]§a§l-----§e{ §a" + help.getName() + " §e}§a§l-----§7[§8]\n");
+			stringBuilder.append(this.prefix + "\n");
 
-		StringBuilder lines = new StringBuilder(this.prefix);
-		for (String line : help.getDescription().split(" ")) {
-			lines.append(line);
-			lines.append(" ");
+			StringBuilder lines = new StringBuilder(this.prefix);
+			for (String line : help.getDescription().split(" ")) {
+				lines.append(line);
+				lines.append(" ");
 
-			if (lines.toString().length() > 60) {
-				stringBuilder.append(lines.append("\n").toString());
-				lines = new StringBuilder(this.prefix);
+				if (lines.toString().length() > 60) {
+					stringBuilder.append(lines.append("\n").toString());
+					lines = new StringBuilder(this.prefix);
+				}
 			}
-		}
-		if (!lines.toString().isEmpty()) {
-			stringBuilder.append(lines.append("\n").toString());
-		}
+			if (!lines.toString().isEmpty()) {
+				stringBuilder.append(lines.append("\n").toString());
+			}
 
-		stringBuilder.append(this.prefix + "\n");
-		stringBuilder.append(this.prefix + "§8[§7]§a§l-----§e{ §a" + help.getName() + " §e}§a§l-----§7[§8]");
+			stringBuilder.append(this.prefix + "\n");
+			stringBuilder.append(this.prefix + "§8[§7]§a§l-----§e{ §a" + help.getName() + " §e}§a§l-----§7[§8]");
+		}
+		String message = stringBuilder.toString();
 
 		this.addCategory(category);
 		this.categorys.get(category).addItem(
 				new PageElement(help.getDisplayItem(),
-				ItemAction.immovable((playerInventory, inventory, action, event) -> {
-					playerInventory.getPlayer().sendMessage(stringBuilder.toString());
-				})));
+						message.isEmpty() ?
+								ItemAction.immovable((playerInventory, inventory, action, event) -> {}) :
+								ItemAction.immovable((playerInventory, inventory, action, event) -> {
+									playerInventory.getPlayer().sendMessage(message);
+						})));
+	}
+
+	public void clear() {
+		this.categorys.clear();
+		List<PageElement> elements = new ArrayList<>(this.getInventory().getItems());
+		for (PageElement element : elements) {
+			this.getInventory().removeItem(element);
+		}
 	}
 
 	public CustomPaginatorInventory getInventory() {

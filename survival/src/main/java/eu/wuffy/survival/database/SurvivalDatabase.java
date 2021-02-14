@@ -9,13 +9,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import com.zaxxer.hikari.HikariConfig;
-
 import eu.wuffy.core.database.CoreDatabase;
 import eu.wuffy.survival.Survival;
 import eu.wuffy.survival.handler.home.Home;
 import eu.wuffy.survival.handler.warp.Warp;
 import eu.wuffy.survival.handler.warp.WarpAlias;
+import eu.wuffy.synced.database.ConfigDatabase;
 import eu.wuffy.synced.database.Database;
 import eu.wuffy.synced.database.DatabaseTable;
 
@@ -174,7 +173,7 @@ public class SurvivalDatabase extends CoreDatabase {
 	private static final String ECONOMY_DELETE_PLAYER_FROM_BANK = String.format("DELETE FROM %seconomy_players_banks WHERE bank_id=?, player=?", SurvivalDatabase.DATABASE_PREFIX);
 	private static final String ECONOMY_GET_BANKS_BY_PLAYER = String.format("SELECT * FROM %seconomy_players_banks WHERE player=?", SurvivalDatabase.DATABASE_PREFIX);
 
-	public SurvivalDatabase(Survival core, HikariConfig config) {
+	public SurvivalDatabase(Survival core, ConfigDatabase config) {
 		super(core, config);
 
 		this.addDefaultTable(SurvivalDatabase.TABLES_WARPS);

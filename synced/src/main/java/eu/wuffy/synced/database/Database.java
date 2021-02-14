@@ -40,10 +40,23 @@ public class Database {
 
 	protected DatabaseTable[] defaultTables = Database.TABLE_CREATE;
 
-	public Database(ICore core, HikariConfig config) {
+	public Database(ICore core, ConfigDatabase config) {
 		this.core = core;
 
-		this.dataSource = new HikariDataSource(config);
+		HikariConfig databaseConfig = new HikariConfig();
+		databaseConfig.setDataSourceClassName(config.dataSourceClassName);
+		databaseConfig.addDataSourceProperty("serverName", config.serverName);
+		databaseConfig.addDataSourceProperty("port", config.port);
+		databaseConfig.addDataSourceProperty("databaseName", config.databaseName);
+		databaseConfig.setUsername(config.username);
+		databaseConfig.setPassword(config.password);
+
+		databaseConfig.setMaxLifetime(config.maxLifetime);
+		databaseConfig.setConnectionTimeout(config.connectionTimeout);
+		databaseConfig.setMinimumIdle(config.minimumIdle);
+		databaseConfig.setMaximumPoolSize(config.maximumPoolSize);
+		databaseConfig.setAutoCommit(config.autoCommit);
+		this.dataSource = new HikariDataSource(databaseConfig);
 
 		this.addDefaultTable(Database.TABLE_CREATE);
 	}

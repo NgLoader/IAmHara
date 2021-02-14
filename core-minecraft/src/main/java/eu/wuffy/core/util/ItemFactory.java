@@ -50,8 +50,10 @@ public class ItemFactory extends ItemStack {
 	public ItemFactory() { }
 
 	public ItemFactory(ItemStack item) {
-		this(item.getType(), item.getAmount(), ((Damageable) item.getItemMeta()).getDamage());
-		this.meta = item.getItemMeta();
+		this(item.getType(), item.getAmount());
+		if (item.hasItemMeta()) {
+			this.meta = item.getItemMeta().clone();
+		}
 	}
 	
 	public ItemFactory(Material material, ItemMeta meta) {
