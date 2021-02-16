@@ -18,11 +18,11 @@ import org.bukkit.inventory.meta.ItemMeta;
 import eu.wuffy.core.util.ItemFactory;
 import eu.wuffy.survival.crafting.IRecipe;
 
-public class WoolStringRecipe extends ShapelessRecipe implements IRecipe {
+public class WoolToStringRecipe extends ShapelessRecipe implements IRecipe {
 
 	public static final ItemStack STRING_ITEMSTACK = new ItemFactory(Material.STRING).setNumber(4).build();
 
-	public WoolStringRecipe() {
+	public WoolToStringRecipe() {
 		super(NamespacedKey.minecraft("recipe.woolstring"), STRING_ITEMSTACK);
 
 		this.addIngredient(Material.SHEARS);

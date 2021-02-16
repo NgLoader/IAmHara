@@ -15,6 +15,7 @@ import org.bukkit.DyeColor;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Material;
 import org.bukkit.block.banner.Pattern;
+import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -33,6 +34,8 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 
 import eu.wuffy.synced.util.ReflectionUtil;
+import net.minecraft.server.v1_16_R3.NBTTagCompound;
+import net.minecraft.server.v1_16_R3.NBTTagInt;
 
 /**
  * @author Ingrim4
@@ -368,6 +371,14 @@ public class ItemFactory extends ItemStack {
 
 	public ItemFactory clone() {
 		return new ItemFactory(this.build());
+	}
+
+	public ItemStack buildCustomModel(int customModel) {
+		net.minecraft.server.v1_16_R3.ItemStack item = CraftItemStack.asNMSCopy(this.build());
+		NBTTagCompound tag = item.hasTag() ? item.getTag() : new NBTTagCompound();
+		tag.set("CustomModelData", NBTTagInt.a(customModel));
+		item.setTag(tag);
+		return CraftItemStack.asBukkitCopy(item);
 	}
 	
 	public ItemStack build() {

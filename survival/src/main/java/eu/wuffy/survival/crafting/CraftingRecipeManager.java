@@ -20,8 +20,13 @@ import org.bukkit.inventory.ShapelessRecipe;
 import eu.wuffy.survival.Survival;
 import eu.wuffy.survival.crafting.recipe.InvisibleItemFrameRecipe;
 import eu.wuffy.survival.crafting.recipe.WebRecipe;
+import eu.wuffy.survival.crafting.recipe.WoolRecipe;
 import eu.wuffy.survival.crafting.recipe.WoolRecolorRecipe;
-import eu.wuffy.survival.crafting.recipe.WoolStringRecipe;
+import eu.wuffy.survival.crafting.recipe.WoolToStringRecipe;
+import eu.wuffy.survival.crafting.recipe.mobcatcher.MobCatcherMiddleRecipe;
+import eu.wuffy.survival.crafting.recipe.mobcatcher.MobCatcherShellRecipe;
+import eu.wuffy.survival.crafting.recipe.mobcatcher.MobCatcherSingleRecipe;
+import eu.wuffy.survival.crafting.recipe.mobcatcher.MobCatcherUnlimitedRecipe;
 import eu.wuffy.synced.IHandler;
 
 public class CraftingRecipeManager extends IHandler<Survival> implements Listener {
@@ -36,8 +41,14 @@ public class CraftingRecipeManager extends IHandler<Survival> implements Listene
 	public void onInit() {
 		this.recipes.add(new InvisibleItemFrameRecipe(this.core));
 
+		this.recipes.add(new MobCatcherShellRecipe());
+		this.recipes.add(new MobCatcherSingleRecipe());
+		this.recipes.add(new MobCatcherMiddleRecipe());
+		this.recipes.add(new MobCatcherUnlimitedRecipe());
+
 		this.recipes.add(new WebRecipe());
-		this.recipes.add(new WoolStringRecipe());
+		this.recipes.add(new WoolRecipe());
+		this.recipes.add(new WoolToStringRecipe());
 		for (Material material : Material.values()) {
 			String name = material.name();
 			if (name.endsWith("_DYE")) {
